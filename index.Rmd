@@ -9,8 +9,8 @@ documentclass: book
 bibliography: lib.bib
 biblio-style: apalike
 colorlinks: yes
-lot: yes
-lof: yes
+lot: no
+lof: no
 fontsize: 12pt
 link-citations: yes
 #url: 'https://mgallow.github.io/oral_manuscript/'

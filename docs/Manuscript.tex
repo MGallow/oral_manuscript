@@ -147,18 +147,13 @@
 \setcounter{tocdepth}{2}
 \tableofcontents
 }
-\listoftables
-\listoffigures
 \hypertarget{prerequisites}{%
 \chapter{Prerequisites}\label{prerequisites}}
-
-\hypertarget{r-includefalse-automatically-create-a-bib-database-for-r-packages-knitrwrite_bibc-.packages-bookdown-knitr-rmarkdown-packages.bib}{%
-\chapter{\texorpdfstring{\texttt{\{r\ include=FALSE\}\ \#\ \#\ automatically\ create\ a\ bib\ database\ for\ R\ packages\ \#\ knitr::write\_bib(c(\ \#\ \ \ .packages(),\ \textquotesingle{}bookdown\textquotesingle{},\ \textquotesingle{}knitr\textquotesingle{},\ \textquotesingle{}rmarkdown\textquotesingle{}\ \#\ ),\ \textquotesingle{}packages.bib\textquotesingle{})\ \#}}{\{r include=FALSE\} \# \# automatically create a bib database for R packages \# knitr::write\_bib(c( \#   .packages(), 'bookdown', 'knitr', 'rmarkdown' \# ), 'packages.bib') \#}}\label{r-includefalse-automatically-create-a-bib-database-for-r-packages-knitrwrite_bibc-.packages-bookdown-knitr-rmarkdown-packages.bib}}
 
 \hypertarget{intro}{%
 \chapter{Introduction}\label{intro}}
 
-Blahh\ldots{}.
+This is the introduction for Matt's oral manuscript.
 
 \hypertarget{tutorial}{%
 \chapter{Tutorial}\label{tutorial}}
@@ -171,7 +166,7 @@ Blahh\ldots{}.
 \KeywordTok{install.packages}\NormalTok{(}\StringTok{"ADMMsigma"}\NormalTok{)}
 
 \CommentTok{# You can also install the development version from GitHub:}
-\CommentTok{# install.packages("devtools")}
+\CommentTok{# install.packages('devtools')}
 \NormalTok{devtools}\OperatorTok{::}\KeywordTok{install_github}\NormalTok{(}\StringTok{"MGallow/ADMMsigma"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -217,13 +212,12 @@ and denote it as Omega.
 \begin{Highlighting}[]
 \KeywordTok{library}\NormalTok{(ADMMsigma)}
 
-\CommentTok{#  generate data from a sparse matrix}
-\CommentTok{# first compute covariance matrix}
+\CommentTok{# generate data from a sparse matrix first compute covariance matrix}
 \NormalTok{S =}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\FloatTok{0.7}\NormalTok{, }\DataTypeTok{nrow =} \DecValTok{5}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{5}\NormalTok{)}
-\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{5}\NormalTok{)\{}
-  \ControlFlowTok{for}\NormalTok{ (j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{5}\NormalTok{)\{}
-\NormalTok{    S[i, j] =}\StringTok{ }\NormalTok{S[i, j]}\OperatorTok{^}\KeywordTok{abs}\NormalTok{(i }\OperatorTok{-}\StringTok{ }\NormalTok{j)}
-\NormalTok{  \}}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{5}\NormalTok{) \{}
+    \ControlFlowTok{for}\NormalTok{ (j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{5}\NormalTok{) \{}
+\NormalTok{        S[i, j] =}\StringTok{ }\NormalTok{S[i, j]}\OperatorTok{^}\KeywordTok{abs}\NormalTok{(i }\OperatorTok{-}\StringTok{ }\NormalTok{j)}
+\NormalTok{    \}}
 \NormalTok{\}}
 
 \CommentTok{# print oracle precision matrix (shrinkage might be useful)}
@@ -244,7 +238,7 @@ and denote it as Omega.
 \begin{Highlighting}[]
 \CommentTok{# generate 100 x 5 matrix with rows drawn from iid N_p(0, S)}
 \KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
-\NormalTok{Z =}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{100}\OperatorTok{*}\DecValTok{5}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{100}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{5}\NormalTok{)}
+\NormalTok{Z =}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{100} \OperatorTok{*}\StringTok{ }\DecValTok{5}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{100}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{5}\NormalTok{)}
 \NormalTok{out =}\StringTok{ }\KeywordTok{eigen}\NormalTok{(S, }\DataTypeTok{symmetric =} \OtherTok{TRUE}\NormalTok{)}
 \NormalTok{S.sqrt =}\StringTok{ }\NormalTok{out}\OperatorTok{$}\NormalTok{vectors }\OperatorTok{%*%}\StringTok{ }\KeywordTok{diag}\NormalTok{(out}\OperatorTok{$}\NormalTok{values}\OperatorTok{^}\FloatTok{0.5}\NormalTok{) }\OperatorTok{%*%}\StringTok{ }\KeywordTok{t}\NormalTok{(out}\OperatorTok{$}\NormalTok{vectors)}
 \NormalTok{X =}\StringTok{ }\NormalTok{Z }\OperatorTok{%*%}\StringTok{ }\NormalTok{S.sqrt}
@@ -275,7 +269,7 @@ As described earlier in the report, the maximum likelihood estimator
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# print inverse of sample precision matrix (perhaps a bad estimate)}
-\KeywordTok{round}\NormalTok{(}\KeywordTok{qr.solve}\NormalTok{(}\KeywordTok{cov}\NormalTok{(X)}\OperatorTok{*}\NormalTok{(}\KeywordTok{nrow}\NormalTok{(X) }\OperatorTok{-}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{/}\KeywordTok{nrow}\NormalTok{(X)), }\DecValTok{5}\NormalTok{)}
+\KeywordTok{round}\NormalTok{(}\KeywordTok{qr.solve}\NormalTok{(}\KeywordTok{cov}\NormalTok{(X) }\OperatorTok{*}\StringTok{ }\NormalTok{(}\KeywordTok{nrow}\NormalTok{(X) }\OperatorTok{-}\StringTok{ }\DecValTok{1}\NormalTok{)}\OperatorTok{/}\KeywordTok{nrow}\NormalTok{(X)), }\DecValTok{5}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -299,7 +293,7 @@ estimator. Below we construct various penalized estimators:
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# elastic-net type penalty (set tolerance to 1e-8)}
-\KeywordTok{ADMMsigma}\NormalTok{(X, }\DataTypeTok{tol.abs =} \FloatTok{1e-8}\NormalTok{, }\DataTypeTok{tol.rel =} \FloatTok{1e-8}\NormalTok{)}
+\KeywordTok{ADMMsigma}\NormalTok{(X, }\DataTypeTok{tol.abs =} \FloatTok{1e-08}\NormalTok{, }\DataTypeTok{tol.rel =} \FloatTok{1e-08}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -463,7 +457,7 @@ to more optimal tuning parameters.
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# produce CV heat map for ADMMsigma}
-\NormalTok{ADMM =}\StringTok{ }\KeywordTok{ADMMsigma}\NormalTok{(X, }\DataTypeTok{tol.abs =} \FloatTok{1e-8}\NormalTok{, }\DataTypeTok{tol.rel =} \FloatTok{1e-8}\NormalTok{)}
+\NormalTok{ADMM =}\StringTok{ }\KeywordTok{ADMMsigma}\NormalTok{(X, }\DataTypeTok{tol.abs =} \FloatTok{1e-08}\NormalTok{, }\DataTypeTok{tol.rel =} \FloatTok{1e-08}\NormalTok{)}
 \KeywordTok{plot}\NormalTok{(ADMM, }\DataTypeTok{type =} \StringTok{"heatmap"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -815,7 +809,7 @@ tuning parameters close to the optimal parameters.
 \NormalTok{S =}\StringTok{ }\KeywordTok{qr.solve}\NormalTok{(Omega)}
 
 \CommentTok{# generate data}
-\NormalTok{Z =}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{100}\OperatorTok{*}\DecValTok{50}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{50}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{100}\NormalTok{)}
+\NormalTok{Z =}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{100} \OperatorTok{*}\StringTok{ }\DecValTok{50}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{50}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{100}\NormalTok{)}
 \NormalTok{out =}\StringTok{ }\KeywordTok{eigen}\NormalTok{(S, }\DataTypeTok{symmetric =} \OtherTok{TRUE}\NormalTok{)}
 \NormalTok{S.sqrt =}\StringTok{ }\NormalTok{out}\OperatorTok{$}\NormalTok{vectors }\OperatorTok{%*%}\StringTok{ }\KeywordTok{diag}\NormalTok{(out}\OperatorTok{$}\NormalTok{values}\OperatorTok{^}\FloatTok{0.5}\NormalTok{) }\OperatorTok{%*%}\StringTok{ }\KeywordTok{t}\NormalTok{(out}\OperatorTok{$}\NormalTok{vectors)}
 \NormalTok{X =}\StringTok{ }\NormalTok{Z }\OperatorTok{%*%}\StringTok{ }\NormalTok{S.sqrt}
@@ -842,7 +836,7 @@ tuning parameters close to the optimal parameters.
 \NormalTok{S =}\StringTok{ }\KeywordTok{qr.solve}\NormalTok{(Omega)}
 
 \CommentTok{# generate data}
-\NormalTok{Z =}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{10}\OperatorTok{*}\DecValTok{1000}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{1000}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{10}\NormalTok{)}
+\NormalTok{Z =}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{10} \OperatorTok{*}\StringTok{ }\DecValTok{1000}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{1000}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{10}\NormalTok{)}
 \NormalTok{out =}\StringTok{ }\KeywordTok{eigen}\NormalTok{(S, }\DataTypeTok{symmetric =} \OtherTok{TRUE}\NormalTok{)}
 \NormalTok{S.sqrt =}\StringTok{ }\NormalTok{out}\OperatorTok{$}\NormalTok{vectors }\OperatorTok{%*%}\StringTok{ }\KeywordTok{diag}\NormalTok{(out}\OperatorTok{$}\NormalTok{values}\OperatorTok{^}\FloatTok{0.5}\NormalTok{) }\OperatorTok{%*%}\StringTok{ }\KeywordTok{t}\NormalTok{(out}\OperatorTok{$}\NormalTok{vectors)}
 \NormalTok{X =}\StringTok{ }\NormalTok{Z }\OperatorTok{%*%}\StringTok{ }\NormalTok{S.sqrt}
@@ -963,19 +957,19 @@ tolerance) offers comparable computation time to the popular
 \KeywordTok{library}\NormalTok{(ADMMsigma)}
 \KeywordTok{library}\NormalTok{(microbenchmark)}
 
-\CommentTok{#  generate data from tri-diagonal (sparse) matrix}
-\CommentTok{# compute covariance matrix (can confirm inverse is tri-diagonal)}
+\CommentTok{# generate data from tri-diagonal (sparse) matrix compute covariance matrix}
+\CommentTok{# (can confirm inverse is tri-diagonal)}
 \NormalTok{S =}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DataTypeTok{nrow =} \DecValTok{100}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{100}\NormalTok{)}
 
-\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{100}\NormalTok{)\{}
-  \ControlFlowTok{for}\NormalTok{ (j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{100}\NormalTok{)\{}
-\NormalTok{    S[i, j] =}\StringTok{ }\FloatTok{0.7}\OperatorTok{^}\NormalTok{(}\KeywordTok{abs}\NormalTok{(i }\OperatorTok{-}\StringTok{ }\NormalTok{j))}
-\NormalTok{  \}}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{100}\NormalTok{) \{}
+    \ControlFlowTok{for}\NormalTok{ (j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{100}\NormalTok{) \{}
+\NormalTok{        S[i, j] =}\StringTok{ }\FloatTok{0.7}\OperatorTok{^}\NormalTok{(}\KeywordTok{abs}\NormalTok{(i }\OperatorTok{-}\StringTok{ }\NormalTok{j))}
+\NormalTok{    \}}
 \NormalTok{\}}
 
 \CommentTok{# generate 1000 x 100 matrix with rows drawn from iid N_p(0, S)}
 \KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
-\NormalTok{Z =}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{1000}\OperatorTok{*}\DecValTok{100}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{1000}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{100}\NormalTok{)}
+\NormalTok{Z =}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{1000} \OperatorTok{*}\StringTok{ }\DecValTok{100}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{1000}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{100}\NormalTok{)}
 \NormalTok{out =}\StringTok{ }\KeywordTok{eigen}\NormalTok{(S, }\DataTypeTok{symmetric =} \OtherTok{TRUE}\NormalTok{)}
 \NormalTok{S.sqrt =}\StringTok{ }\NormalTok{out}\OperatorTok{$}\NormalTok{vectors }\OperatorTok{%*%}\StringTok{ }\KeywordTok{diag}\NormalTok{(out}\OperatorTok{$}\NormalTok{values}\OperatorTok{^}\FloatTok{0.5}\NormalTok{) }\OperatorTok{%*%}\StringTok{ }\KeywordTok{t}\NormalTok{(out}\OperatorTok{$}\NormalTok{vectors)}
 \NormalTok{X =}\StringTok{ }\NormalTok{Z }\OperatorTok{%*%}\StringTok{ }\NormalTok{S.sqrt}
@@ -988,16 +982,17 @@ tolerance) offers comparable computation time to the popular
 
 \begin{verbatim}
 ## Unit: milliseconds
-##                              expr      min      lq     mean   median
-##  glasso::glasso(s = S, rho = 0.1) 48.90523 50.1563 52.79238 51.16126
+##                              expr      min       lq     mean   median
+##  glasso::glasso(s = S, rho = 0.1) 49.46673 53.37757 58.35196 55.90935
 ##        uq      max neval
-##  54.31671 74.55431   100
+##  60.77517 92.68082   100
 \end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# benchmark ADMMsigma - default tolerance}
-\KeywordTok{microbenchmark}\NormalTok{(}\KeywordTok{ADMMsigma}\NormalTok{(}\DataTypeTok{S =}\NormalTok{ S, }\DataTypeTok{lam =} \FloatTok{0.1}\NormalTok{, }\DataTypeTok{alpha =} \DecValTok{1}\NormalTok{, }\DataTypeTok{tol.abs =} \FloatTok{1e-4}\NormalTok{, }\DataTypeTok{tol.rel =} \FloatTok{1e-4}\NormalTok{, }\DataTypeTok{trace =} \StringTok{"none"}\NormalTok{))}
+\KeywordTok{microbenchmark}\NormalTok{(}\KeywordTok{ADMMsigma}\NormalTok{(}\DataTypeTok{S =}\NormalTok{ S, }\DataTypeTok{lam =} \FloatTok{0.1}\NormalTok{, }\DataTypeTok{alpha =} \DecValTok{1}\NormalTok{, }\DataTypeTok{tol.abs =} \FloatTok{1e-04}\NormalTok{, }\DataTypeTok{tol.rel =} \FloatTok{1e-04}\NormalTok{, }
+    \DataTypeTok{trace =} \StringTok{"none"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1005,14 +1000,15 @@ tolerance) offers comparable computation time to the popular
 ## Unit: milliseconds
 ##                                                                                           expr
 ##  ADMMsigma(S = S, lam = 0.1, alpha = 1, tol.abs = 1e-04, tol.rel = 1e-04,      trace = "none")
-##       min       lq     mean   median       uq      max neval
-##  78.38064 81.13339 84.86769 82.69599 85.21767 134.8773   100
+##      min       lq     mean   median       uq      max neval
+##  77.2134 83.51351 89.71565 85.37738 94.37814 126.0049   100
 \end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# benchmark ADMMsigma - tolerance 1e-8}
-\KeywordTok{microbenchmark}\NormalTok{(}\KeywordTok{ADMMsigma}\NormalTok{(}\DataTypeTok{S =}\NormalTok{ S, }\DataTypeTok{lam =} \FloatTok{0.1}\NormalTok{, }\DataTypeTok{alpha =} \DecValTok{1}\NormalTok{, }\DataTypeTok{tol.abs =} \FloatTok{1e-8}\NormalTok{, }\DataTypeTok{tol.rel =} \FloatTok{1e-8}\NormalTok{, }\DataTypeTok{trace =} \StringTok{"none"}\NormalTok{))}
+\KeywordTok{microbenchmark}\NormalTok{(}\KeywordTok{ADMMsigma}\NormalTok{(}\DataTypeTok{S =}\NormalTok{ S, }\DataTypeTok{lam =} \FloatTok{0.1}\NormalTok{, }\DataTypeTok{alpha =} \DecValTok{1}\NormalTok{, }\DataTypeTok{tol.abs =} \FloatTok{1e-08}\NormalTok{, }\DataTypeTok{tol.rel =} \FloatTok{1e-08}\NormalTok{, }
+    \DataTypeTok{trace =} \StringTok{"none"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1020,8 +1016,8 @@ tolerance) offers comparable computation time to the popular
 ## Unit: milliseconds
 ##                                                                                           expr
 ##  ADMMsigma(S = S, lam = 0.1, alpha = 1, tol.abs = 1e-08, tol.rel = 1e-08,      trace = "none")
-##       min       lq    mean   median       uq      max neval
-##  257.2874 259.3264 265.224 262.7856 265.9522 292.6069   100
+##       min       lq     mean   median       uq      max neval
+##  258.5389 261.5402 272.3741 267.8829 274.7276 353.4726   100
 \end{verbatim}
 
 \begin{Shaded}
@@ -1033,10 +1029,10 @@ tolerance) offers comparable computation time to the popular
 
 \begin{verbatim}
 ## Unit: seconds
-##                          expr      min       lq     mean  median       uq
-##  ADMMsigma(X, trace = "none") 7.921557 7.957254 8.049066 8.05477 8.084374
+##                          expr      min       lq     mean   median       uq
+##  ADMMsigma(X, trace = "none") 8.338241 8.341611 8.536446 8.472933 8.515822
 ##       max neval
-##  8.227377     5
+##  9.013621     5
 \end{verbatim}
 
 \begin{Shaded}
@@ -1049,9 +1045,9 @@ tolerance) offers comparable computation time to the popular
 \begin{verbatim}
 ## Unit: seconds
 ##                                     expr      min       lq     mean
-##  ADMMsigma(X, cores = 3, trace = "none") 8.884784 8.931084 9.060373
-##    median       uq      max neval
-##  9.145838 9.153126 9.187034     5
+##  ADMMsigma(X, cores = 3, trace = "none") 9.285137 9.315978 9.470666
+##   median       uq      max neval
+##  9.40943 9.426579 9.916207     5
 \end{verbatim}
 
 \begin{Shaded}
@@ -1063,10 +1059,10 @@ tolerance) offers comparable computation time to the popular
 
 \begin{verbatim}
 ## Unit: seconds
-##                                           expr    min       lq     mean
-##  ADMMsigma(X, crit = "loglik", trace = "none") 6.8952 6.946041 7.040865
+##                                           expr      min       lq     mean
+##  ADMMsigma(X, crit = "loglik", trace = "none") 7.028816 7.121599 7.185927
 ##    median       uq      max neval
-##  7.077382 7.093876 7.191825     5
+##  7.181803 7.277249 7.320166     5
 \end{verbatim}
 
 \begin{Shaded}
@@ -1079,9 +1075,9 @@ tolerance) offers comparable computation time to the popular
 \begin{verbatim}
 ## Unit: seconds
 ##                                                      expr      min
-##  RIDGEsigma(X, lam = 10^seq(-8, 8, 0.01), trace = "none") 11.88004
+##  RIDGEsigma(X, lam = 10^seq(-8, 8, 0.01), trace = "none") 12.22374
 ##        lq     mean   median       uq      max neval
-##  11.98805 12.00878 12.00675 12.05369 12.11539     5
+##  12.37326 12.93705 13.01892 13.04356 14.02577     5
 \end{verbatim}
 
 \bibliography{lib.bib}
