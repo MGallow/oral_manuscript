@@ -1,6 +1,6 @@
-Package: placeholder
+Package: oral_manuscript
 Type: Book
-Title: Does not matter.
+Title: oral_manuscript
 Version: 0.0.1
 Imports: bookdown
-Remotes: rstudio/bookdown
+Remotes: MGallow/oral_manuscript
