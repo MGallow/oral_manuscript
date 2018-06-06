@@ -21,4 +21,5 @@ deploy:
   #local_dir: docs
   target-branch: master
   keep-history: true
+  allow-empty-commit: false
     
