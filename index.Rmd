@@ -5,7 +5,8 @@ date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 output: bookdown::gitbook
 documentclass: book
-bibliography: [lib.bib, packages.bib]
+#bibliography: [lib.bib, packages.bib]
+bibliography: lib.bib
 biblio-style: apalike
 colorlinks: yes
 lot: yes
@@ -17,11 +18,18 @@ github-repo: MGallow/oral_manuscript
 description: "This is a working manuscript in preparation for Matt Galloway's doctoral oral examination."
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, tidy = TRUE)
+
+# ```{r include=FALSE}
+# # automatically create a bib database for R packages
+# knitr::write_bib(c(
+#   .packages(), 'bookdown', 'knitr', 'rmarkdown'
+# ), 'packages.bib')
+# ```
+
+```
+
 # Prerequisites
 
-```{r include=FALSE}
-# automatically create a bib database for R packages
-knitr::write_bib(c(
-  .packages(), 'bookdown', 'knitr', 'rmarkdown'
-), 'packages.bib')
-```
+

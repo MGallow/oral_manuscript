@@ -1,6 +1,6 @@
 book_filename: "Manuscript"
 repo: https://github.com/MGallow/oral_manuscript/
-clean: [packages.bib]
+#clean: [packages.bib]
 language:
   label:
     fig: "FIGURE "

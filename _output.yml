@@ -1,6 +1,6 @@
 bookdown::gitbook:
   css: style.css
-  split_by: section
+  #split_by: section
   config:
     toc:
       collapse: none
@@ -23,7 +23,7 @@ bookdown::pdf_book:
   template: null
   keep_tex: yes
   toc_depth: 3
-  toc_appendix: yes
+  #toc_appendix: yes
   toc_unnumbered: no
   quote_footer: ["//VA{", "}{}"]
 bookdown::epub_book: default
