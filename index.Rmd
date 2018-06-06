@@ -19,9 +19,6 @@ description: "This is a working manuscript in preparation for Matt Galloway's do
 
 # Prerequisites
 
-Blah...
-
-
 ```{r include=FALSE}
 # automatically create a bib database for R packages
 knitr::write_bib(c(
