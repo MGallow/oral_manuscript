@@ -1,0 +1,9 @@
+Package: oral_manuscript
+Type: Book
+Title: oral_manuscript
+Version: 0.0.1
+Imports: bookdown,
+  ADMMsigma,
+  microbenchmark,
+  glasso
+Remotes: MGallow/oral_manuscript

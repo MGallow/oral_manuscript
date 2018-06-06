@@ -1,0 +1,24 @@
+language: r
+dist: trusty
+sudo: false
+
+branches:
+  only:
+    - master
+
+cache: packages
+
+script:
+  - Rscript -e "bookdown::render_book('index.Rmd', 'bookdown::gitbook')"
+  - Rscript -e "bookdown::render_book('index.Rmd', 'bookdown::pdf_book')"
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  on:
+    branch: master
+  #local_dir: docs
+  target-branch: master
+  keep-history: false
+    
