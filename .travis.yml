@@ -6,12 +6,15 @@ branches:
   only:
     - master
 
+# cache local changes
 cache: packages
 
+# render both output forms of the book
 script:
   - Rscript -e "bookdown::render_book('index.Rmd', 'bookdown::gitbook')"
   - Rscript -e "bookdown::render_book('index.Rmd', 'bookdown::pdf_book')"
 
+# deploy book to gh-pages branch
 deploy:
   provider: pages
   skip_cleanup: true
@@ -20,6 +23,11 @@ deploy:
     branch: master
   local_dir: _book
   #target-branch: master
-  keep-history: true
+  keep-history: false
   allow-empty-commit: false
-    
+
+# send email if any changes
+notifications:
+  email:
+    on_success: change
+    on_failure: change
