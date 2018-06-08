@@ -23,7 +23,7 @@ deploy:
     branch: master
   local_dir: _book
   #target-branch: master
-  keep-history: false
+  keep-history: true
   allow-empty-commit: false
 
 # send email if any changes
