@@ -11,7 +11,7 @@ biblio-style: apalike
 colorlinks: yes
 lot: no
 lof: no
-fontsize: 12pt
+fontsize: 11pt
 link-citations: yes
 #url: 'https://mgallow.github.io/oral_manuscript/'
 github-repo: MGallow/oral_manuscript
