@@ -12,7 +12,7 @@ Below we benchmark the various functions contained in `ADMMsigma`. We can see th
 
 
 <br>\vspace{0.5cm}
-```{r, message = FALSE, echo = TRUE}
+```{r, message = FALSE, echo = TRUE, tidy = TRUE}
 library(ADMMsigma)
 library(microbenchmark)
 

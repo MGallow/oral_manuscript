@@ -3,10 +3,10 @@
 
 Suppose we want to solve the following optimization problem:
 
-\begin{align*}
+$$ \begin{align*}
   \mbox{minimize } f(x) + g(z) \\
   \mbox{subject to } Ax + Bz = c
-\end{align*}
+\end{align*} $$
 
 where $x \in \mathbb{R}^{n}, z \in \mathbb{R}^{m}, A \in \mathbb{R}^{p \times n}, B \in \mathbb{R}^{p \times m}$, and $c \in \mathbb{R}^{p}$. Following @boyd2011distributed, the optimization problem will be introduced in vector form though we will later consider cases where $x$ and $z$ are matrices. We will also assume $f$ and $g$ are convex functions. Optimization problems like this arise naturally in several statistics and machine learning applications -- particularly regularization methods. For instance, we could take $f$ to be the squared error loss, $g$ to be the $l_{2}$-norm, $c$ to be equal to zero and $A$ and $B$ to be identity matrices to solve the ridge regression optimization problem.
 
@@ -190,23 +190,3 @@ Z_{ij}^{k + 1} &= \frac{1}{\lambda(1 - \alpha) + \rho}Sign\left(\rho\Omega_{ij}^
 \end{align*}
 
 where $Soft$ is the soft-thresholding function.
-
-<br><br>\newpage
-
-<!-- \begin{thebibliography}{9} -->
-
-<!-- \bibitem{1} -->
-<!--   Boyd, Stephen, et al. "Distributed optimization and statistical learning via the alternating direction method of multipliers." Foundations and Trends® in Machine Learning 3.1 (2011): 1-122. -->
-
-<!-- \bibitem{2} -->
-<!--   Polson, Nicholas G., James G. Scott, and Brandon T. Willard. "Proximal algorithms in statistics and machine learning." Statistical Science 30.4 (2015): 559-581. -->
-
-<!-- \bibitem{3} -->
-<!--   Marjanovic, Goran, and Victor Solo. "On $ l_q $ optimization and matrix completion." IEEE Transactions on signal processing 60.11 (2012): 5714-5724. -->
-
-<!-- \bibitem{4} -->
-<!--   Zou, Hui, and Trevor Hastie. "Regularization and variable selection via the elastic net." Journal of the Royal Statistical Society: Series B (Statistical Methodology) 67.2 (2005): 301-320. -->
-
-<!-- \end{thebibliography} -->
-
-## References

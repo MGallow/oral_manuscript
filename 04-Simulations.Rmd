@@ -3,9 +3,7 @@
 
 In the simulations below we generated data from a number of oracle precision matrices with various structures. For each data-generating procedure, the `ADMMsigma()` function was run using 5-fold cross validation. After 20 replications, the cross validation errors were totalled and the optimal tuning parameters were selected (results in the top figure). These results are compared with the Kullback Leibler (KL) losses between the estimates and the oracle precision matrix (bottom figure). We can see below that our cross validation procedure choosing tuning parameters close to the optimal parameters.
 
-<br>\newpage
-
-### Compound Symmetric: P = 100, N = 50
+## Compound Symmetric: P = 100, N = 50
 
 ![](images/compound_N50_P100.png)
 
@@ -27,9 +25,8 @@ X = Z %*% S.sqrt
 
 ```
 
-<br>\newpage
 
-### Compound Symmetric: P = 10, N = 1000
+## Compound Symmetric: P = 10, N = 1000
 
 ![](images/compound_N1000_P10.png)
 
@@ -51,9 +48,8 @@ X = Z %*% S.sqrt
 
 ```
 
-<br>\newpage
 
-### Dense: P = 100, N = 50
+## Dense: P = 100, N = 50
 
 ![](images/repsKLdenseQR_N50_P100.png)
 
@@ -77,9 +73,8 @@ X = Z %*% S.sqrt
 
 ```
 
-<br>\newpage
 
-### Dense: P = 10, N = 50
+## Dense: P = 10, N = 50
 
 ![](images/repsKLdense_N50_P10.png)
 
@@ -103,9 +98,8 @@ X = Z %*% S.sqrt
 
 ```
 
-<br>\newpage
 
-### Tridiagonal: P = 100, N = 50
+## Tridiagonal: P = 100, N = 50
 
 ![](images/repsKLtridiag_N50_P100.png)
 
