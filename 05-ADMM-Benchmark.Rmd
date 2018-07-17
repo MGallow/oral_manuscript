@@ -1,5 +1,5 @@
 
-# Benchmark
+# `ADMMsigma` Benchmark
 
 Below we benchmark the various functions contained in `ADMMsigma`. We can see that `ADMMsigma` (at the default tolerance) offers comparable computation time to the popular `glasso` R package.
 

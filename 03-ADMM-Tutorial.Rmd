@@ -1,5 +1,5 @@
 
-# Tutorial
+# `ADMMsigma` Tutorial
 
 <br>\vspace{0.5cm}
 ```{r, eval = FALSE, echo = TRUE}

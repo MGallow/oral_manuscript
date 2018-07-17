@@ -27,3 +27,5 @@ skimr
 readxl
 glue
 microbenchmark
+SCPME
+bindrcpp
