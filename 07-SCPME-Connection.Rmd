@@ -7,42 +7,42 @@ The general optimization problem outlined in @molstad2017shrinking is to estimat
   \hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \lambda\left\| A\Omega B - C \right\|_{1} \right\}
 \end{align}
 
-where $S$ is the sample covariance of $X \in \mathbb{R}^{p}$ (denominator $n$) and $\left\| \cdot \right\|_{1}$ denotes the $L_{1}$-norm. In addition, $A \in \mathbb{R}^{n \times p}, B \in \mathbb{R}^{p \times r}, \mbox{ and } C \in \mathbb{R}^{n \times r}$ are matrices assumed to be known and specified by the user. This objective function is the log-likelihood for the marginal precision matrix of $X$, which we denote here as $\Omega \equiv \Sigma_{xx}^{-1}$, plus a penalty term.
+where $S$ is the sample covariance of $X \in \mathbb{R}^{p}$ (denominator $n$) and $\left\| \cdot \right\|_{1}$ denotes the $L_{1}$-norm. In addition, $A \in \mathbb{R}^{m \times p}, B \in \mathbb{R}^{p \times q}, \mbox{ and } C \in \mathbb{R}^{m \times q}$ are matrices assumed to be known and specified by the user. This objective function is a penalized log-likelihood for the marginal precision matrix of $X$, which we denote here as $\Omega \equiv \Sigma_{xx}^{-1}$.
 
-\[ \hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ l\left( \Omega \right) + P_{\lambda}\left( \Omega \right) \right\} \]
+\[ \hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ -l\left( \Omega \right) + P_{\lambda}\left( \Omega \right) \right\} \]
 
-where $P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1}$. Under this particular likelihood, it is assumed that each observation of $X$ follows a $p$-variate normal distribution (ie: $X_{i} \sim N_{p}\left( \mu_{x}, \Omega^{-1} \right)$) -- though Dennis Cook and others have shown this objective function to work well as a generic loss even when the assumptions are not met.
+where $P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1}$. Under this particular likelihood, it is assumed that each observation of $X_{i}$ in a sample size of size $n$ follows a $p$-variate normal distribution (ie: $X_{i} \sim N_{p}\left( \mu_{x}, \Omega^{-1} \right)$) -- however, Dennis Cook and others have shown this objective function to work well as a generic loss even when these assumptions are not met.
 
-This type of formulation leads to many new, interesting, and novel estimators for $\Omega$. For instance, we might set $A = I_{p}, B = \Sigma_{xy}, \mbox{ and } C = 0,$ in which case
+This particular formulation for the penalty leads to many new, interesting, and novel estimators for $\Omega$. For instance, if in addition to $X$ we also observe $n$ copies of the random variable $Y$, we might set $A = I_{p}, B = \Sigma_{xy}$ where $\Sigma_{xy}$ is the covariance matrix of $X$ and $Y$, and $C = 0$. In which case
 
 \[P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\Sigma_{xy} \right\|_{1} = \lambda\left\| \beta \right\|_{1} \]
 
-That is, this objective function estimates an $\Omega$ with respect to the marginal likelihood of $X$ under the assumption that $\beta$ is sparse (recall that $\beta \equiv \Omega\Sigma_{xy}$). We could also take $B = \left[ \Sigma_{xy}, I_{p} \right]$ so that the identity matrix (dimension $p$) is appended to the covariance matrix of $X$ and $Y$.
+This objective function estimates an $\Omega$ via the marginal log-likelihood of $X$ under the assumption that the forward regression coefficient $\beta$ is sparse (recall that $\beta \equiv \Omega\Sigma_{xy}$). We could also take $B = \left[ \Sigma_{xy}, I_{p} \right]$ so that the identity matrix (dimension $p$) is appended to the covariance matrix of $X$ and $Y$.
 
 \[ P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\left[\Sigma_{xy}, I_{p}\right] \right\|_{1} = \lambda\left\| \beta \right\|_{1} + \lambda\left\| \Omega \right\|_{1} \]
 
-In this case, not only are we assuming that $\beta$ is sparse, but we are also assuming sparsity in $\Omega$. Further, if we let $\mathbb{X} \in \mathbb{R}^{n \times p}$ be a matrix with rows $X_{i} - \bar{X}$ and $\mathbb{Y} \in \mathbb{R}^{n \times r}$ be a matrix with rows $Y_{i} - \bar{Y}$, we might also take $A = \mathbb{X}, B = \Sigma_{xy}, \mbox{ and } C = \mathbb{Y}$ so that
+In this case, not only are we assuming that $\beta$ is sparse, but we are also assuming sparsity in $\Omega$. Furthermore, if we let $\mathbb{X} \in \mathbb{R}^{n \times p}$ be a matrix with rows $X_{i} - \bar{X}$ and $\mathbb{Y} \in \mathbb{R}^{n \times r}$ be a matrix with rows $Y_{i} - \bar{Y}$, we might also take $A = \mathbb{X}, B = \Sigma_{xy}, \mbox{ and } C = \mathbb{Y}$ so that
 
 \begin{align}
   \hat{\Omega} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \lambda\left\| \mathbb{X}\Omega \Sigma_{xy} - \mathbb{Y} \right\|_{1} \right\} \\
   &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \lambda\left\| \mathbb{Y} - \mathbb{X}\beta \right\|_{1} \right\} \nonumber
 \end{align}
 
-This estimator encourages the predicted values $\hat{\mathbb{Y}} = \mathbb{X}\hat{\beta} = \mathbb{X}\hat{\Omega}\Sigma_{xy}$ to be exactly equal to the observed responses $\mathbb{Y}$. We will name this estimator the *lasso SCPME estimator*. Note that in practice - for any of these estimators - we do not know the true covariance $\Sigma_{xy}$ but we could provide the sample estimate $\hat{\Sigma}_{xy} = \mathbb{X}^{T}\mathbb{Y}/n$.
+This estimator encourages the predicted values $\hat{\mathbb{Y}} = \mathbb{X}\hat{\beta} = \mathbb{X}\hat{\Omega}\Sigma_{xy}$ to be exactly equal to the observed responses $\mathbb{Y}$. We will name this estimator the *lasso SCPME estimator*. Note that in practice - for any of these estimators - we do not know the true covariance matrix $\Sigma_{xy}$ but we could provide the sample estimate $\hat{\Sigma}_{xy} = \mathbb{X}^{T}\mathbb{Y}/n$ in its place.
 
-All of these estimators fall into the SCPME (shrinking characteristics of precision matrix estimators) framework outlined in the paper. The augmented ADMM algorithm is the following:
+All of these estimators fall into the SCPME (shrinking characteristics of precision matrix estimators) algorithmic framework outlined in the paper. The augmented ADMM algorithm (details [here](https://mgallow.github.io/SCPME/articles/Details.html#augmented-admm-algorithm)) is the following:
 
 Set $k = 0$ and repeat steps 1-6 until convergence.
 
-1. Compute $G_{k} = \rho A^{T}\left( A\Omega_{k} B - Z_{k} - C + \rho^{-1}Y_{k} \right)$
+1. Compute $G^{k} = \rho A^{T}\left( A\Omega^{k} B - Z^{k} - C + \Lambda^{k}/\rho \right)B^{T}$
 
-2. Decompose $S + \left( G_{k} + G_{k}^{T} \right)/2 - \rho\tau\Omega_{k} = VQV^{T}$ (via the spectral decomposition).
+2. Decompose $S + \left( G^{k} + (G^{k})^{T} \right)/2 - \rho\tau\Omega^{k} = VQV^{T}$ (via the spectral decomposition).
 
-3. Set $\Omega_{k + 1} = V\left( -Q + (Q^{2} + 4\rho\tau I_{p})^{1/2} \right)V^{T}/(2\rho\tau)$
+3. Set $\Omega^{k + 1} = V\left( -Q + (Q^{2} + 4\rho\tau I_{p})^{1/2} \right)V^{T}/(2\rho\tau)$
 
-4. Set $Z_{k + 1} = \mbox{soft}\left( A\Omega_{k + 1}B - C + \rho^{-1}Y_{k}, \rho^{-1}\lambda \right)$
+4. Set $Z^{k + 1} = \mbox{soft}\left( A\Omega^{k + 1}B - C + \rho^{-1}\Lambda_{k}, \rho^{-1}\lambda \right)$
 
-5. Set $Y_{k + 1} = \rho\left( A\Omega_{k + 1} B - Z_{k + 1} - C \right)$
+5. Set $\Lambda^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)$
 
 6. Replace $k$ with $k + 1$.
 
@@ -51,52 +51,58 @@ Set $k = 0$ and repeat steps 1-6 until convergence.
 
 ## Connection to joint log-likelihood
 
-The last estimator in the previous section reveals an interesting connection to the joint log-likelihood of $X$ and $Y$ when we consider its analogous *ridge* version - the *ridge SCPME estimator*:
+The last estimator in the previous section reveals an interesting connection to the joint log-likelihood of $X$ and $Y$ (under a few assumptions) when we consider its analogous *ridge* version - the *ridge SCPME estimator*:
 
 \begin{align}
   \hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega \Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
 \end{align}
 
-To see this, let us suppose that we have $n$ independent copies of $(Y_{i}, X_{i})$ where $Y_{i} | X_{i} \sim N_{r}\left( \mu_{y} + \beta^{T}X_{i}, \Omega_{y | x}^{-1} \right)$ and $X_{i} \sim N_{p}\left( \mu_{x}, \Omega^{-1} \right)$. That is,
+To see this, let us suppose that we have $n$ independent copies of the random pair $(Y_{i}, X_{i})$ and we assume a linear relationship of the following form:
 
-\[ Y_{i} = \mu_{y} + \beta^{T}X_{i} + E_{i} \]
+\[ Y_{i} = \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right) + E_{i} \]
 
-where $E_{i} \sim N_{r}\left( 0, \Omega_{y | x}^{-1} \right)$. Similar to before, take $\Omega_{y | x} \equiv \Sigma_{y | x}^{-1}, \Omega \equiv \Sigma_{xx}^{-1}, \mbox{ and } \beta \equiv \Omega\Sigma_{xy}$.
+where $E_{i} \sim N_{r}\left( 0, \Omega_{y | x}^{-1} \right)$ and $X_{i} \sim N_{p}\left( \mu_{x}, \Omega^{-1} \right)$. These two assumptions imply that the conditional distribution of $Y_{i}|X_{i}$ is of the form
 
-Below we derive the joint likelihood:
+\[ Y_{i} | X_{i} \sim N_{r}\left( \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right), \Omega_{y | x}^{-1} \right) \] 
+
+We can use this conditional distribution along with the marginal distribution of $X$ to derive the joint likelihood of $X$ and $Y$. Similar to before, we will take $\Omega_{y | x} \equiv \Sigma_{y | x}^{-1}, \Omega \equiv \Sigma_{xx}^{-1}, \mbox{ and } \beta \equiv \Omega\Sigma_{xy}$ for convenience. We will also let $f$ denote the probability distribution function for each respective variable.
 
 \begin{align*}
-  L\left( \Omega_{y | x}, \Omega, \mu_{x}, \mu_{y}, \beta | Y, X \right) &\propto f\left(Y | X, \Omega_{y | x}, \Omega, \mu_{x}, \mu_{y}, \beta \right) \times f\left(X | \Omega, \mu_{x} \right) \\
-  &= \prod_{i = 1}^{n} (2\pi)^{-r/2}\left| \Omega_{y | x} \right|^{1/2} \exp\left[ -\frac{1}{2}\left( Y_{i} - \mu_{y} - \beta^{T}X_{i} \right)^{T}\Omega_{y | x}\left( Y_{i} - \mu_{y} - \beta^{T}X_{i} \right) \right] \\
+  L&\left( \Omega_{y | x}, \Omega, \mu_{x}, \mu_{y}, \beta | Y, X \right) \propto f\left(Y | X; \Omega_{y | x}, \Omega, \mu_{x}, \mu_{y}, \beta \right) \times f\left(X; \Omega, \mu_{x} \right) \\
+  &= \prod_{i = 1}^{n} (2\pi)^{-r/2}\left| \Omega_{y | x} \right|^{1/2} \exp\left[ -\frac{1}{2}\left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right)^{T}\Omega_{y | x}\left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right) \right] \\
   &\times (2\pi)^{-p/2}\left| \Omega \right|^{1/2} \exp\left[ -\frac{1}{2}\left( X_{i} - \mu_{x} \right)^{T}\Omega\left( X_{i} - \mu_{x} \right) \right] \\
-  &\propto \left| \Omega_{y | x} \right|^{n/2}\mbox{etr}\left[ -\frac{1}{2}\sum_{i = 1}^{n}\left( Y_{i} - \mu_{y} - \beta^{T}X_{i} \right)\left( Y_{i} - \mu_{y} - \beta^{T}X_{i} \right)^{T}\Omega_{y | x} \right] \\
+  &\propto \left| \Omega_{y | x} \right|^{n/2}\mbox{etr}\left[ -\frac{1}{2}\sum_{i = 1}^{n}\left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right)\left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right)^{T}\Omega_{y | x} \right] \\
   &\times \left| \Omega \right|^{n/2}\mbox{etr}\left[ -\frac{1}{2}\sum_{i = 1}^{n}\left( X_{i} - \mu_{x} \right)\left( X_{i} - \mu_{x} \right)^{T}\Omega \right]
 \end{align*}
 
 where $\mbox{etr}\left( \cdot \right)$ denotes the exponential trace operator. This implies that the joint log-likelihood is of the following form:
 
 \begin{align*}
-  l\left( \Omega_{y | x}, \Omega, \mu_{x}, \mu_{y}, \beta | Y, X \right) &= const. + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}\sum_{i = 1}^{n} tr\left[ \left( Y_{i} - \mu_{y} - \beta^{T}X_{i} \right)\left( Y_{i} - \mu_{y} - \beta^{T}X_{i} \right)\Omega_{y | x} \right] \\
-  &+\frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}\sum_{i = 1}^{n}tr\left[ \left( X_{i} - \mu_{x} \right)\left( X_{i} - \mu_{x} \right)^{T}\Omega \right]
+  l&\left( \Omega_{y | x}, \Omega, \mu_{x}, \mu_{y}, \beta | Y, X \right) = const. + \frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}\sum_{i = 1}^{n}tr\left[ \left( X_{i} - \mu_{x} \right)\left( X_{i} - \mu_{x} \right)^{T}\Omega \right] \\
+  &+ \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}\sum_{i = 1}^{n} tr\left[ \left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right)\left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right)^{T}\Omega_{y | x} \right]
 \end{align*}
 
 **Note:** this form simplifies significantly if we solve for $\mu_{x}$ and $\mu_{y}$ and make a few additional assumptions about our data.
 
 \begin{align*}
- \nabla_{\mu_{x}}l\left\{\cdot\right\} &= \nabla_{\mu_{x}}\left\{ -\frac{1}{2}tr\left( -n\mu_{x}\bar{X}^{T}\Omega - n\bar{X}\mu_{x}^{T}\Omega + n\mu_{x}\mu_{x}^{T}\Omega \right) \right\} \\
- &= -\frac{1}{2}\left( -n\Omega\bar{X} - n\Omega\bar{X} + 2n\Omega\mu_{x} \right) \\
- \Rightarrow \hat{\mu_{x}} &= \bar{X} \\ \\
- \nabla_{\mu_{y}}l\left\{\cdot\right\} &= \nabla_{\mu_{y}}\left\{ -\frac{1}{2}tr\left( -n\mu_{y}(\bar{Y} - \beta^{T}\bar{X})\Omega_{y | x} - n(\bar{Y} - \beta^{T}\bar{X})\mu_{y}^{T}\Omega_{y | x} + n\mu_{y}\mu_{y}^{T}\Omega_{y | x} \right) \right\} \\
- &= -\frac{1}{2}\left( -n\Omega_{y | x}(\bar{Y} - \beta^{T}\bar{X}) - n\Omega_{y | x}(\bar{Y} - \beta^{T}\bar{X}) + 2n\Omega_{y | x}\mu_{y} \right) \\
- \Rightarrow \hat{\mu_{y}} &= \bar{Y} - \beta^{T}\bar{X}
+ \nabla_{\mu_{y}}l\left\{\cdot\right\} &= \nabla_{\mu_{y}}\left\{ -\frac{1}{2}tr\left[ -n\mu_{y}\left(\bar{Y} - \beta^{T}(\bar{X} - \mu_{x})\right)^{T}\Omega_{y | x} - n\left(\bar{Y} - \beta^{T}(\bar{X} - \mu_{x})\right)\mu_{y}^{T}\Omega_{y | x} + n\mu_{y}\mu_{y}^{T}\Omega_{y | x} \right] \right\} \\
+ &= -\frac{1}{2}\left[ -n\Omega_{y | x}\left(\bar{Y} - \beta^{T}(\bar{X} - \mu_{x}) \right) - n\Omega_{y | x}\left(\bar{Y} - \beta^{T}(\bar{X} - \mu_{x}) \right) + 2n\Omega_{y | x}\mu_{y} \right] \\
+ \Rightarrow \hat{\mu}_{y} &= \bar{Y} - \hat{\beta}^{T}\left(\bar{X} - \hat{\mu_{x}}\right) \\ \\
+ \nabla_{\mu_{x}}l\left\{\cdot\right\} &= \nabla_{\mu_{x}}\left\{ -\frac{1}{2}tr\left[n\beta^{T}\mu_{x}\left(\bar{Y} - \mu_{y} - \beta^{T}\bar{X} \right)^{T}\Omega_{y | x} + n\left(\bar{Y} - \mu_{y} - \beta^{T}\bar{X} \right)\mu_{x}^{T}\beta\Omega_{y | x} + \beta^{T}\mu_{x}\mu_{x}^{T}\beta\Omega_{y | x} \right] \right\} \\
+ &-\nabla_{\mu_{x}}\left\{\frac{1}{2}tr\left[ -n\mu_{x}\bar{X}^{T}\Omega - n\bar{X}\mu_{x}^{T}\Omega + n\mu_{x}\mu_{x}^{T}\Omega \right] \right\} \\
+ &= -\frac{1}{2}\left[n\beta\Omega_{y | x}\left(\bar{Y} - \mu_{y} - \beta^{T}\bar{X} \right) + n\beta\Omega_{y | x}\left(\bar{Y} - \mu_{y} - \beta^{T}\bar{X} \right) + 2\beta\Omega_{y | x}\beta^{T}\mu_{x} \right] \\
+ &-\frac{1}{2}\left( -n\Omega\bar{X} - n\Omega\bar{X} + 2n\Omega\mu_{x} \right) \\
+ \Rightarrow 0 &= -n\hat{\beta}\hat{\Omega}_{y | x}(\bar{Y} - \hat{\mu}_{y} - \hat{\beta}^{T}\bar{X}) - \hat{\beta}\hat{\Omega}_{y | x}\hat{\beta}^{T}\hat{\mu}_{x} + n\hat{\Omega}\bar{X} - n\hat{\Omega}\hat{\mu}_{x} \\
+ \Rightarrow 0 &= n\hat{\Omega}\bar{X} - n\hat{\Omega}\hat{\mu}_{x} \\
+ \Rightarrow \hat{\mu}_{x} &= \bar{X}
 \end{align*}
 
-Without loss of generality, let us assume that $\bar{X} = \bar{Y} = 0$. This can be achieved by simply centering the data by the sample averages.
+Therefore, by plugging in $\hat{\mu}_{x}$ into $\hat{\mu}_{y}$, we find that $\hat{\mu}_{y} = \bar{Y}$ and $\hat{\mu}_{x} = \bar{X}$.
 
-Putting all of this together and recalling that $\beta \equiv \Omega\Sigma_{xy}$, we have that the partially maximized joint log-likelihood is the following:
+Without loss of generality, let us assume that $\bar{X} = \bar{Y} = 0$. This can be achieved by simply centering the data by the sample averages. Putting all of this together and recalling that $\beta \equiv \Omega\Sigma_{xy}$, we have that the partially maximized joint log-likelihood is the following:
 
 \begin{align*}
-  l\left( \Omega_{y | x}, \Omega, \Sigma_{xy} | Y, X \right) &= const. + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}\sum_{i = 1}^{n} tr\left[ \left( Y_{i} - \Sigma_{xy}^{T}\Omega X_{i} \right)\left( Y_{i} - \Sigma_{xy}^{T}\Omega X_{i} \right)\Omega_{y | x} \right] \\
+  l\left( \Omega_{y | x}, \Omega, \Sigma_{xy} | Y, X \right) &= const. + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}\sum_{i = 1}^{n} tr\left[ \left( Y_{i} - \Sigma_{xy}^{T}\Omega X_{i} \right)\left( Y_{i} - \Sigma_{xy}^{T}\Omega X_{i} \right)^{T}\Omega_{y | x} \right] \\
   &+\frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}\sum_{i = 1}^{n}tr\left( X_{i}X_{i}^{T}\Omega \right) \\
   &= const. + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{xy} \right)^{T}\left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{xy} \right)\Omega_{y | x} \right] \\
   &+ \frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}tr\left( \mathbb{X}^{T}\mathbb{X}\Omega \right) \\
@@ -112,53 +118,79 @@ where $S = \mathbb{X}^{T}\mathbb{X}/n$. Now suppose we are interested in solving
   &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left( S\Omega \right) - \log\left| \Omega \right| + \frac{1}{n}\left\| \left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{xy} \right)\Omega_{y | x}^{1/2} \right\|_{F}^{2} \right\}
 \end{align*}
 
-where $\left\|\cdot\right\|_{F}$ denotes the Frobenius norm. Let us assume that $\Omega_{y | x}^{1/2} = I_{r}$ and let $\lambda = 2/n$. Then
+where $\left\|\cdot\right\|_{F}$ denotes the Frobenius norm. Further, let us assume that, given $X$, each of the $r$ responses are pairwise independent with equal variance so that $\Omega_{y | x}^{1/2} = I_{r}/\sigma_{y | x}$ and let $\lambda = 2/(n\sigma_{y | x}^{2})$. Therefore, we have that
 
 \begin{align}
   \hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left( S\Omega \right) - \log\left| \Omega \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega\Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
 \end{align}
 
-Notice that this is exactly the ridge SCPME estimator. This tells us that with just a few assumptions, the ridge SCPME estimator with $A = \mathbb{X}, B = \Sigma_{xy}, \mbox{ and } C = \mathbb{Y}$ is equivalent to maximizing the joint log-likelihood of $X$ and $Y$ with respect to $\Omega$. Specifically, if we assume that, given $X$, each response is independent of one another and has equal variance (denoted as $\sigma_{y | x}^{2}$) then letting $\lambda = 2/(n\sigma_{y | x}^{2})$ and solving for the ridge SCPME estimator is equivalent to solving for the optimal $\hat{\Omega}$ under the joint log-likelihood of $X$ and $Y$.
+Notice that this is exactly the ridge SCPME estimator!
+
+<br>
+\vspace{1cm}
+
+## Takeaways
+
+We have shown that solving for the ridge SCPME estimator is equivalent to solving for the MLE for $\Omega \equiv \Sigma_{xx}^{-1}$ when the following assumptions hold:
+
+1. Each observation $(Y_{i}, X_{i})$ is independent and linearly distributed such that
+
+\[ Y_{i} = \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right) + E_{i} \]
+
+where $E_{i} \sim N_{r}\left( 0, \Omega_{y | x}^{-1} \right)$ and $X_{i} \sim N_{p}\left( \mu_{x}, \Omega^{-1} \right)$.
+
+2. Given $X$, each of the $r$ responses in $Y \in \mathbb{R}^{r}$ is independent of one another with equal variance such that $\Omega_{y | x}^{-1} \equiv \Sigma_{y | x} = I_{r}/\sigma_{y | x}^{2}$.
+
+3. Let the tuning parameter $\lambda = 2/(n\sigma_{y | x}^{2})$.
 
 In addition, only a very slight modification of the augmented ADMM algorithm in @molstad2017shrinking is required to compute this estimate:
 
 Set $k = 0$ and repeat steps 1-6 until convergence.
 
-1. Compute $G_{k} = \rho A^{T}\left( A\Omega_{k} B - Z_{k} - C + \rho^{-1}Y_{k} \right)$
+1. Compute $G^{k} = \rho A^{T}\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}\Lambda^{k} \right)B^{T}$
 
-2. Decompose $S + \left( G_{k} + G_{k}^{T} \right)/2 - \rho\tau\Omega_{k} = VQV^{T}$ (via the spectral decomposition).
+2. Decompose $S + \left( G^{k} + (G^{k})^{T} \right)/2 - \rho\tau\Omega^{k} = VQV^{T}$ (via the spectral decomposition).
 
-3. Set $\Omega_{k + 1} = V\left( -Q + (Q^{2} + 4\rho\tau I_{p})^{1/2} \right)V^{T}/(2\rho\tau)$
+3. Set $\Omega^{k + 1} = V\left( -Q + (Q^{2} + 4\rho\tau I_{p})^{1/2} \right)V^{T}/(2\rho\tau)$
 
-4. Set $Z_{k + 1} = \left[ \rho\left( A\Omega_{k + 1} B - C \right) + Y_{k} \right]/(\lambda + \rho)$
+4. Set $Z^{k + 1} = \left[ \rho\left( A\Omega^{k + 1} B - C \right) + \Lambda^{k} \right]/(\lambda + \rho)$
 
-5. Set $Y_{k + 1} = \rho\left( A\Omega_{k + 1} B - Z_{k + 1} - C \right)$
+5. Set $\Lambda^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)$
 
 6. Replace $k$ with $k + 1$.
 
-The only difference is in step 4.
+Note that the only difference is in step 4.
 
-There are a few takeaways we can make after revealing this connection. The first is that the estimator constructed in this section is not complete nonsense. We are, in fact, solving a very similar problem to that of optimizing the joint likelihood. The second takeaway is that the SCPME estimator offers a very efficient method of computing this joint likelihood estimator. To the best of my knowledge, no closed-form solution to the ridge SCPME estimator exists and so we must resort to some iterative algorithm like this one in order to solve it.
+There are a few takeaways we can make after revealing this connection. The first is that the estimator constructed in the previous section is, in fact, solving a very similar problem to that of optimizing the joint likelihood with respect to $\Omega$. The second takeaway is that the SCPME algorithmic framework offers a very efficient method of computing this joint likelihood estimator. No closed-form solution to this estimator exists (to the best of my knowledge) and so we must resort to some iterative algorithm like the SCPME agumented ADMM algorithm in order to solve it. We show this below:
 
+<br>\vspace{1cm}
+
+\[ \hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\lambda}{2}\left\|\mathbb{X}\Omega\hat{\Sigma}_{xy} - \mathbb{Y}\right\|_{F}^{2} \right\} \]
+
+\begin{align*}
+  \nabla_{\Omega}&\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\lambda}{2}\left\|\mathbb{X}\Omega\hat{\Sigma}_{xy} - \mathbb{Y}\right\|_{F}^{2} \right\} \\
+  &= \nabla_{\Omega}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\lambda}{2}tr\left[(\mathbb{X}\Omega\hat{\Sigma}_{xy} - \mathbb{Y})^{T}(\mathbb{X}\Omega\hat{\Sigma}_{xy} - \mathbb{Y}) \right] \right\} \\
+  &= \nabla_{\Omega}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\lambda}{2}tr\left(\Omega\mathbb{X}^{T}\mathbb{X}\Omega\hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T} - 2\Omega\hat{\Sigma}_{xy}\mathbb{Y}^{T}\mathbb{X} \right) \right\} \\
+  &= 2S - S\circ I_{p} - 2\Omega^{-1} + \Omega^{-1}\circ I_{p} + \lambda\mathbb{X}^{T}\mathbb{X}\Omega\hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T} + \lambda\hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T}\Omega\mathbb{X}^{T}\mathbb{X} \\
+  &- \lambda\mathbb{X}^{T}\mathbb{X}\Omega\hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T}\circ I_{p} - \hat{\Sigma}_{xy}\mathbb{Y}^{T}\mathbb{X} - \mathbb{X}^{T}\mathbb{Y}\hat{\Sigma}_{xy} + \hat{\Sigma}_{xy}\mathbb{Y}^{T}\mathbb{X}\circ I_{P} \\
+  \Rightarrow 0 &= S - \hat{\Omega}^{-1} + \frac{\lambda}{2}\left(\mathbb{X}^{T}\mathbb{X}\hat{\Omega}\hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T} + \hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T}\hat{\Omega}\mathbb{X}^{T}\mathbb{X} \right) - \lambda\hat{\Sigma}_{xy}\mathbb{Y}^{T}\mathbb{X}
+\end{align*}
+
+by multiplying all of the off-diagonal elements by $1/2$. Note that we cannot isolate $\hat{\Omega}$.
 
 <br>
 \vspace{1cm}
 
 ## Exploratory simulations
 
-Let $\beta = \mathbb{B} \circ \mathbb{V}$ where $vec\left( \mathbb{B} \right) \sim N_{pr}\left( 0, I_{p} \otimes I_{r}/\sqrt{p} \right)$ and $\mathbb{V} \in \mathbb{R}^{p \times r}$ is a matrix containing $pr$ random bernoulli draws with probability 0.5 being equal to 1. The $\Sigma_{xx}$ and $\Sigma_{y | x}$ is constructed so that $\left( \Sigma_{xx} \right)_{ij} = 0.7^{\left| i - j \right|}$ and $\left( \Sigma_{y | x} \right)_{ij} = 0.7^{\left| i - j \right|}$, respectively. This ensures that the inverses will be tridiagonal (sparse). Then for $n$ independent, identically distributed samples:
+Under the assumptions discussed previously, let us first show that the MLE for $\Omega$ is *not*, in fact, the sample estimator $\hat{\Omega} = \left(\sum_{i = 1}^{n}(X_{i} - \bar{X})(X_{i} - \bar{X})^{T}/n \right)^{-1}$. We can prove this by showing that the ridge MSCPME estimator achieves a larger log-likelihood value.
 
-\[ X_{i} \sim N_{p}\left( 0, \Sigma_{xx} \right) \]
-
-\[ Y_{i}| X_{i} \sim N_{r}\left( \beta^{T}X_{i}, \Sigma_{y | x} \right) \]
-
-We will take $(n = 100, p = 10, r = 5)$ for this short study and use the `data_gen` function I already have built in R.
+Below we will randomly generate some data from a diagonal oracle precision matrix and compute our estimators:
 
 <br>\vspace{1cm}
 ```{r, tidy = TRUE}
 
 # load libraries
-library(statr)
 library(SCPME)
 set.seed(1234)
 
@@ -173,4 +205,86 @@ round(Omega, 5)
 sample = qr.solve((nrow(data$X) - 1)/nrow(data$X)*cov(data$X))
 round(sample, 5)
 
+SCPME = shrink(data$X, data$Y, A = data$X, B = cov(data$X, data$Y), C = data$Y, lam = 2/100, alpha = 0)
+
 ```
+<br>\vspace{1cm}
+
+Note that we use the oracle covariance $\Sigma_{xy}$ in our calculation. We can also substitute for it using the sample estimate:
+
+
+
+
+Let $\beta = \mathbb{B} \circ \mathbb{V}$ where $vec\left( \mathbb{B} \right) \sim N_{pr}\left( 0, I_{p} \otimes I_{r}/\sqrt{p} \right)$ and $\mathbb{V} \in \mathbb{R}^{p \times r}$ is a matrix containing $pr$ random bernoulli draws with probability 0.5 being equal to 1. The $\Sigma_{xx}$ and $\Sigma_{y | x}$ is constructed so that $\left( \Sigma_{xx} \right)_{ij} = 0.7^{\left| i - j \right|}$ and $\left( \Sigma_{y | x} \right)_{ij} = 0.7^{\left| i - j \right|}$, respectively. This ensures that the inverses will be tridiagonal (sparse). Then for $n$ independent, identically distributed samples:
+
+\[ X_{i} \sim N_{p}\left( 0, \Sigma_{xx} \right) \]
+
+\[ Y_{i}| X_{i} \sim N_{r}\left( \beta^{T}X_{i}, \Sigma_{y | x} \right) \]
+
+We will take $(n = 100, p = 10, r = 5)$ for this short study and use the `data_gen` function I already have built in R.
+
+<br>\vspace{1cm}
+```{r, tidy = TRUE}
+
+# randomly generate the data
+data = data_gen(n = 100, p = 10, r = 5)
+
+# print Omega
+Omega = qr.solve(data$SigmaX)
+round(Omega, 5)
+
+# print sample precision matrix (perhaps bad estimate)
+sample = qr.solve((nrow(data$X) - 1)/nrow(data$X)*cov(data$X))
+round(sample, 5)
+
+```
+<br>\vspace{1cm}
+
+### Calculate the *lasso SCPME estimator* using 5-fold CV to choose the $\lambda$ that minimizes in-sample MSPE:
+
+<br>\vspace{1cm}
+```{r, tidy = TRUE}
+
+# lasso SCPME
+(lasso = shrink(data$X, data$Y, A = data$X, B = cov(data$X, data$Y), C = data$Y, lam.max = 10, lam.min.ratio = 1e-4, nlam = 20))
+
+```
+<br>\vspace{1cm}
+
+### Calculate the *ridge SCPME estimator* by first setting $\lambda = 2/100$:
+
+<br>\vspace{1cm}
+```{r, tidy = TRUE}
+
+# ridge SCPME
+(lasso = shrink(data$X, data$Y, A = data$X, B = cov(data$X, data$Y), C = data$Y, lam = 2/100, alpha = 0))
+
+```
+<br>\vspace{1cm}
+
+### Now calculate the *ridge SCPME estimator* using 5-fold CV to choose the $\lambda$ that minimizes in-sample MSPE:
+
+<br>\vspace{1cm}
+```{r, tidy = TRUE}
+
+# lasso SCPME
+(lasso = shrink(data$X, data$Y, A = data$X, B = cov(data$X, data$Y), C = data$Y, lam.max = 10, lam.min.ratio = 1e-4, nlam = 20, alpha = 0))
+
+# plot CV errors
+plot(lasso)
+
+```
+<br>\vspace{1cm}
+
+We can see that optimal tuning parameter selected is on the edge of the candidate set. This will be true even if you allow `lam.max = 100`. This is due to the fact that the cross validation criteria is the in-sample prediction error and the penalty term is the prediction error across all samples -- so weighting, or putting more emphasis, on the prediction error in the objective function will always be favored. One can overcome this by changing the cross validation criteria.
+
+### Calculate the *ridge SCPME estimator* using 5-fold CV to choose the $\lambda$ that maximizes the penalized log-likelihood:
+
+<br>\vspace{1cm}
+```{r, tidy = TRUE}
+
+# lasso SCPME
+(lasso = shrink(data$X, data$Y, A = data$X, B = cov(data$X, data$Y), C = data$Y, lam.max = 10, lam.min.ratio = 1e-4, nlam = 20, alpha = 0, crit.cv = "penloglik"))
+
+```
+<br>\vspace{1cm}

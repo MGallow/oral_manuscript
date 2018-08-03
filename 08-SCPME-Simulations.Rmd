@@ -1,6 +1,8 @@
 
 # `SCPME` Simulations
 
+## Estimator Comparison
+
 We compare the performance of various shrinkage estimators under different data realizations. Each data scenario was replicated a total of 20 times.
 
 <br>\vspace{1cm}
@@ -19,15 +21,13 @@ In the following estimators, let the superscript * denote the oracle estimator:
  
  - `oracleO` = oracle estimator with the true $\Omega^{*}$ known ($\left\| Y - X\Omega^{*}\hat{\Sigma}_{xy} \right\|_{F}^{2}$)
  
+ - `oracleS` = oracle estimator with the true $\Sigma_{xy}^{*}$ known and sample estimator for $\Omega$ ($\left\| Y - X\hat{\Omega}\Sigma_{xy}^{*} \right\|_{F}^{2}$)
+ 
  - `shrinkB` = shrinking characteristics regression estimator where optimal tuning parameter is chosen to minimize in-sample MSPE via 3-fold CV (penalty: $\lambda\left\| \Omega\hat{\Sigma}_{xy} \right\|_{1}$)
  
  - `shrinkBS` = shrinking characteristics regression estimator with oracle cross-covariance where optimal tuning parameter is chosen to minimize in-sample MSPE via 3-fold CV (penalty: $\lambda\left\| \Omega\hat{\Sigma}_{xy}^{*} \right\|_{1}$)
  
  - `shrinkBO` = shrinking characteristics estimator that penalizes the sum of the absolute values of $\beta = \Omega\Sigma_{xy}$ *and* $\Omega$ (penalty: $\lambda\left\| \Omega[\Sigma_{xy}, I_{p}] \right\|_{1}$)
- 
- - `shrinkXY` = shrinking characteristics regression estimator with A = X, B = cov(X, Y), and C = Y (penalty: $\lambda\left\| X\Omega\hat{\Sigma}_{xy} - Y \right\|_{1}$)
- 
- - `shrinkXYO` = shrinking characteristics regression estimator meant to emulate the "likelihood" for $\beta$ (using oracle $\Omega_{y | x}^{*}$) (penalty: $\lambda\left\| X\Omega\hat{\Sigma}_{xy}\Omega_{y | x}^{1/2} - Y\Omega_{y | x}^{1/2} \right\|_{1}$)
  
  - `glasso` = lasso penalized precision matrix where optimal tuning parameter is chosen to maximize log-likelihood via 3-fold CV.
 
@@ -60,26 +60,30 @@ Possible parameters in simulation:
  - `reps` = 20
  - `n` = (100, 1000)
  - `p` = (10, 50, 100, 150)
- - `r` = c(1, 5)
- - `sparse` = 0.5
- - `sigma` = "tridiag"
+ - `r` = c(1, 5, 10)
+ - `sparse` = c(0.5)
+ - `sigma` = c("tridiag")
 
 Note that prior to estimation, the intercept is removed by centering the data.
 
 <br>\vspace{1cm}
 
-## Plots
+### Plots
+
+#### High Dimension
+
+Note that we are now displaying model error (ME) as opposed to mean squared prediction error (MSPE). Also, `OLS` and `oracleS` will not be show in the high dimensional setting plots because of poor performance.
 
 ```{r, eval = T, echo = F}
 
 # load data
-load("images/sim5.Rdata")
+load("images/sim6.Rdata")
 
 # set P to numeric 
 data$P %<>% as.character %>% as.numeric
 
-# MSPE by P and R (N = 100, sparse = 0.5, sigma = "tridiag")
-data %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + facet_wrap(~ R, scales = "free") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("MSPE") + ggtitle("MSPE by P and R (N = 500, sparse = 0.5, sigma = tridiag)")
+# ME by P and R (N = 100, sparse = 0.5, sigma = "tridiag")
+data %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", !model %in% c("OLS", "oracleS"), metric == "ME") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + facet_wrap(~ R, scales = "free") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P and R (N = 100, sparse = 0.5, sigma = tridiag)")
 
 ```
 
@@ -87,39 +91,30 @@ data %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", model != "OLS") %>%
 
 ```{r, eval = T, echo = F}
 
-# MSPE by P (N = 100, R = 1, sparse = 0.5, sigma = "tridiag")
-data %>% filter(N == 100, R == 1, sparse == 0.5, sigma == "tridiag", model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("MSPE") + ggtitle("MSPE by P (N = 500, R = 1, sparse = 0.5, sigma = tridiag)")
+# ME by P (N = 100, R = 10, sparse = 0.5, sigma = "tridiag")
+data %>% filter(N == 100, R == 10, sparse == 0.5, sigma == "tridiag", !model %in% c("OLS", "oracleS")) %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P (N = 100, R = 10, sparse = 0.5, sigma = tridiag)")
 
 ```
 
 <br>\vspace{1cm}
 
-**Notable: N = 100, P = 150, R = 1, sparse = 0.5, sigma = "tridiag"**
+**Notable: N = 100, P = 150, R = 10, sparse = 0.5, sigma = "tridiag"**
 
 ```{r, eval = T, echo = F}
 
-# MSPE table (N = 100, sparse = 0.5, sigma = "tridiag", P = 100, R = 5)
-data %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", P == 150, R == 1) %>% group_by(model) %>% summarise(mean = mean(Error), sd = sd(Error)) %>% arrange(mean)
+# ME table (N = 100, sparse = 0.5, sigma = "tridiag", P = 150, R = 10)
+data %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", P == 150, R == 10) %>% group_by(model) %>% summarise(mean = mean(Error), sd = sd(Error)) %>% arrange(mean)
 
 ```
 
 <br>\vspace{1cm}
 
-```{r, eval = T, echo = F}
-
-# MSPE by P (N = 100, R = 5, sparse = 0.5, sigma = "tridiag")
-data %>% filter(N == 100, R == 5, sparse == 0.5, sigma == "tridiag", model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("MSPE") + ggtitle("MSPE by P (N = 500, R = 5, sparse = 0.5, sigma = tridiag)")
-
-```
-
-<br>\vspace{1cm}
-
-**Notable: N = 100, P = 150, R = 5, sparse = 0.5, sigma = "tridiag"**
+#### Low Dimension
 
 ```{r, eval = T, echo = F}
 
-# MSPE table (N = 500, sparse = 0.5, sigma = "tridiag", P = 100, R = 5)
-data %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", P == 150, R == 5) %>% group_by(model) %>% summarise(mean = mean(Error), sd = sd(Error)) %>% arrange(mean)
+# ME by P and R (N = 1000, sparse = 0.5, sigma = "tridiag")
+data %>% filter(N == 1000, sparse == 0.5, model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + facet_wrap(~ R, scales = "free") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P and R (N = 1000, sparse = 0.5, sigma = tridiag)")
 
 ```
 
@@ -127,37 +122,8 @@ data %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", P == 150, R == 5) %
 
 ```{r, eval = T, echo = F}
 
-# MSPE by P and R (N = 1000, sparse = 0.5, sigma = "tridiag")
-data %>% filter(N == 1000, sparse == 0.5, model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + facet_wrap(~ R, scales = "free") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("MSPE") + ggtitle("MSPE by P and R (N = 5000, sparse = 0.5, sigma = tridiag)")
-
-```
-
-<br>\vspace{1cm}
-
-```{r, eval = T, echo = F}
-
-# MSPE by P (N = 1000, R = 1, sparse = 0.5, sigma = "tridiag")
-data %>% filter(N == 1000, R == 1, sparse == 0.5, model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("MSPE") + ggtitle("MSPE by P (N = 5000, R = 1, sparse = 0.5, sigma = tridiag)")
-
-```
-
-<br>\vspace{1cm}
-
-**Notable: N = 1000, P = 150, R = 1, sparse = 0.5, sigma = "tridiag"**
-
-```{r, eval = T, echo = F}
-
-# MSPE table (N = 500, sparse = 0.5, sigma = "tridiag", P = 100, R = 1)
-data %>% filter(N == 1000, sparse == 0.5, sigma == "tridiag", P == 150, R == 1) %>% group_by(model) %>% summarise(mean = mean(Error), sd = sd(Error)) %>% arrange(mean)
-
-```
-
-<br>\vspace{1cm}
-
-```{r, eval = T, echo = F}
-
-# MSPE by P (N = 1000, R = 5, sparse = 0.5, sigma = "tridiag")
-data %>% filter(N == 1000, R == 5, sparse == 0.5, model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("MSPE") + ggtitle("MSPE by P (N = 5000, R = 5, sparse = 0.5, sigma = tridiag)")
+# ME by P (N = 1000, R = 5, sparse = 0.5, sigma = "tridiag")
+data %>% filter(N == 1000, R == 5, sparse == 0.5, model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P (N = 1000, R = 5, sparse = 0.5, sigma = tridiag)")
 
 ```
 
@@ -167,7 +133,7 @@ data %>% filter(N == 1000, R == 5, sparse == 0.5, model != "OLS") %>% group_by(N
 
 ```{r, eval = T, echo = F}
 
-# MSPE table (N = 1000, sparse = 0.5, sigma = "tridiag", P = 100, R = 5)
+# ME table (N = 1000, sparse = 0.5, sigma = "tridiag", P = 150, R = 5)
 data %>% filter(N == 1000, sparse == 0.5, sigma == "tridiag", P == 150, R == 5) %>% group_by(model) %>% summarise(mean = mean(Error), sd = sd(Error)) %>% arrange(mean)
 
 ```
@@ -175,18 +141,216 @@ data %>% filter(N == 1000, sparse == 0.5, sigma == "tridiag", P == 150, R == 5) 
 
 <br>\vspace{1cm}
 
-## Takeaways
+### Takeaways
 
-1. `shrinkBO` (penalty: $\lambda\left\| \Omega[\Sigma_{xy}, I_{p}] \right\|_{1}$) and `shrinkB` (penalty: $\lambda\left\| \Omega\hat{\Sigma}_{xy} \right\|_{1}$) perform increasingly well relative (and superior) to the others when $p >> n$. I don't think it's surprising that `shrinkBO` performs the best because the embedded assumptions most closely match the data generating model.
+1. In high dimensional settings, `shrinkBO` (penalty: $\lambda\left\| \Omega[\hat{\Sigma}_{xy}, I_{p}] \right\|_{1}$) and `shrinkB` (penalty: $\lambda\left\| \Omega\hat{\Sigma}_{xy} \right\|_{1}$) perform increasingly well relative (and superior) to the others when $p >> n$. It's not surprising that `shrinkBO` performs the best because the embedded assumptions most closely match the data generating model.
 
-2. It's interesting to see that in all cases `shrinkBS` (penalty: $\lambda\left\| \Omega\Sigma_{xy}^{*} \right\|_{1}$) performed worse than `shrinkB` (penalty: $\lambda\left\| \Omega\hat{\Sigma}_{xy} \right\|_{1}$). So the takeaway is that for these two very similar estimators, the estimator with the oracle $\Sigma_{xy}$ cross-covariance matrix performs much worse than using the sample estimate $\hat{\Sigma}_{xy} = \mathbb{X}^{T}\mathbb{Y}/n$. Is this due to an error? Could the root cause be because I centered the data?
+2. In the high dimension setting, the oracle estimators `oracleO` (penalty: $\lambda\left\| \Omega^{*}\hat{\Sigma}_{xy} \right\|_{1}$) and `oracleS` (penalty: $\lambda\left\| \hat{\Omega}\Sigma_{xy}^{*} \right\|_{1}$) performed worse or comparable to OLS. The poor performance of `oracleS` is likely due to the fact that the sample estimate of $\Omega$ is not identifiable when $p > n$.
 
-3. `OracleO` ($\left\| Y - X\Omega^{*}\hat{\Sigma}_{xy} \right\|_{F}^{2}$) performed awful in all simulations as well... possibly link to the Abundant paper?
+3. When $n > p$ we see that `shrinkB` performs terribly. Interestingly, `shrinkBO` is still one of the better performing estimators -- though worse than both `lasso` and `ridge`.
 
-4. `shrinkXY` (penalty: $\lambda\left\| X\Omega\hat{\Sigma}_{xy} - Y \right\|_{1}$) and `shrinkXYO` (penalty: $\lambda\left\| X\Omega\hat{\Sigma}_{xy}\Omega_{y | x}^{1/2} - Y\Omega_{y | x}^{1/2} \right\|_{1}$) did not perform well relative to the others in the high-dimensional setting. In the low-dimensional setting, they performed better but worse than `lasso` and `ridge`. But what is an appropriate data generating model for these estimators? A model that can perfectly fit the observed values? And would MSPE be the most appropriate criteria for these estimators?
+4. It is interesting that `oracleO` performed worse than `oracleS` in the final table. It appears that estimating the covariance matrix $\Sigma_{xy}$ well is *more* important than estimating $\Omega$ well.
+
 
 <br>\vspace{1cm}
 
-## Questions
+## Shrinking Covariance
 
-1. Is MSPE the best criteria? Or would model error be a better metric?
+We compare the performance of the `shrinkB` and `shrinkBO` estimators when manually shrinking the sample covariance matrix of $X$ and $Y$ (denoted $\Sigma_{xy}$). Each data scenario was replicated a total of 20 times.
+
+<br>\vspace{1cm}
+
+### Models
+
+In the following estimators, let the superscript * denote the oracle estimator:
+ 
+ - `shrinkB` = shrinking characteristics regression estimator where optimal tuning parameter is chosen to minimize in-sample MSPE via 3-fold CV (penalty: $\lambda\left\| \Omega\hat{\Sigma}_{xy} \right\|_{1}$)
+ 
+ - `shrinkBO` = shrinking characteristics estimator that penalizes the sum of the absolute values of $\beta = \Omega\Sigma_{xy}$ *and* $\Omega$ (penalty: $\lambda\left\| \Omega[\Sigma_{xy}, I_{p}] \right\|_{1}$)
+ 
+For each of the estimators, $\Sigma_{xy}$ is estimated by the sample covariance matrix $\hat{\Sigma}_{xy}$ times some constant factor $k \in (0.1, 0.2, ..., 0.9, 1)$. We are shrinking $\hat{\Sigma}_{xy}$ by a constant to determine if there are any benefits to doing so.
+
+<br>\vspace{1cm}
+
+### Data Generation
+
+Let $\mathbb{X} \in \mathbb{R}^{n \times p}$, $\mathbb{Y} \in \mathbb{R}^{n \times r}$, and $\beta \in \mathbb{R}^{p \times r}$ so that
+
+\[ \mathbb{Y} = \mathbb{X}\beta + \mathbb{E} \]
+
+These values are generated in the following way:
+
+Let $\beta = \mathbb{B} \circ \mathbb{V}$ where $vec\left( \mathbb{B} \right) \sim N_{pr}\left( 0, I_{p} \otimes I_{r}/\sqrt{p} \right)$ and $\mathbb{V} \in \mathbb{R}^{p \times r}$ is a matrix containing $pr$ random bernoulli draws with `sparse` probability being equal to 1. In effect, each $\beta$ entry is turned off with equal probability.
+
+Now, if `sigma = "tridiag"` then $\Sigma_{xx}$ and $\Sigma_{y | x}$ is constructed so that $\left( \Sigma_{xx} \right)_{ij} = 0.7^{\left| i - j \right|}$ and $\left( \Sigma_{y | x} \right)_{ij} = 0.7^{\left| i - j \right|}$, respectively. This ensures that the inverses will be tridiagonal (sparse).
+
+Then for $n$ independent, identically distributed samples:
+
+\[ X_{i} \sim N_{p}\left( 0, \Sigma_{xx} \right) \]
+
+\[ E_{i} \sim N_{r}\left( 0, \Sigma_{y | x} \right) \]
+
+If `sigma = "compound"` then the data is generated similarly but $\Omega_{xx} \equiv \Sigma_{xx}^{-1}$ and $\Omega_{y | x} \equiv \Sigma_{y | x}^{-1}$ both have entries equal to 1 on the diagonal and 0.9 on the off-diagonal.
+
+An additional 1000 samples will be generated for the testing set -- regardless of the training set size ($n$). For instance, in the 3-fold cross validation procedure where `n = 100` and `p = 100`, 1000 samples would be set aside for later testing and $100*(2/3)$ samples would be used for training in each fold (ie: high dimensional setting).
+
+Possible parameters in simulation:
+
+ - `reps` = 20
+ - `n` = (100, 1000)
+ - `p` = (10, 50, 100, 150, 200)
+ - `r` = c(1, 5, 10)
+ - `sparse` = c(0.5)
+ - `sigma` = c("tridiag", "compound")
+
+Note that prior to estimation, the intercept is removed by centering the data.
+
+<br>\vspace{1cm}
+
+### Plots
+
+```{r, eval = T, echo = F}
+
+# load data
+load("images/sigma.Rdata")
+
+# design color palette
+bluetowhite <- c("#000E29", "white")
+
+# change to numeric
+data$lam %<>% as.character %>% as.numeric
+data$const %<>% as.character %>% as.numeric
+
+```
+
+#### High Dimension
+
+##### `shrinkB`
+
+<br>\vspace{1cm}
+
+```{r, eval = T, echo = F}
+
+# shrinkB MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "tridiag")
+d = data %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "tridiag", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkB MSPE (N = 100, P = 200, R = 10, sigma = tridiag)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+<br>\vspace{1cm}
+
+```{r, eval = T, echo = F}
+
+# shrinkB MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "compound")
+d = data %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "compound", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkB MSPE (N = 100, P = 200, R = 10, sigma = compound)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+##### `shrinkBO`
+
+<br>\vspace{1cm}
+
+```{r, eval = T, echo = F}
+
+# shrinkBO MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "tridiag")
+d = data %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "tridiag", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkBO MSPE (N = 100, P = 200, R = 10, sigma = tridiag)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+<br>\vspace{1cm}
+
+```{r, eval = T, echo = F}
+
+# shrinkBO MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "compound")
+d = data %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "compound", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkBO MSPE (N = 100, P = 200, R = 10, sigma = compound)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+<br>\vspace{1cm}
+
+#### Low Dimension
+
+##### `shrinkB`
+
+<br>\vspace{1cm}
+
+```{r, eval = T, echo = F}
+
+# shrinkB MSPE by lam and const (N = 1000, P = 50, R = 1, sigma = "tridiag")
+d = data %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "tridiag", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkB MSPE (N = 1000, P = 50, R = 1, sigma = tridiag)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+<br>\vspace{1cm}
+
+```{r, eval = T, echo = F}
+
+# shrinkB MSPE by lam and const (N = 1000, P = 50, R = 1, sigma = "compound")
+d = data %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "compound", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkB MSPE (N = 1000, P = 50, R = 1, sigma = compound)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+#### `shrinkBO`
+
+<br>\vspace{1cm}
+
+```{r, eval = T, echo = F}
+
+# shrinkBO MSPE by lam and const (N = 1000, P = 10, R = 1, sigma = "tridiag")
+d = data %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "tridiag", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkBO MSPE (N = 1000, P = 50, R = 1, sigma = tridiag)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+<br>\vspace{1cm}
+
+```{r, eval = T, echo = F}
+
+# shrinkBO MSPE by lam and const (N = 1000, P = 50, R = 1, sigma = "compound")
+d = data %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "compound", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkBO MSPE (N = 1000, P = 50, R = 1, sigma = compound)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+<br>\vspace{1cm}
+
+
+
+### Takeaways
+
+1. In the high dimensional settings, it does appear that shrinking the sample covariance matrix $\hat{\Sigma}_{xy}$ by a constant factor helps in reducing MSPE. This is indicated by the fact that the optimal `const` hovers around 0.5 for each of the estimators `shrinkB` and `shrinkBO`.
+
+2. In the low dimension settings, it appears that shrinking the covariance matrix is not beneficial.
+
+3. The type of oracle precision matrix (tridiagonal or compound symmetric) does not appear to be too influential with regards to the affect of shrinking the covariance matrix.
+
+4. The larger the dimension of $Y$, the more beneficial shrinkage will likely be (not that surprising)

@@ -3,10 +3,14 @@ title: "Oral Manuscript"
 author: "Matt Galloway"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
-output: bookdown::gitbook
+output:
+  bookdown::pdf_book:
+    toc_depth: 2
+  bookdown::gitbook:
+    fig_caption: false
 documentclass: book
-#bibliography: [lib.bib, packages.bib]
-bibliography: lib.bib
+bibliography: [lib.bib, packages.bib]
+#bibliography: lib.bib
 biblio-style: apalike
 colorlinks: yes
 lot: no
@@ -21,14 +25,14 @@ description: "This is a working manuscript in preparation for Matt Galloway's do
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, cache = TRUE, tidy = TRUE)
 
-# ```{r include=FALSE}
-# # automatically create a bib database for R packages
-# knitr::write_bib(c(
-#   .packages(), 'bookdown', 'knitr', 'rmarkdown'
-# ), 'packages.bib')
-# ```
+```
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(.packages(), "glasso", "ADMMsigma"), 'packages.bib')
 
 ```
+
 
 # Prerequisites
 

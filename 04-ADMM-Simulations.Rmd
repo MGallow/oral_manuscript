@@ -1,13 +1,16 @@
 
 # `ADMMsigma` Simulations
 
-In the simulations below we generated data from a number of oracle precision matrices with various structures. For each data-generating procedure, the `ADMMsigma()` function was run using 5-fold cross validation. After 20 replications, the cross validation errors were totalled and the optimal tuning parameters were selected (results in the top figure). These results are compared with the Kullback Leibler (KL) losses between the estimates and the oracle precision matrix (bottom figure). We can see below that our cross validation procedure choosing tuning parameters close to the optimal parameters.
+In the simulations below, we generate data from a number of different oracle precision matrices with various structures. For each data-generating procedure, the `ADMMsigma()` function was run using 5-fold cross validation. After 20 replications, the cross validation errors were totalled and the optimal tuning parameters were selected (results below the top figure). These results are compared with the Kullback Leibler (KL) losses between the estimates and the oracle precision matrix (bottom figure).
 
-## Compound Symmetric: P = 100, N = 50
+We can see below that our cross validation procedure consistently chooses tuning parameters that are close to the optimal parameters with respsect to the oracle.
 
-![](images/compound_N50_P100.png)
+<br>\vspace{1cm}
 
-<br>\vspace{0.5cm}
+## Plots
+
+### Compound Symmetric: P = 100, N = 50
+
 ```{r, message = FALSE, echo = TRUE, eval = FALSE}
 
 # oracle precision matrix
@@ -24,13 +27,15 @@ S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
 X = Z %*% S.sqrt
 
 ```
-
-
-## Compound Symmetric: P = 10, N = 1000
-
-![](images/compound_N1000_P10.png)
-
 <br>\vspace{0.5cm}
+
+![](images/compound_N50_P100.png)
+
+
+<br>\newpage
+
+### Compound Symmetric: P = 10, N = 1000
+
 ```{r, message = FALSE, echo = TRUE, eval = FALSE}
 
 # oracle precision matrix
@@ -47,13 +52,15 @@ S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
 X = Z %*% S.sqrt
 
 ```
-
-
-## Dense: P = 100, N = 50
-
-![](images/repsKLdenseQR_N50_P100.png)
-
 <br>\vspace{0.5cm}
+
+![](images/compound_N1000_P10.png)
+
+
+<br>\newpage
+
+### Dense: P = 100, N = 50
+
 ```{r, message = FALSE, echo = TRUE, eval = FALSE, tidy = FALSE}
 
 # generate eigen values
@@ -72,13 +79,14 @@ S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
 X = Z %*% S.sqrt
 
 ```
-
-
-## Dense: P = 10, N = 50
-
-![](images/repsKLdense_N50_P10.png)
-
 <br>\vspace{0.5cm}
+
+![](images/repsKLdenseQR_N50_P100.png)
+
+<br>\newpage
+
+### Dense: P = 10, N = 50
+
 ```{r, message = FALSE, echo = TRUE, eval = FALSE, tidy = FALSE}
 
 # generate eigen values
@@ -97,13 +105,14 @@ S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
 X = Z %*% S.sqrt
 
 ```
-
-
-## Tridiagonal: P = 100, N = 50
-
-![](images/repsKLtridiag_N50_P100.png)
-
 <br>\vspace{0.5cm}
+
+![](images/repsKLdense_N50_P10.png)
+
+<br>\newpage
+
+### Tridiagonal: P = 100, N = 50
+
 ```{r, message = FALSE, echo = TRUE, eval = FALSE, tidy = FALSE}
 
 # generate covariance matrix
@@ -122,4 +131,6 @@ S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
 X = Z %*% S.sqrt
 
 ```
+<br>\vspace{0.5cm}
 
+![](images/repsKLtridiag_N50_P100.png)
