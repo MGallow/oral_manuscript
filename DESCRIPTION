@@ -6,5 +6,6 @@ Imports: bookdown,
   ADMMsigma,
   microbenchmark,
   glasso,
-  magrittr
+  magrittr,
+  pander
 Remotes: MGallow/oral_manuscript

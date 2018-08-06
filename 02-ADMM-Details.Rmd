@@ -5,14 +5,17 @@ Consider the case where we observe $n$ independent, identically distributed copi
 
 Because we assume independence, we know that the probability of observing these specific observations $X_{1}, ..., X_{n}$ is equal to
 
-\begin{align*}
-  f(X_{1}, ..., X_{n}; \mu, \Sigma) &= \prod_{i = 1}^{n}(2\pi)^{-p/2}\left| \Sigma \right|^{-1/2}\exp\left[ -\frac{1}{2}\left( X_{i} - \mu \right)^{T}\Sigma^{-1}\left( X_{i} - \mu \right) \right] \\
+\begin{align}
+  f(X_{1}, ..., X_{n}; \mu, \Sigma) &= \prod_{i = 1}^{n}(2\pi)^{-p/2}\left| \Sigma \right|^{-1/2}\exp\left[ -\frac{1}{2}\left( X_{i} - \mu \right)^{T}\Sigma^{-1}\left( X_{i} - \mu \right) \right] \notag \\
   &= (2\pi)^{-nr/2}\left| \Sigma \right|^{-n/2}\mbox{etr}\left[ -\frac{1}{2}\sum_{i = 1}^{n}\left( X_{i} - \mu \right)\left( X_{i} - \mu \right)^{T}\Sigma^{-1} \right]
-\end{align*}
+\end{align}
 
 where $\mbox{etr}\left( \cdot \right)$ denotes the exponential trace operator. It follows that the log-likelihood for $\mu$ and $\Sigma$ is equal to the following:
 
-\[ l(\mu, \Sigma | X) = const. - \frac{n}{2}\log\left| \Sigma \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \mu \right)\left(X_{i} - \mu \right)^{T}\Sigma^{-1} \right] \]
+\begin{equation}
+  l(\mu, \Sigma | X) = const. - \frac{n}{2}\log\left| \Sigma \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \mu \right)\left(X_{i} - \mu \right)^{T}\Sigma^{-1} \right]
+(\#eq:loglik)
+\end{equation}
 
 If we are interested in estimating $\mu$, it is relatively straight forward to show that the maximum likelihood estimator (MLE) for $\mu$ is $\hat{\mu}_{MLE} = \sum_{i = 1}^{n}X_{i}/n$ which we typically denote as $\bar{X}$. However, in addition to $\mu$, many applications require the estimation of $\Sigma$ as well. We can also find a maximum likelihood estimator:
 
@@ -26,9 +29,7 @@ By setting the gradient equal to zero and plugging in the MLE for $\mu$, we find
 
 \[ \hat{\Omega}_{MLE} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| \right\} \]
 
-so that $\hat{\Omega}_{MLE} = S^{-1}$. Beyond the formatting convenience, computing estimates for $\Omega$ as opposed to $\Sigma$ often poses less computational challenges -- and accordingly, the literature has placed more emphasis on efficiently solving for $\Omega$ instead of $\Sigma$.
-
-Notice that here we are *minimizing* the negative log-likelihood as opposed to maximizing the log-likelihood. Both procedures will result in the same estimate. 
+so that $\hat{\Omega}_{MLE} = S^{-1}$. Beyond the formatting convenience, computing estimates for $\Omega$ as opposed to $\Sigma$ often poses less computational challenges -- and accordingly, the literature has placed more emphasis on efficiently solving for $\Omega$ instead of $\Sigma$ ^[Notice that here we are *minimizing* the negative log-likelihood as opposed to maximizing the log-likelihood. Both procedures will result in the same estimate.].
 
 As in regression settings, we can construct a *penalized* log-likelihood estimator by adding a penalty term, $P\left(\Omega\right)$, to the log-likelihood so that
 

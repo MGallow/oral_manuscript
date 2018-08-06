@@ -1,8 +1,13 @@
 \usepackage{booktabs}
 \usepackage{amsthm}
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
 \makeatletter
 \def\thm@space@setup{%
   \thm@preskip=8pt plus 2pt minus 4pt
   \thm@postskip=\thm@preskip
 }
 \makeatother
+\pagestyle{fancy}
+% \pagestyle{empty}

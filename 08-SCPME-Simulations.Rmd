@@ -80,19 +80,19 @@ Note that we are now displaying model error (ME) as opposed to mean squared pred
 load("images/sim6.Rdata")
 
 # set P to numeric 
-data$P %<>% as.character %>% as.numeric
+sim6$P %<>% as.character %>% as.numeric
 
 # ME by P and R (N = 100, sparse = 0.5, sigma = "tridiag")
-data %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", !model %in% c("OLS", "oracleS"), metric == "ME") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + facet_wrap(~ R, scales = "free") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P and R (N = 100, sparse = 0.5, sigma = tridiag)")
+sim6 %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", !model %in% c("OLS", "oracleS"), metric == "ME") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + facet_wrap(~ R, scales = "free") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P and R (N = 100, sparse = 0.5, sigma = tridiag)")
 
 ```
 
 <br>\vspace{1cm}
 
-```{r, eval = T, echo = F}
+```{r, eval = T, echo = F, fig.cap = "Figure caption here."}
 
 # ME by P (N = 100, R = 10, sparse = 0.5, sigma = "tridiag")
-data %>% filter(N == 100, R == 10, sparse == 0.5, sigma == "tridiag", !model %in% c("OLS", "oracleS")) %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P (N = 100, R = 10, sparse = 0.5, sigma = tridiag)")
+sim6 %>% filter(N == 100, R == 10, sparse == 0.5, sigma == "tridiag", !model %in% c("OLS", "oracleS")) %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P (N = 100, R = 10, sparse = 0.5, sigma = tridiag)")
 
 ```
 
@@ -103,7 +103,7 @@ data %>% filter(N == 100, R == 10, sparse == 0.5, sigma == "tridiag", !model %in
 ```{r, eval = T, echo = F}
 
 # ME table (N = 100, sparse = 0.5, sigma = "tridiag", P = 150, R = 10)
-data %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", P == 150, R == 10) %>% group_by(model) %>% summarise(mean = mean(Error), sd = sd(Error)) %>% arrange(mean)
+sim6 %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", P == 150, R == 10) %>% group_by(model) %>% summarise(mean = mean(Error), sd = sd(Error)) %>% arrange(mean) %>% pander(caption = "Table caption here.")
 
 ```
 
@@ -114,7 +114,7 @@ data %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", P == 150, R == 10) 
 ```{r, eval = T, echo = F}
 
 # ME by P and R (N = 1000, sparse = 0.5, sigma = "tridiag")
-data %>% filter(N == 1000, sparse == 0.5, model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + facet_wrap(~ R, scales = "free") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P and R (N = 1000, sparse = 0.5, sigma = tridiag)")
+sim6 %>% filter(N == 1000, sparse == 0.5, model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + facet_wrap(~ R, scales = "free") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P and R (N = 1000, sparse = 0.5, sigma = tridiag)")
 
 ```
 
@@ -123,7 +123,7 @@ data %>% filter(N == 1000, sparse == 0.5, model != "OLS") %>% group_by(N, P, R, 
 ```{r, eval = T, echo = F}
 
 # ME by P (N = 1000, R = 5, sparse = 0.5, sigma = "tridiag")
-data %>% filter(N == 1000, R == 5, sparse == 0.5, model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P (N = 1000, R = 5, sparse = 0.5, sigma = tridiag)")
+sim6 %>% filter(N == 1000, R == 5, sparse == 0.5, model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P (N = 1000, R = 5, sparse = 0.5, sigma = tridiag)")
 
 ```
 
@@ -134,7 +134,7 @@ data %>% filter(N == 1000, R == 5, sparse == 0.5, model != "OLS") %>% group_by(N
 ```{r, eval = T, echo = F}
 
 # ME table (N = 1000, sparse = 0.5, sigma = "tridiag", P = 150, R = 5)
-data %>% filter(N == 1000, sparse == 0.5, sigma == "tridiag", P == 150, R == 5) %>% group_by(model) %>% summarise(mean = mean(Error), sd = sd(Error)) %>% arrange(mean)
+sim6 %>% filter(N == 1000, sparse == 0.5, sigma == "tridiag", P == 150, R == 5) %>% group_by(model) %>% summarise(mean = mean(Error), sd = sd(Error)) %>% arrange(mean) %>% pander(caption = "Table caption here.")
 
 ```
 
@@ -218,8 +218,8 @@ load("images/sigma.Rdata")
 bluetowhite <- c("#000E29", "white")
 
 # change to numeric
-data$lam %<>% as.character %>% as.numeric
-data$const %<>% as.character %>% as.numeric
+sigma$lam %<>% as.character %>% as.numeric
+sigma$const %<>% as.character %>% as.numeric
 
 ```
 
@@ -232,7 +232,7 @@ data$const %<>% as.character %>% as.numeric
 ```{r, eval = T, echo = F}
 
 # shrinkB MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "tridiag")
-d = data %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "tridiag", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+d = sigma %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "tridiag", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
 
 min = d[d$mean == min(d$mean),]
 
@@ -245,7 +245,7 @@ d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_
 ```{r, eval = T, echo = F}
 
 # shrinkB MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "compound")
-d = data %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "compound", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+d = sigma %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "compound", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
 
 min = d[d$mean == min(d$mean),]
 
@@ -260,7 +260,7 @@ d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_
 ```{r, eval = T, echo = F}
 
 # shrinkBO MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "tridiag")
-d = data %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "tridiag", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+d = sigma %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "tridiag", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
 
 min = d[d$mean == min(d$mean),]
 
@@ -273,7 +273,7 @@ d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_
 ```{r, eval = T, echo = F}
 
 # shrinkBO MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "compound")
-d = data %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "compound", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+d = sigma %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "compound", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
 
 min = d[d$mean == min(d$mean),]
 
@@ -292,7 +292,7 @@ d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_
 ```{r, eval = T, echo = F}
 
 # shrinkB MSPE by lam and const (N = 1000, P = 50, R = 1, sigma = "tridiag")
-d = data %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "tridiag", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+d = sigma %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "tridiag", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
 
 min = d[d$mean == min(d$mean),]
 
@@ -305,7 +305,7 @@ d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_
 ```{r, eval = T, echo = F}
 
 # shrinkB MSPE by lam and const (N = 1000, P = 50, R = 1, sigma = "compound")
-d = data %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "compound", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+d = sigma %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "compound", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
 
 min = d[d$mean == min(d$mean),]
 
@@ -320,7 +320,7 @@ d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_
 ```{r, eval = T, echo = F}
 
 # shrinkBO MSPE by lam and const (N = 1000, P = 10, R = 1, sigma = "tridiag")
-d = data %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "tridiag", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+d = sigma %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "tridiag", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
 
 min = d[d$mean == min(d$mean),]
 
@@ -333,7 +333,7 @@ d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_
 ```{r, eval = T, echo = F}
 
 # shrinkBO MSPE by lam and const (N = 1000, P = 50, R = 1, sigma = "compound")
-d = data %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "compound", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+d = sigma %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "compound", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
 
 min = d[d$mean == min(d$mean),]
 

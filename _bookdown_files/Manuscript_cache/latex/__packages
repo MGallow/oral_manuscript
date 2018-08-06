@@ -10,10 +10,6 @@ dplyr
 stringr
 forcats
 devtools
-RcppArmadillo
-formatR
-magrittr
-statr
 logitr
 RcppProgress
 foreach
@@ -22,10 +18,10 @@ doParallel
 ADMMsigma
 GLASSOO
 CVglasso
+SCPME
 bench
+magrittr
 skimr
 readxl
 glue
-microbenchmark
-SCPME
 bindrcpp
