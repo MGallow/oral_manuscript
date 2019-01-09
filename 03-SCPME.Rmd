@@ -1,0 +1,834 @@
+
+# SCPME
+
+The penalty proposed by @molstad2017shrinking is one of the following form:
+
+\begin{equation}
+P\left(\Omega\right) = \lambda\left\| A\Omega B - C \right\|_{1}
+(\#eq:pen2)
+\end{equation}
+
+where $A \in \mathbb{R}^{m \times p}, B \in \mathbb{R}^{p \times q}, \mbox{ and } C \in \mathbb{R}^{m \times q}$ are matrices assumed to be known and specified by the user. Solving the full penalized log-likelihood for $\Omega$ results in solving
+
+\begin{equation}
+\hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\left\| A\Omega B - C \right\|_{1} \right\}
+(\#eq:omegaloglik2)
+\end{equation}
+
+This form of penalty is particularly useful because matrices $A, B, \mbox{ and } C$ can be constructed so that we penalize the sum, absolute value of a *characteristic* of the precision matrix $\Omega$. This type of penalty leads to many new, interesting, and novel estimators for $\Omega$. An example of one such estimator (suppose we observe $n$ samples of $Y_{i} \in \mathbb{R}^{r}$) would be one where we set $A = I_{p}, B = \Sigma_{xy}, \mbox{ and } C = 0$ where $\Sigma_{xy}$ is the covariance matrix of $X$ and $Y$. This penalty has the effect of assuming sparsity in the forward regression coefficient $\beta \equiv \Omega\Sigma_{xy}$. Of course, in practice we do not know the true covariance matrix $\Sigma_{xy}$ but we might consider using the sample estimate $\hat{\Sigma}_{xy} = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(Y_{i} - \bar{Y}\right)^{T}/n$
+
+We will explore how to solve for $\hat{\Omega}$ in the next section.
+
+
+
+
+
+## Augmented ADMM Algorithm
+
+*This section requires general knowledge of the alternating direction method of multipliers (ADMM) algorithm. I would recommend reading this overview I have written [here](https://mgallow.github.io/ADMMsigma/articles/Details.html#admm-algorithm) before proceeding.*
+
+The ADMM algorithm - thanks to it's flexibility - is particularly well-suited to solve penalized-likelihood optimization problems that arise naturally in several statistics and machine learning applications. Within the context of @molstad2017shrinking, this algorithm would consist of iterating over the following three steps:
+
+\begin{align}
+  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}L_{\rho}(\Omega, Z^{k}, \Lambda^{k}) (\#eq:omegaauglagrange2) \\
+  Z^{k + 1} &= \arg\min_{Z \in \mathbb{R}^{n \times r}}L_{\rho}(\Omega^{k + 1}, Z, \Lambda^{k}) (\#eq:ZZauglagrange2) \\
+  \Lambda^{k + 1} &= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right) (\#eq:lamauglagrange2)
+\end{align}
+
+where $L_{p}(\cdot)$ is the *augmented lagrangian* defined as
+
+\begin{equation}
+L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda^{T}\left(A\Omega B - Z - C\right)\right] + \frac{\rho}{2}\left\|A\Omega B - Z - C\right\|_{F}^{2}
+(\#eq:auglagrange2)
+\end{equation}
+
+with $f\left(\Omega\right) = tr\left(S\Omega\right) - \log\left|\Omega\right|$ and $g\left(Z\right) = \lambda\left\|Z\right\|_{1}$. However, instead of solving the first step exactly, the authors propose an alternative, approximating objective function ($\tilde{L}$) based on the majorize-minimize principle -- the purpose of which is to find a solution that can be solved in closed form.
+
+The approximating function is defined as
+
+\begin{equation}
+\begin{split}
+  \tilde{L}_{\rho}\left(\Omega, Z^{k}, \Lambda^{k}\right) = f\left(\Omega\right) &+ tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \\
+  &+ \frac{\rho}{2}vec\left(\Omega - \Omega^{k}\right)^{T}Q\left(\Omega - \Omega^{k}\right)
+(\#eq:approx)
+\end{split}
+\end{equation}
+
+where $Q = \tau I_{p} - \left(A^{T}A \otimes BB^{T}\right)$, $\otimes$ is the Kronecker product, and $\tau$ is chosen such that $Q$ is positive definite. Note that if $Q$ is positive definite (p.d.), then
+
+\begin{equation}
+\frac{\rho}{2}vec\left(\Omega - \Omega^{k} \right)^{T}Q\left(\Omega - \Omega^{k} \right) > 0
+(\#eq:pd)
+\end{equation}
+
+since $\rho > 0$ and $vec\left(\Omega - \Omega^{k}\right)$ is always nonzero whenever $\Omega \neq \Omega^{k}$. Thus $L_{\rho}\left(\cdot\right) \leq \tilde{L}\left(\cdot\right)$ for all $\Omega$ and $\tilde{L}$ is a majorizing function.
+
+To see why this particular function was used, consider the Taylor's expansion of $\rho\left\|A\Omega B - Z^{k} - C\right\|_{F}^{2}/2$:
+
+\begin{equation}
+\begin{split}
+  \frac{\rho}{2}\left\| A\Omega B - Z^{k} - C \right\|_{F}^{2} &\approx \frac{\rho}{2}\left\| A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2} \\
+  &+ \frac{\rho}{2}vec\left( \Omega - \Omega^{k}\right)^{T}\left(A^{T}A \otimes BB^{T}\right)vec\left(\Omega - \Omega^{k}\right) \\
+  &+ \rho vec\left(\Omega - \Omega^{k}\right)^{T}vec\left(BB^{T}\Omega^{k}A^{T}A - B(Z^{k})^{T}A - BC^{T}A \right)
+(\#eq:taylors)
+\end{split}
+\end{equation}
+
+**Note:**
+
+\begin{equation}
+  \nabla_{\Omega}\left\{ \frac{\rho}{2}\left\|A\Omega B - Z - C\right\|_{F}^{2} \right\} = \rho BB^{T}\Omega A^{T}A - \rho BZ^{T}A - \rho BC^{T}A
+(\#eq:gradient)
+\end{equation}
+
+\begin{equation}
+\nabla_{\Omega}^{2}\left\{ \frac{\rho}{2}\left\|A\Omega B - Z - C \right\|_{F}^{2} \right\} = \rho\left(A^{T}A \otimes BB^{T} \right)
+(\#eq:hessian)
+\end{equation}
+
+This implies that
+
+\begin{equation}
+\begin{split}
+  \frac{\rho}{2}\left\| A\Omega B - Z^{k} - C \right\|_{F}^{2} &+ \frac{\rho}{2}vec\left(\Omega - \Omega^{k} \right)^{T}Q\left(\Omega - \Omega^{k} \right) \\
+  &\approx \frac{\rho}{2}\left\| A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2} + \frac{\rho}{2}vec\left(\Omega - \Omega^{k} \right)^{T}Q\left(\Omega - \Omega^{k} \right) \\
+  &+ \frac{\rho}{2}vec\left( \Omega - \Omega^{k}\right)^{T}\left(A^{T}A \otimes BB^{T}\right)vec\left(\Omega - \Omega^{k}\right) \\
+  &+ \rho vec\left(\Omega - \Omega^{k}\right)^{T}vec\left(BB^{T}\Omega^{k}A^{T}A - B(Z^{k})^{T}A - BC^{T}A \right) \\
+  &= \frac{\rho}{2}\left\| A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2} + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \\
+  &+ \rho tr\left[\left(\Omega - \Omega^{k}\right)\left(BB^{T}\Omega^{k}A^{T}A - B(Z^{k})^{T}A - BC^{T}A \right)\right]
+(\#eq:penapprox)
+\end{split}
+\end{equation}
+
+Let us now plug in this equality into our optimization problem in step one:
+
+\begin{equation}
+\begin{split}
+  \Omega^{k + 1} &:= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\tilde{L}_{\rho}(\Omega, Z^{k}, \Lambda^{k}) \\
+  &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{\begin{matrix}
+ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \end{matrix}\right. \\
+  &+ \left.\begin{matrix} \frac{\rho}{2}vec\left(\Omega - \Omega^{k}\right)^{T}Q\left(\Omega - \Omega^{k}\right) \end{matrix}\right\} \\
+  &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{\begin{matrix}
+ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2} \end{matrix}\right. \\
+  &+ \left.\begin{matrix} \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} + \rho tr\left[\left(\Omega - \Omega^{k}\right)\left(BB^{T}\Omega^{k}A^{T}A - B(Z^{k})^{T}A - BC^{T}A \right)\right] \end{matrix}\right\} \\
+  &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{\begin{matrix}
+ tr\left[\left(S + \rho A^{T}(A\Omega^{k}B - Z^{k} - C + \Lambda^{k}/\rho)B^{T} \right)\Omega\right] \end{matrix}\right. \\
+  &- \left.\begin{matrix} \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \end{matrix}\right\} \\
+  &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{
+ tr\left[\left(S + G^{k} \right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\} \\
+(\#eq:omegaapprox)
+\end{split}
+\end{equation}
+
+where $G^{k} = \rho A^{T}(A\Omega^{k}B - Z^{k} - C + \Lambda^{k}/\rho)B^{T}$.
+
+
+
+The *augmented ADMM* algorithm is the following:
+
+\begin{align}
+  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{tr\left[\left(S + G^{k}\right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\} (\#eq:omegaaugadmm) \\
+  Z^{k + 1} &= \arg\min_{Z \in \mathbb{R}^{n \times r}}\left\{\lambda\left\|Z\right\|_{1} + tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \right\} (\#eq:ZZaugadmm) \\
+  \Lambda^{k + 1} &= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right) (\#eq:lamaugadmm)
+\end{align}
+
+
+
+### Algorithm
+
+Set $k = 0$ and repeat steps 1-6 until convergence.
+
+1. Compute $G^{k} = \rho A^{T}\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}Y^{k} \right)B^{T}$
+
+2. Decompose $S + \left( G^{k} + (G^{k})^{T} \right)/2 - \rho\tau\Omega^{k} = VQV^{T}$ (via the spectral decomposition).
+
+3. Set $\Omega^{k + 1} = V\left( -Q + (Q^{2} + 4\rho\tau I_{p})^{1/2} \right)V^{T}/(2\rho\tau)$
+
+4. Set $Z^{k + 1} = \mbox{soft}\left( A\Omega^{k + 1}B - C + \rho^{-1}Y^{k}, \rho^{-1}\lambda \right)$
+
+5. Set $Y^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)$
+
+6. Replace $k$ with $k + 1$.
+
+where $\mbox{soft}(a, b) = \mbox{sign}(a)(\left| a \right| - b)_{+}$.
+
+
+
+### Stopping Criterion
+
+In discussing the optimality conditions and stopping criterion, we will follow the steps outlined in @boyd2011distributed and cater them to the SCPME method.
+
+Below we have three optimality conditions:
+
+1. Primal:
+
+\begin{equation}
+A\Omega^{k + 1}B - Z^{k + 1} - C = 0
+(\#eq:scpmeprimal)
+\end{equation}
+
+2. Dual:
+
+\begin{equation}
+\begin{split}
+  0 &\in \partial f\left(\Omega^{k + 1}\right) + \frac{1}{2}\left(B(\Lambda^{k + 1})^{T}A + A^{T}\Lambda^{k + 1}B^{T} \right) \\
+  0 &\in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}
+(\#eq:scpmedual)
+\end{split}
+\end{equation}
+
+The first dual optimality condition is a result of taking the sub-differential of the lagrangian (non-augmented) with respect to $\Omega^{k + 1}$ (note that we must honor the symmetric constraint of $\Omega^{k + 1}$) and the second is a result of taking the sub-differential of the lagrangian with respect to $Z^{k + 1}$ (no symmetric constraint).
+
+We will define the left-hand side of the primal optimality condition as the primal residual $r^{k + 1} = A\Omega^{k + 1}B - Z^{k + 1} - C$. At convergence, the optimality conditions require that $r^{k + 1} \approx 0$. The second residual we will define is the dual residual:
+
+\[ s^{k + 1} = \frac{\rho}{2}\left( B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right) \]
+
+This residual is derived from the fact. Because $\Omega^{k + 1}$ is the argument that minimizes $L_{p}\left( \Omega, Z^{k}, \Lambda^{k} \right)$,
+
+\begin{equation}
+\begin{split}
+  0 &\in \partial \left\{ f\left(\Omega^{k + 1}\right) + tr\left[ \Lambda^{k}\left( A\Omega^{k + 1}B - Z^{k} - C \right) \right] + \frac{\rho}{2}\left\| A\Omega^{k + 1}B - Z^{k} - C \right\|_{F}^{2} \right\} \\
+  &= \partial f\left(\Omega^{k + 1} \right) + \frac{1}{2}\left(B(\Lambda^{k})^{T}A + A^{T}\Lambda^{k}B^{T} \right) + \frac{\rho}{2}\left( BB^{T}\Omega^{k + 1}A^{T}A + A^{T}A\Omega^{k + 1}BB^{T} \right) \\
+  &- \frac{\rho}{2}\left( A^{T}(Z^{k} + C)B^{T} + B(Z^{k} + C)^{T}A \right) \\
+  &= \partial f\left(\Omega^{k + 1} \right) + \frac{1}{2}\left(B(\Lambda^{k})^{T}A + A^{T}\Lambda^{k}B^{T} \right) \\
+  &+ \frac{\rho}{2}\left( B(B^{T}\Omega^{k + 1}A^{T} - (Z^{k})^{T} - C^{T})A + A^{T}(A\Omega^{k + 1}B - Z^{k} - C)B^{T} \right) \\
+  &= \partial f\left(\Omega^{k + 1} \right) + \frac{1}{2}\left( B(\Lambda^{k})^{T}A + A^{T}\Lambda^{k}B^{T} \right) + \frac{\rho}{2}\left(A^{T}(A\Omega^{k + 1}B - Z^{k + 1} + Z^{k + 1} - Z^{k} - C)B^{T} \right) \\
+  &+ \frac{\rho}{2}\left(B(B^{T}\Omega^{k + 1}A^{T} - (Z^{k + 1})^{T} + (Z^{k + 1})^{T} - (Z^{k})^{T} - C^{T})A \right) \\
+  &= \partial f\left(\Omega^{k + 1} \right) + \frac{1}{2}\left[ B\left((\Lambda^{k})^{T} + \rho(B^{T}\Omega^{k + 1}A^{T} - (Z^{k + 1})^{T} - C^{T}) \right)A \right] \\
+  &+ \frac{1}{2}\left[ A^{T}\left(\Lambda^{k} + \rho(A\Omega^{k + 1}B - Z^{k + 1} - c)B \right)B^{T} \right] + \frac{\rho}{2}\left(B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right) \\
+  &= \partial f\left(\Omega^{k + 1} \right) + \frac{1}{2}\left(B(\Lambda^{k + 1})^{T}A + A^{T}\Lambda^{k + 1}B^{T} \right) + \frac{\rho}{2}\left(B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right) \\
+  \Rightarrow 0 &\in \frac{\rho}{2}\left( B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right)
+(\#eq:stopproof)
+\end{split}
+\end{equation}
+
+Like the primal residual, at convergence the optimality conditions require that $s^{k + 1} \approx 0$. Note that the second dual optimality condition is always satisfied:
+
+\begin{equation}
+\begin{split}
+  0 &\in \partial \left\{ g\left(Z^{k + 1}\right) + tr\left[ \Lambda^{k}\left( A\Omega^{k + 1}B - Z^{k + 1} - C \right) \right] + \rho\left\| A\Omega^{k + 1}B - Z^{k + 1} - C \right\|_{F}^{2} \right\} \\
+  &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k} - \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right) \\
+  &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1} \\
+(\#eq:dualopt2)
+\end{split}
+\end{equation}
+
+One possible stopping criterion is to set $\epsilon^{rel} = \epsilon^{abs} = 10^{-3}$ and stop the algorithm when $\epsilon^{pri} \leq \left\| r^{k + 1} \right\|_{F}$ and $\epsilon^{dual} \leq \left\| s^{k + 1} \right\|_{F}$ where
+
+\begin{equation}
+\begin{split}
+  \epsilon^{pri} &= \sqrt{nr}\epsilon^{abs} + \epsilon^{rel}\max\left\{ \left\| A\Omega^{k + 1}B \right\|_{F}, \left\| Z^{k + 1} \right\|_{F}, \left\| C \right\|_{F} \right\} \\
+  \epsilon^{dual} &= p\epsilon^{abs} + \epsilon^{rel}\left\| \left( B(\Lambda^{k + 1})^{T}A + A^{T}\Lambda^{k + 1}B^{T} \right)/2 \right\|_{F}
+(\#eq:scpmestopping)
+\end{split}
+\end{equation}
+
+
+
+
+
+## Illustration via Regression
+
+
+
+
+## Simulations
+
+
+We compare the performance of various shrinkage estimators under different data realizations. Each data scenario was replicated a total of 20 times.
+
+
+
+### Models
+
+In the following estimators, let the superscript * denote the oracle estimator:
+ 
+ - `OLS` = ordinary least squares estimator in *low* dimensional setting and Moore-Penrose estimator in a *high* ($p >> n$) dimensional setting
+ 
+ - `ridge` = ridge regression estimator where the optimal tuning parameter is chosen to minimize in-sample MSPE via 3-fold CV
+ 
+ - `lasso` = lasso regression estimator where the optimal tuning parameter is chosen to minimize in-sample MSPE via 3-fold CV
+ 
+ - `oracleB` = oracle estimator with the true $\beta^{*}$ known ($\left\| Y - X\beta^{*} \right\|_{F}^{2}$)
+ 
+ - `oracleO` = oracle estimator with the true $\Omega^{*}$ known ($\left\| Y - X\Omega^{*}\hat{\Sigma}_{xy} \right\|_{F}^{2}$)
+ 
+ - `oracleS` = oracle estimator with the true $\Sigma_{xy}^{*}$ known and sample estimator for $\Omega$ ($\left\| Y - X\hat{\Omega}\Sigma_{xy}^{*} \right\|_{F}^{2}$)
+ 
+ - `shrinkB` = shrinking characteristics regression estimator where optimal tuning parameter is chosen to minimize in-sample MSPE via 3-fold CV (penalty: $\lambda\left\| \Omega\hat{\Sigma}_{xy} \right\|_{1}$)
+ 
+ - `shrinkBS` = shrinking characteristics regression estimator with oracle cross-covariance where optimal tuning parameter is chosen to minimize in-sample MSPE via 3-fold CV (penalty: $\lambda\left\| \Omega\hat{\Sigma}_{xy}^{*} \right\|_{1}$)
+ 
+ - `shrinkBO` = shrinking characteristics estimator that penalizes the sum of the absolute values of $\beta = \Omega\Sigma_{xy}$ *and* $\Omega$ (penalty: $\lambda\left\| \Omega[\Sigma_{xy}, I_{p}] \right\|_{1}$)
+ 
+ - `glasso` = lasso penalized precision matrix where optimal tuning parameter is chosen to maximize log-likelihood via 3-fold CV.
+
+
+
+### Data Generation
+
+Let $\mathbb{X} \in \mathbb{R}^{n \times p}$, $\mathbb{Y} \in \mathbb{R}^{n \times r}$, and $\beta \in \mathbb{R}^{p \times r}$ so that
+
+\begin{equation}
+\mathbb{Y} = \mathbb{X}\beta + \mathbb{E}
+(\#eq:datalinregression)
+\end{equation}
+
+These values are generated in the following way:
+
+Let $\beta = \mathbb{B} \circ \mathbb{V}$ where $vec\left( \mathbb{B} \right) \sim N_{pr}\left( 0, I_{p} \otimes I_{r}/\sqrt{p} \right)$ and $\mathbb{V} \in \mathbb{R}^{p \times r}$ is a matrix containing $pr$ random bernoulli draws with `sparse` probability being equal to 1. In effect, each $\beta$ entry is turned off with equal probability.
+
+Now, if `sigma = "tridiag"` then $\Sigma_{xx}$ and $\Sigma_{y | x}$ is constructed so that $\left( \Sigma_{xx} \right)_{ij} = 0.7^{\left| i - j \right|}$ and $\left( \Sigma_{y | x} \right)_{ij} = 0.7^{\left| i - j \right|}$, respectively. This ensures that the inverses will be tridiagonal (sparse).
+
+Then for $n$ independent, identically distributed samples:
+
+\begin{equation}
+X_{i} \sim N_{p}\left( 0, \Sigma_{xx} \right)
+(\#eq:xnormal)
+\end{equation}
+
+\begin{equation}
+E_{i} \sim N_{r}\left( 0, \Sigma_{y | x} \right)
+(\#eq:enormal)
+\end{equation}
+
+If `sigma = "compound"` then the data is generated similarly but $\Omega_{xx} \equiv \Sigma_{xx}^{-1}$ and $\Omega_{y | x} \equiv \Sigma_{y | x}^{-1}$ both have entries equal to 1 on the diagonal and 0.9 on the off-diagonal.
+
+An additional 1000 samples will be generated for the testing set -- regardless of the training set size ($n$). For instance, in the 3-fold cross validation procedure where `n = 100` and `p = 100`, 1000 samples would be set aside for later testing and $100*(2/3)$ samples would be used for training in each fold (ie: high dimensional setting).
+
+Possible parameters in simulation:
+
+ - `reps` = 20
+ - `n` = (100, 1000)
+ - `p` = (10, 50, 100, 150)
+ - `r` = c(1, 5, 10)
+ - `sparse` = c(0.5)
+ - `sigma` = c("tridiag")
+
+Note that prior to estimation, the intercept is removed by centering the data.
+
+
+
+### Plots
+
+#### High Dimension
+
+Note that we are now displaying model error (ME) as opposed to mean squared prediction error (MSPE). Also, `OLS` and `oracleS` will not be show in the high dimensional setting plots because of poor performance.
+
+```{r scpmesim1, eval = T, echo = F, fig.cap = "Figure caption here."}
+
+# load data
+load("images/sim6.Rdata")
+
+# set P to numeric 
+sim6$P %<>% as.character %>% as.numeric
+
+# ME by P and R (N = 100, sparse = 0.5, sigma = "tridiag")
+sim6 %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", !model %in% c("OLS", "oracleS"), metric == "ME") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + facet_wrap(~ R, scales = "free") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P and R (N = 100, sparse = 0.5, sigma = tridiag)")
+
+```
+
+<br>\vspace{1cm}
+
+```{r scpmesim2, eval = T, echo = F, fig.cap = "Figure caption here."}
+
+# ME by P (N = 100, R = 10, sparse = 0.5, sigma = "tridiag")
+sim6 %>% filter(N == 100, R == 10, sparse == 0.5, sigma == "tridiag", !model %in% c("OLS", "oracleS")) %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P (N = 100, R = 10, sparse = 0.5, sigma = tridiag)")
+
+```
+
+<br>\vspace{1cm}
+
+**Notable: N = 100, P = 150, R = 10, sparse = 0.5, sigma = "tridiag"**
+
+```{r scpmesim3, eval = T, echo = F}
+
+# ME table (N = 100, sparse = 0.5, sigma = "tridiag", P = 150, R = 10)
+sim6 %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", P == 150, R == 10) %>% group_by(model) %>% summarise(mean = mean(Error), sd = sd(Error)) %>% arrange(mean) %>% pander(caption = "Table caption here.")
+
+```
+
+<br>\vspace{1cm}
+
+#### Low Dimension
+
+```{r scpmesim4, eval = T, echo = F, fig.cap = "Figure caption here."}
+
+# ME by P and R (N = 1000, sparse = 0.5, sigma = "tridiag")
+sim6 %>% filter(N == 1000, sparse == 0.5, model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + facet_wrap(~ R, scales = "free") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P and R (N = 1000, sparse = 0.5, sigma = tridiag)")
+
+```
+
+<br>\vspace{1cm}
+
+```{r scpmesim5, eval = T, echo = F, fig.cap = "Figure caption here."}
+
+# ME by P (N = 1000, R = 5, sparse = 0.5, sigma = "tridiag")
+sim6 %>% filter(N == 1000, R == 5, sparse == 0.5, model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P (N = 1000, R = 5, sparse = 0.5, sigma = tridiag)")
+
+```
+
+<br>\vspace{1cm}
+
+**Notable: N = 1000, P = 150, R = 5, sparse = 0.5, sigma = "tridiag"**
+
+```{r scpmesim6, eval = T, echo = F}
+
+# ME table (N = 1000, sparse = 0.5, sigma = "tridiag", P = 150, R = 5)
+sim6 %>% filter(N == 1000, sparse == 0.5, sigma == "tridiag", P == 150, R == 5) %>% group_by(model) %>% summarise(mean = mean(Error), sd = sd(Error)) %>% arrange(mean) %>% pander(caption = "Table caption here.")
+
+```
+
+
+
+
+### Takeaways
+
+1. In high dimensional settings, `shrinkBO` (penalty: $\lambda\left\| \Omega[\hat{\Sigma}_{xy}, I_{p}] \right\|_{1}$) and `shrinkB` (penalty: $\lambda\left\| \Omega\hat{\Sigma}_{xy} \right\|_{1}$) perform increasingly well relative (and superior) to the others when $p >> n$. It's not surprising that `shrinkBO` performs the best because the embedded assumptions most closely match the data generating model.
+
+2. In the high dimension setting, the oracle estimators `oracleO` (penalty: $\lambda\left\| \Omega^{*}\hat{\Sigma}_{xy} \right\|_{1}$) and `oracleS` (penalty: $\lambda\left\| \hat{\Omega}\Sigma_{xy}^{*} \right\|_{1}$) performed worse or comparable to OLS. The poor performance of `oracleS` is likely due to the fact that the sample estimate of $\Omega$ is not identifiable when $p > n$.
+
+3. When $n > p$ we see that `shrinkB` performs terribly. Interestingly, `shrinkBO` is still one of the better performing estimators -- though worse than both `lasso` and `ridge`.
+
+4. It is interesting that `oracleO` performed worse than `oracleS` in the final table. It appears that estimating the covariance matrix $\Sigma_{xy}$ well is *more* important than estimating $\Omega$ well.
+
+
+
+### Shrinking Covariance Models
+
+In the following estimators, let the superscript * denote the oracle estimator:
+ 
+ - `shrinkB` = shrinking characteristics regression estimator where optimal tuning parameter is chosen to minimize in-sample MSPE via 3-fold CV (penalty: $\lambda\left\| \Omega\hat{\Sigma}_{xy} \right\|_{1}$)
+ 
+ - `shrinkBO` = shrinking characteristics estimator that penalizes the sum of the absolute values of $\beta = \Omega\Sigma_{xy}$ *and* $\Omega$ (penalty: $\lambda\left\| \Omega[\Sigma_{xy}, I_{p}] \right\|_{1}$)
+ 
+For each of the estimators, $\Sigma_{xy}$ is estimated by the sample covariance matrix $\hat{\Sigma}_{xy}$ times some constant factor $k \in (0.1, 0.2, ..., 0.9, 1)$. We are shrinking $\hat{\Sigma}_{xy}$ by a constant to determine if there are any benefits to doing so.
+
+
+
+### Data Generation
+
+Let $\mathbb{X} \in \mathbb{R}^{n \times p}$, $\mathbb{Y} \in \mathbb{R}^{n \times r}$, and $\beta \in \mathbb{R}^{p \times r}$ so that
+
+\begin{equation}
+\mathbb{Y} = \mathbb{X}\beta + \mathbb{E}
+(\#eq:datalinregression2)
+\end{equation}
+
+These values are generated in the following way:
+
+Let $\beta = \mathbb{B} \circ \mathbb{V}$ where $vec\left( \mathbb{B} \right) \sim N_{pr}\left( 0, I_{p} \otimes I_{r}/\sqrt{p} \right)$ and $\mathbb{V} \in \mathbb{R}^{p \times r}$ is a matrix containing $pr$ random bernoulli draws with `sparse` probability being equal to 1. In effect, each $\beta$ entry is turned off with equal probability.
+
+Now, if `sigma = "tridiag"` then $\Sigma_{xx}$ and $\Sigma_{y | x}$ is constructed so that $\left( \Sigma_{xx} \right)_{ij} = 0.7^{\left| i - j \right|}$ and $\left( \Sigma_{y | x} \right)_{ij} = 0.7^{\left| i - j \right|}$, respectively. This ensures that the inverses will be tridiagonal (sparse).
+
+Then for $n$ independent, identically distributed samples:
+
+\begin{equation}
+X_{i} \sim N_{p}\left( 0, \Sigma_{xx} \right)
+(\#eq:xnormal2)
+\end{equation}
+
+\begin{equation}
+E_{i} \sim N_{r}\left( 0, \Sigma_{y | x} \right)
+(\#eq:enormal2)
+\end{equation}
+
+If `sigma = "compound"` then the data is generated similarly but $\Omega_{xx} \equiv \Sigma_{xx}^{-1}$ and $\Omega_{y | x} \equiv \Sigma_{y | x}^{-1}$ both have entries equal to 1 on the diagonal and 0.9 on the off-diagonal.
+
+An additional 1000 samples will be generated for the testing set -- regardless of the training set size ($n$). For instance, in the 3-fold cross validation procedure where `n = 100` and `p = 100`, 1000 samples would be set aside for later testing and $100*(2/3)$ samples would be used for training in each fold (ie: high dimensional setting).
+
+Possible parameters in simulation:
+
+ - `reps` = 20
+ - `n` = (100, 1000)
+ - `p` = (10, 50, 100, 150, 200)
+ - `r` = c(1, 5, 10)
+ - `sparse` = c(0.5)
+ - `sigma` = c("tridiag", "compound")
+
+Note that prior to estimation, the intercept is removed by centering the data.
+
+
+
+### Plots
+
+```{r, eval = T, echo = F}
+
+# load data
+load("images/sigma.Rdata")
+
+# design color palette
+bluetowhite <- c("#000E29", "white")
+
+# change to numeric
+sigma$lam %<>% as.character %>% as.numeric
+sigma$const %<>% as.character %>% as.numeric
+
+```
+
+#### High Dimension
+
+##### `shrinkB`
+
+<br>\vspace{1cm}
+
+```{r scpmesim7, eval = T, echo = F, fig.cap = "Figure caption here."}
+
+# shrinkB MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "tridiag")
+d = sigma %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "tridiag", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkB MSPE (N = 100, P = 200, R = 10, sigma = tridiag)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+<br>\vspace{1cm}
+
+```{r scpmesim8, eval = T, echo = F, fig.cap = "Figure caption here."}
+
+# shrinkB MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "compound")
+d = sigma %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "compound", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkB MSPE (N = 100, P = 200, R = 10, sigma = compound)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+##### `shrinkBO`
+
+<br>\vspace{1cm}
+
+```{r scpmesim9, eval = T, echo = F, fig.cap = "Figure caption here."}
+
+# shrinkBO MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "tridiag")
+d = sigma %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "tridiag", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkBO MSPE (N = 100, P = 200, R = 10, sigma = tridiag)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+<br>\vspace{1cm}
+
+```{r scpmesim10, eval = T, echo = F, fig.cap = "Figure caption here."}
+
+# shrinkBO MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "compound")
+d = sigma %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "compound", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkBO MSPE (N = 100, P = 200, R = 10, sigma = compound)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+<br>\vspace{1cm}
+
+#### Low Dimension
+
+##### `shrinkB`
+
+<br>\vspace{1cm}
+
+```{r scpmesim11, eval = T, echo = F, fig.cap = "Figure caption here."}
+
+# shrinkB MSPE by lam and const (N = 1000, P = 50, R = 1, sigma = "tridiag")
+d = sigma %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "tridiag", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkB MSPE (N = 1000, P = 50, R = 1, sigma = tridiag)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+<br>\vspace{1cm}
+
+```{r scpmesim12, eval = T, echo = F, fig.cap = "Figure caption here."}
+
+# shrinkB MSPE by lam and const (N = 1000, P = 50, R = 1, sigma = "compound")
+d = sigma %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "compound", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkB MSPE (N = 1000, P = 50, R = 1, sigma = compound)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+#### `shrinkBO`
+
+<br>\vspace{1cm}
+
+```{r scpmesim13, eval = T, echo = F, fig.cap = "Figure caption here."}
+
+# shrinkBO MSPE by lam and const (N = 1000, P = 10, R = 1, sigma = "tridiag")
+d = sigma %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "tridiag", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkBO MSPE (N = 1000, P = 50, R = 1, sigma = tridiag)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+<br>\vspace{1cm}
+
+```{r scpmesim14, eval = T, echo = F, fig.cap = "Figure caption here."}
+
+# shrinkBO MSPE by lam and const (N = 1000, P = 50, R = 1, sigma = "compound")
+d = sigma %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "compound", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkBO MSPE (N = 1000, P = 50, R = 1, sigma = compound)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+
+<br>\vspace{1cm}
+
+
+
+### Takeaways
+
+1. In the high dimensional settings, it does appear that shrinking the sample covariance matrix $\hat{\Sigma}_{xy}$ by a constant factor helps in reducing MSPE. This is indicated by the fact that the optimal `const` hovers around 0.5 for each of the estimators `shrinkB` and `shrinkBO`.
+
+2. In the low dimension settings, it appears that shrinking the covariance matrix is not beneficial.
+
+3. The type of oracle precision matrix (tridiagonal or compound symmetric) does not appear to be too influential with regards to the affect of shrinking the covariance matrix.
+
+4. The larger the dimension of $Y$, the more beneficial shrinkage will likely be (not that surprising)
+
+
+
+
+
+## Discussion
+
+The general optimization problem outlined in @molstad2017shrinking is to estimate $\hat{\Omega}$ such that
+
+\begin{equation}
+  \hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \lambda\left\| A\Omega B - C \right\|_{1} \right\}
+(\#eq:penloglik3)
+\end{equation}
+
+where $S$ is the sample covariance of $X \in \mathbb{R}^{p}$ (denominator $n$) and $\left\| \cdot \right\|_{1}$ denotes the $L_{1}$-norm. In addition, $A \in \mathbb{R}^{m \times p}, B \in \mathbb{R}^{p \times q}, \mbox{ and } C \in \mathbb{R}^{m \times q}$ are matrices assumed to be known and specified by the user. This objective function is a penalized log-likelihood for the marginal precision matrix of $X$, which we denote here as $\Omega \equiv \Sigma_{xx}^{-1}$.
+
+\begin{equation}
+\hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ -l\left( \Omega \right) + P_{\lambda}\left( \Omega \right) \right\}
+(\#eq:penloglik3)
+\end{equation}
+
+where $P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1}$. Under this particular likelihood, it is assumed that each observation of $X_{i}$ in a sample size of size $n$ follows a $p$-variate normal distribution (ie: $X_{i} \sim N_{p}\left( \mu_{x}, \Omega^{-1} \right)$) -- however, Dennis Cook and others have shown this objective function to work well as a generic loss even when these assumptions are not met.
+
+This particular formulation for the penalty leads to many new, interesting, and novel estimators for $\Omega$. For instance, if in addition to $X$ we also observe $n$ copies of the random variable $Y$, we might set $A = I_{p}, B = \Sigma_{xy}$ where $\Sigma_{xy}$ is the covariance matrix of $X$ and $Y$, and $C = 0$. In which case
+
+\begin{equation}
+P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\Sigma_{xy} \right\|_{1} = \lambda\left\| \beta \right\|_{1}
+(\#eq:pen3)
+\end{equation}
+
+This objective function estimates an $\Omega$ via the marginal log-likelihood of $X$ under the assumption that the forward regression coefficient $\beta$ is sparse (recall that $\beta \equiv \Omega\Sigma_{xy}$). We could also take $B = \left[ \Sigma_{xy}, I_{p} \right]$ so that the identity matrix (dimension $p$) is appended to the covariance matrix of $X$ and $Y$.
+
+\begin{equation}
+P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\left[\Sigma_{xy}, I_{p}\right] \right\|_{1} = \lambda\left\| \beta \right\|_{1} + \lambda\left\| \Omega \right\|_{1}
+(\#eq:pen4)
+\end{equation}
+
+In this case, not only are we assuming that $\beta$ is sparse, but we are also assuming sparsity in $\Omega$. Furthermore, if we let $\mathbb{X} \in \mathbb{R}^{n \times p}$ be a matrix with rows $X_{i} - \bar{X}$ and $\mathbb{Y} \in \mathbb{R}^{n \times r}$ be a matrix with rows $Y_{i} - \bar{Y}$, we might also take $A = \mathbb{X}, B = \Sigma_{xy}, \mbox{ and } C = \mathbb{Y}$ so that
+
+\begin{equation}
+\begin{split}
+\hat{\Omega} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \lambda\left\| \mathbb{X}\Omega \Sigma_{xy} - \mathbb{Y} \right\|_{1} \right\} \\
+  &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \lambda\left\| \mathbb{Y} - \mathbb{X}\beta \right\|_{1} \right\}
+(\#eq:penloglik4)
+\end{split}
+\end{equation}
+
+This estimator encourages the predicted values $\hat{\mathbb{Y}} = \mathbb{X}\hat{\beta} = \mathbb{X}\hat{\Omega}\Sigma_{xy}$ to be exactly equal to the observed responses $\mathbb{Y}$. We will name this estimator the *lasso SCPME estimator*. Note that in practice - for any of these estimators - we do not know the true covariance matrix $\Sigma_{xy}$ but we could provide the sample estimate $\hat{\Sigma}_{xy} = \mathbb{X}^{T}\mathbb{Y}/n$ in its place.
+
+All of these estimators fall into the SCPME (shrinking characteristics of precision matrix estimators) algorithmic framework outlined in the paper. The augmented ADMM algorithm (details [here](https://mgallow.github.io/SCPME/articles/Details.html#augmented-admm-algorithm)) is the following:
+
+Set $k = 0$ and repeat steps 1-6 until convergence.
+
+1. Compute $G^{k} = \rho A^{T}\left( A\Omega^{k} B - Z^{k} - C + \Lambda^{k}/\rho \right)B^{T}$
+
+2. Decompose $S + \left( G^{k} + (G^{k})^{T} \right)/2 - \rho\tau\Omega^{k} = VQV^{T}$ (via the spectral decomposition).
+
+3. Set $\Omega^{k + 1} = V\left( -Q + (Q^{2} + 4\rho\tau I_{p})^{1/2} \right)V^{T}/(2\rho\tau)$
+
+4. Set $Z^{k + 1} = \mbox{soft}\left( A\Omega^{k + 1}B - C + \rho^{-1}\Lambda_{k}, \rho^{-1}\lambda \right)$
+
+5. Set $\Lambda^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)$
+
+6. Replace $k$ with $k + 1$.
+
+
+
+### Connection to joint log-likelihood
+
+The last estimator in the previous section reveals an interesting connection to the joint log-likelihood of $X$ and $Y$ (under a few assumptions) when we consider its analogous *ridge* version - the *ridge SCPME estimator*:
+
+\begin{equation}
+\hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega \Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
+(\#eq:penregression)
+\end{equation}
+
+To see this, let us suppose that we have $n$ independent copies of the random pair $(Y_{i}, X_{i})$ and we assume a linear relationship of the following form:
+
+\begin{equation}
+Y_{i} = \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right) + E_{i}
+(\#eq:linregression)
+\end{equation}
+
+where $E_{i} \sim N_{r}\left( 0, \Omega_{y | x}^{-1} \right)$ and $X_{i} \sim N_{p}\left( \mu_{x}, \Omega^{-1} \right)$. These two assumptions imply that the conditional distribution of $Y_{i}|X_{i}$ is of the form
+
+\begin{equation}
+Y_{i} | X_{i} \sim N_{r}\left( \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right), \Omega_{y | x}^{-1} \right)
+(\#eq:linnormal)
+\end{equation}
+
+We can use this conditional distribution along with the marginal distribution of $X$ to derive the joint likelihood of $X$ and $Y$. Similar to before, we will take $\Omega_{y | x} \equiv \Sigma_{y | x}^{-1}, \Omega \equiv \Sigma_{xx}^{-1}, \mbox{ and } \beta \equiv \Omega\Sigma_{xy}$ for convenience. We will also let $f$ denote the probability distribution function for each respective variable.
+
+\begin{equation}
+\begin{split}
+  L&\left( \Omega_{y | x}, \Omega, \mu_{x}, \mu_{y}, \beta | Y, X \right) \propto f\left(Y | X; \Omega_{y | x}, \Omega, \mu_{x}, \mu_{y}, \beta \right) \times f\left(X; \Omega, \mu_{x} \right) \\
+  &= \prod_{i = 1}^{n} (2\pi)^{-r/2}\left| \Omega_{y | x} \right|^{1/2} \exp\left[ -\frac{1}{2}\left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right)^{T}\Omega_{y | x}\left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right) \right] \\
+  &\times (2\pi)^{-p/2}\left| \Omega \right|^{1/2} \exp\left[ -\frac{1}{2}\left( X_{i} - \mu_{x} \right)^{T}\Omega\left( X_{i} - \mu_{x} \right) \right] \\
+  &\propto \left| \Omega_{y | x} \right|^{n/2}\mbox{etr}\left[ -\frac{1}{2}\sum_{i = 1}^{n}\left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right)\left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right)^{T}\Omega_{y | x} \right] \\
+  &\times \left| \Omega \right|^{n/2}\mbox{etr}\left[ -\frac{1}{2}\sum_{i = 1}^{n}\left( X_{i} - \mu_{x} \right)\left( X_{i} - \mu_{x} \right)^{T}\Omega \right]
+(\#eq:jointlik)
+\end{split}
+\end{equation}
+
+where $\mbox{etr}\left( \cdot \right)$ denotes the exponential trace operator. This implies that the joint log-likelihood is of the following form:
+
+\begin{equation}
+\begin{split}
+  l&\left( \Omega_{y | x}, \Omega, \mu_{x}, \mu_{y}, \beta | Y, X \right) = const. + \frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}\sum_{i = 1}^{n}tr\left[ \left( X_{i} - \mu_{x} \right)\left( X_{i} - \mu_{x} \right)^{T}\Omega \right] \\
+  &+ \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}\sum_{i = 1}^{n} tr\left[ \left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right)\left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right)^{T}\Omega_{y | x} \right]
+(\#eq:jointloglik)
+\end{split}
+\end{equation}
+
+**Note:** this form simplifies significantly if we solve for $\mu_{x}$ and $\mu_{y}$ and make a few additional assumptions about our data.
+
+\begin{equation}
+\begin{split}
+ \nabla_{\mu_{y}}l\left\{\cdot\right\} &= \nabla_{\mu_{y}}\left\{ -\frac{1}{2}tr\left[ -n\mu_{y}\left(\bar{Y} - \beta^{T}(\bar{X} - \mu_{x})\right)^{T}\Omega_{y | x} - n\left(\bar{Y} - \beta^{T}(\bar{X} - \mu_{x})\right)\mu_{y}^{T}\Omega_{y | x} + n\mu_{y}\mu_{y}^{T}\Omega_{y | x} \right] \right\} \\
+ &= -\frac{1}{2}\left[ -n\Omega_{y | x}\left(\bar{Y} - \beta^{T}(\bar{X} - \mu_{x}) \right) - n\Omega_{y | x}\left(\bar{Y} - \beta^{T}(\bar{X} - \mu_{x}) \right) + 2n\Omega_{y | x}\mu_{y} \right] \\
+ \Rightarrow \hat{\mu}_{y} &= \bar{Y} - \hat{\beta}^{T}\left(\bar{X} - \hat{\mu_{x}}\right)
+ (\#eq:gradient2)
+\end{split}
+\end{equation}
+
+
+\begin{equation}
+\begin{split}
+  \nabla_{\mu_{x}}l\left\{\cdot\right\} &= \nabla_{\mu_{x}}\left\{ -\frac{1}{2}tr\left[n\beta^{T}\mu_{x}\left(\bar{Y} - \mu_{y} - \beta^{T}\bar{X} \right)^{T}\Omega_{y | x} + n\left(\bar{Y} - \mu_{y} - \beta^{T}\bar{X} \right)\mu_{x}^{T}\beta\Omega_{y | x} + \beta^{T}\mu_{x}\mu_{x}^{T}\beta\Omega_{y | x} \right] \right\} \\
+ &-\nabla_{\mu_{x}}\left\{\frac{1}{2}tr\left[ -n\mu_{x}\bar{X}^{T}\Omega - n\bar{X}\mu_{x}^{T}\Omega + n\mu_{x}\mu_{x}^{T}\Omega \right] \right\} \\
+ &= -\frac{1}{2}\left[n\beta\Omega_{y | x}\left(\bar{Y} - \mu_{y} - \beta^{T}\bar{X} \right) + n\beta\Omega_{y | x}\left(\bar{Y} - \mu_{y} - \beta^{T}\bar{X} \right) + 2\beta\Omega_{y | x}\beta^{T}\mu_{x} \right] \\
+ &-\frac{1}{2}\left( -n\Omega\bar{X} - n\Omega\bar{X} + 2n\Omega\mu_{x} \right) \\
+ \Rightarrow 0 &= -n\hat{\beta}\hat{\Omega}_{y | x}(\bar{Y} - \hat{\mu}_{y} - \hat{\beta}^{T}\bar{X}) - \hat{\beta}\hat{\Omega}_{y | x}\hat{\beta}^{T}\hat{\mu}_{x} + n\hat{\Omega}\bar{X} - n\hat{\Omega}\hat{\mu}_{x} \\
+ \Rightarrow 0 &= n\hat{\Omega}\bar{X} - n\hat{\Omega}\hat{\mu}_{x} \\
+ \Rightarrow \hat{\mu}_{x} &= \bar{X}
+(\#eq:gradient3)
+\end{split}
+\end{equation}
+
+Therefore, by plugging in $\hat{\mu}_{x}$ into $\hat{\mu}_{y}$, we find that $\hat{\mu}_{y} = \bar{Y}$ and $\hat{\mu}_{x} = \bar{X}$.
+
+Without loss of generality, let us assume that $\bar{X} = \bar{Y} = 0$. This can be achieved by simply centering the data by the sample averages. Putting all of this together and recalling that $\beta \equiv \Omega\Sigma_{xy}$, we have that the partially maximized joint log-likelihood is the following:
+
+\begin{equation}
+\begin{split}
+  l\left( \Omega_{y | x}, \Omega, \Sigma_{xy} | Y, X \right) &= const. + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}\sum_{i = 1}^{n} tr\left[ \left( Y_{i} - \Sigma_{xy}^{T}\Omega X_{i} \right)\left( Y_{i} - \Sigma_{xy}^{T}\Omega X_{i} \right)^{T}\Omega_{y | x} \right] \\
+  &+\frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}\sum_{i = 1}^{n}tr\left( X_{i}X_{i}^{T}\Omega \right) \\
+  &= const. + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{xy} \right)^{T}\left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{xy} \right)\Omega_{y | x} \right] \\
+  &+ \frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}tr\left( \mathbb{X}^{T}\mathbb{X}\Omega \right) \\
+  &= const. + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{xy} \right)^{T}\left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{y | x} \right)\Omega_{y | x} \right] \\
+  &+ \frac{n}{2}\log\left| \Omega \right| - \frac{n}{2}tr\left( S\Omega \right)
+(\#eq:partialjointloglik)
+\end{split}
+\end{equation}
+
+where $S = \mathbb{X}^{T}\mathbb{X}/n$. Now suppose we are interested in solving for $\Omega$:
+
+\begin{equation}
+\begin{split}
+  \hat{\Omega} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}-l\left( \Omega_{y | x}, \Omega, \Sigma_{xy} | Y, X \right) \\
+  &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{xy} \right)^{T}\left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{xy} \right)\Omega_{y | x} \right] + \frac{n}{2}tr\left( S\Omega \right) - \frac{n}{2}\log\left| \Omega \right| \right\} \\
+  &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left( S\Omega \right) - \log\left| \Omega \right| + \frac{1}{n}\left\| \left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{xy} \right)\Omega_{y | x}^{1/2} \right\|_{F}^{2} \right\}
+(\#eq:omegajointloglik)
+\end{split}
+\end{equation}
+
+where $\left\|\cdot\right\|_{F}$ denotes the Frobenius norm. Further, let us assume that, given $X$, each of the $r$ responses are pairwise independent with equal variance so that $\Omega_{y | x}^{1/2} = I_{r}/\sigma_{y | x}$ and let $\lambda = 2/(n\sigma_{y | x}^{2})$. Therefore, we have that
+
+\begin{equation}
+\hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left( S\Omega \right) - \log\left| \Omega \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega\Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
+(\#eq:omegajointmle)
+\end{equation}
+
+Notice that this is exactly the ridge SCPME estimator!
+
+
+
+### Takeaways
+
+We have shown that solving for the ridge SCPME estimator is equivalent to solving for the MLE for $\Omega \equiv \Sigma_{xx}^{-1}$ when the following assumptions hold:
+
+1. Each observation $(Y_{i}, X_{i})$ is independent and linearly distributed such that
+
+\begin{equation}
+Y_{i} = \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right) + E_{i}
+(\#eq:linregression2)
+\end{equation}
+
+where $E_{i} \sim N_{r}\left( 0, \Omega_{y | x}^{-1} \right)$ and $X_{i} \sim N_{p}\left( \mu_{x}, \Omega^{-1} \right)$.
+
+2. Given $X$, each of the $r$ responses in $Y \in \mathbb{R}^{r}$ is independent of one another with equal variance such that $\Omega_{y | x}^{-1} \equiv \Sigma_{y | x} = I_{r}/\sigma_{y | x}^{2}$.
+
+3. Let the tuning parameter $\lambda = 2/(n\sigma_{y | x}^{2})$.
+
+In addition, only a very slight modification of the augmented ADMM algorithm in @molstad2017shrinking is required to compute this estimate:
+
+Set $k = 0$ and repeat steps 1-6 until convergence.
+
+1. Compute $G^{k} = \rho A^{T}\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}\Lambda^{k} \right)B^{T}$
+
+2. Decompose $S + \left( G^{k} + (G^{k})^{T} \right)/2 - \rho\tau\Omega^{k} = VQV^{T}$ (via the spectral decomposition).
+
+3. Set $\Omega^{k + 1} = V\left( -Q + (Q^{2} + 4\rho\tau I_{p})^{1/2} \right)V^{T}/(2\rho\tau)$
+
+4. Set $Z^{k + 1} = \left[ \rho\left( A\Omega^{k + 1} B - C \right) + \Lambda^{k} \right]/(\lambda + \rho)$
+
+5. Set $\Lambda^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)$
+
+6. Replace $k$ with $k + 1$.
+
+Note that the only difference is in step 4.
+
+There are a few takeaways we can make after revealing this connection. The first is that the estimator constructed in the previous section is, in fact, solving a very similar problem to that of optimizing the joint likelihood with respect to $\Omega$. The second takeaway is that the SCPME algorithmic framework offers a very efficient method of computing this joint likelihood estimator. No closed-form solution to this estimator exists (to the best of my knowledge) and so we must resort to some iterative algorithm like the SCPME agumented ADMM algorithm in order to solve it. We show this below:
+
+\begin{equation}
+\hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\lambda}{2}\left\|\mathbb{X}\Omega\hat{\Sigma}_{xy} - \mathbb{Y}\right\|_{F}^{2} \right\}
+(\#eq:penregression2)
+\end{equation}
+
+\begin{equation}
+\begin{split}
+  \nabla_{\Omega}&\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\lambda}{2}\left\|\mathbb{X}\Omega\hat{\Sigma}_{xy} - \mathbb{Y}\right\|_{F}^{2} \right\} \\
+  &= \nabla_{\Omega}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\lambda}{2}tr\left[(\mathbb{X}\Omega\hat{\Sigma}_{xy} - \mathbb{Y})^{T}(\mathbb{X}\Omega\hat{\Sigma}_{xy} - \mathbb{Y}) \right] \right\} \\
+  &= \nabla_{\Omega}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\lambda}{2}tr\left(\Omega\mathbb{X}^{T}\mathbb{X}\Omega\hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T} - 2\Omega\hat{\Sigma}_{xy}\mathbb{Y}^{T}\mathbb{X} \right) \right\} \\
+  &= 2S - S\circ I_{p} - 2\Omega^{-1} + \Omega^{-1}\circ I_{p} + \lambda\mathbb{X}^{T}\mathbb{X}\Omega\hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T} + \lambda\hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T}\Omega\mathbb{X}^{T}\mathbb{X} \\
+  &- \lambda\mathbb{X}^{T}\mathbb{X}\Omega\hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T}\circ I_{p} - \hat{\Sigma}_{xy}\mathbb{Y}^{T}\mathbb{X} - \mathbb{X}^{T}\mathbb{Y}\hat{\Sigma}_{xy} + \hat{\Sigma}_{xy}\mathbb{Y}^{T}\mathbb{X}\circ I_{P} \\
+  \Rightarrow 0 &= S - \hat{\Omega}^{-1} + \frac{\lambda}{2}\left(\mathbb{X}^{T}\mathbb{X}\hat{\Omega}\hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T} + \hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T}\hat{\Omega}\mathbb{X}^{T}\mathbb{X} \right) - \lambda\hat{\Sigma}_{xy}\mathbb{Y}^{T}\mathbb{X}
+  (\#eq:penregressionproof)
+\end{split}
+\end{equation}
+
+by multiplying all of the off-diagonal elements by $1/2$. Note that we cannot isolate $\hat{\Omega}$.
+
+
+
+

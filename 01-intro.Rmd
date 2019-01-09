@@ -1,5 +1,22 @@
 
 # Introduction {#intro}
 
-This is the introduction for Matt's oral manuscript.
+In many statistical applications, estimating the covariance for a set of random variables is a critical task. The covariance is useful because it characterizes the *relationship* between variables. For instance, suppose we have three variables $X, Y, \mbox{ and } Z$ and their covariance matrix is of the form
 
+\[ \Sigma_{xyz} = \begin{pmatrix}
+1 & 0 & 0.5 \\ 
+0 & 1 & 0 \\ 
+0.5 & 0 & 1
+\end{pmatrix} \]
+
+We can gather valuable information from this matrix. First of all, we know that each of the variables has an equal variance of 1. Second,  we know that variables $X$ and $Y$ are likely independent because the covariance between the two is equal to 0. This implies that any information in $X$ is useless in trying to gather information about $Y$. Lastly, we know that variables $X$ and $Z$ are moderately, positively correlated because their covariance is 0.5.
+
+Unfortunately, estimating $\Sigma$ well is often computationally expensive and, in a few settings, extremely challenging. For this reason, emphasis in the literature and elsewhere has been placed on estimating the inverse of $\Sigma$ which we like to denote as $\Omega \equiv \Sigma^{-1}$.
+
+- Why do we care?
+
+- What is SCPME?
+
+- Guide
+
+- Model and notation
