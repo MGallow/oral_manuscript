@@ -1,0 +1,146 @@
+
+# `SCPME` R Package
+
+`SCPME` is an R package that estimates a penalized precision matrix via a modified alternating direction method of multipliers (ADMM) algorithm as described in @molstad2017shrinking. Specifically, the modified ADMM algorithm solves the following optimization problem:
+
+\[ \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S \Omega\right) - \log\det\left(\Omega\right) + \lambda\left\| A\Omega B - C \right\|_{1} \right\} \]
+
+where $\lambda > 0$ is a tuning parameter, $A, B, \mbox{ and } C$ are known matrices specified by the user, and we define $\left\|A \right\|_{1} = \sum_{i, j} \left| A_{ij} \right|$.
+
+This form of penalty leads to many new, interesting, and novel estimators for the precision matrix $\Omega$. In short, users can construct matrices $A, B, \mbox{ and } C$ so that emphasis is place on the sum, absolute value of a *characteristic* of $\Omega$. We will explore a few of these in the tutorial section.
+
+A list of functions contained in the package can be found below:
+
+* `shrink()` computes the estimated precision matrix
+
+* `data_gen()` data generation function (for convenience)
+
+* `plot.shrink()` produces a heat map or line graph for cross validation errors
+
+
+
+## Installation
+
+<br>\vspace{0.5cm}
+```{r, eval = FALSE}
+# The easiest way to install is from CRAN
+install.packages("SCPME")
+
+# You can also install the development version from GitHub:
+# install.packages("devtools")
+devtools::install_github("MGallow/SCPME")
+```
+<br>\vspace{0.5cm}
+
+This package is hosted on Github at [github.com/MGallow/SCPME](https://github.com/MGallow/SCPME).
+
+
+
+## Tutorial
+
+The primary function is the `SCPME` package is simply `shrink()`. The input values $X$ is an $n \times p$ data matrix so that there are $n$ rows each representing an observation and $p$ columns each representing a unique variable and $Y$ is an $n \times r$ response matrix where $r$ is the dimension of the response vector. By default, `SCPME` will estimate $\Omega$ using a lasso penalty ($A = I_{p}, B = I_{p}, \mbox{ and } C = 0$) and choose the optimal $\lambda$ tuning parameter that minimizes the mean squared prediction error for the regression of the variable $Y$ on $X$. If $Y$ is not provided (optional), then tuning parameter selection will be based on the validation likelihood. Note that $\Omega$ (perhaps better denoted here as $\Omega_{x}$) will only have meaningful shrinkage unless the data vector $X \in \mathbb{R^{p}}$ is multi-dimensional - that is, $p > 1$.
+
+Here, in this example, the data matrix is $100 \times 5$ and the response is generated according to the following model:
+
+\[ Y_{i} = \beta^{T}X_{i} + E_{i} \]
+
+where $E_{i} \sim N\left( 0, 1 \right)$ and $X_{i}$ is generated from a multivariate normal distribution with mean zero and tapered oracle covariance matrix $S$. A tapered covariance matrix has an inverse - or precision matrix - that is tri-diagonal. It is this oracle precision matrix that is our primary interest in estimating. In addition, $\beta$ is randomly generated and sparse. The data will be generated using the `data_gen()` function contained in the package.
+
+<br>\vspace{0.5cm}
+```{r, message = FALSE, echo = TRUE}
+library(SCPME)
+set.seed(123)
+
+# generate data from a sparse oracle precision matrix.
+# we can use the built-in `data_gen` function
+
+# generate 100 x 5 X data matrix and 100 x 1 Y data matrix
+data = data_gen(p = 5, n = 100, r = 1)
+
+# the oracle regression coefficients are sparse
+data$betas
+
+```
+
+```{r, message = FALSE, echo = TRUE}
+
+# shrink sum absolute entries in omega
+shrink(X = data$X, Y = data$Y)
+
+```
+<br>\vspace{0.5cm}
+
+Notice here that the estimated precision matrix is *not* sparse. This is due to the fact that our cross validation criteria is the mean-squared prediction. We can estimate a new precision matrix using the validation likelihood as criteria with the following command:
+
+<br>\vspace{0.5cm}
+```{r, message = FALSE, echo = TRUE}
+
+# shrink sum absolute entries in omega
+shrink(X = data$X, Y = data$Y, crit.cv = "loglik")
+
+```
+<br>\vspace{0.5cm}
+
+Recall that all of the estimators so far have used a lasso penalty that penalizes the sum of the absolute value of all the entries in $\Omega$ ($A = I_{p}, B = I_{p}, \mbox{ and } C = 0$). In effect, this penalty embeds an assumption in our estimate that the true $\Omega$ is sparse. The flexibility of the penalty described in @molstad2017shrinking allows us to make other assumptions as well. For instance, in the penalty we could set $A = I_{p}, B = \Sigma_{xy}$ where $\Sigma_{xy}$ is the covariance matrix of $X$ and $Y$, and $C = 0$. In which case
+
+\[P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\Sigma_{xy} \right\|_{1} = \lambda\left\| \beta \right\|_{1} \]
+
+This objective function estimates an $\Omega$ via the marginal log-likelihood of $X$ under the assumption that the forward regression coefficient $\beta$ is sparse (recall that $\beta \equiv \Omega\Sigma_{xy}$). Of course, in practice, we do not know the true covariance matrix $\Sigma_{xy}$ but we might consider using the sample estimate $\hat{\Sigma}_{xy} = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(Y_{i} - \bar{Y}\right)^{T}/n$.
+
+<br>\vspace{0.5cm}
+```{r, message = FALSE, echo = TRUE}
+
+# assume sparsity in beta
+lam_max = max(abs(crossprod(data$X, data$Y)))
+(shrink = shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), lam.max = lam_max, nlam = 20))
+
+```
+
+Note that we specified the maximum `lam` value in the previous function to expand the tuning parameter grid. Conveniently, with these settings, the augmented ADMM algorithm also solves for the estimated $\beta$ coefficient matrix simultaneously:
+
+<br>\vspace{0.5cm}
+```{r, message = FALSE, echo = TRUE}
+
+# print estimated beta matrix
+shrink$Z
+
+```
+<br>\vspace{0.5cm}
+
+Another possible penalty is to set $B = \left[ \Sigma_{xy}, I_{p} \right]$ so that the identity matrix (dimension $p$) is appended to the covariance matrix of $X$ and $Y$. That is, the penalty $P$, is constructed as follows:
+
+\[ P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\left[\Sigma_{xy}, I_{p}\right] \right\|_{1} = \lambda\left\| \beta \right\|_{1} + \lambda\left\| \Omega \right\|_{1} \]
+
+In this case, not only are we assuming that $\beta$ is sparse, but we are also assuming sparsity in $\Omega$.
+
+<br>\vspace{0.5cm}
+```{r, message = FALSE, echo = TRUE}
+
+# assume sparsity in beta AND omega
+(shrink = shrink(X = data$X, Y = data$Y, B = cbind(cov(data$X, data$Y), diag(ncol(data$X))), lam.max = 10, lam.min.ratio = 1e-4, nlam = 20))
+
+# print estimated beta
+shrink$Z[, 1, drop = FALSE]
+
+```
+<br>\vspace{0.5cm}
+
+`SCPME` also has the capability to provide plots (heatmap and line graph) for the cross validation errors. In the heatmap plot below, the more bright (white) areas of the heat map correspond to a better tuning parameter selection.
+
+<br>\vspace{0.5cm}
+```{r SCPMEpackage1, message = FALSE, echo = TRUE, fig.cap = "CV heatmap for SCPME tutorial", out.width = "80%"}
+
+# produce CV heat map
+plot(shrink, type = "heatmap")
+
+```
+
+```{r SCPMEpackage2, message = FALSE, echo = TRUE, fig.cap = "CV line graph for SCPME tutorial", out.width = "80%"}
+
+# produce line graph
+plot(shrink, type = "line")
+
+```
+<br>\vspace{0.5cm}
+
+`SCPME` has a number of more advanced options such as various convergence criteria and parallel processing that are explained in detail on the project website at [mattxgalloway.com/SCPME](http://mattxgalloway.com/SCPME/).

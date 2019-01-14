@@ -229,11 +229,28 @@ One possible stopping criterion is to set $\epsilon^{rel} = \epsilon^{abs} = 10^
 
 ## Illustration via Regression
 
+In many statistical applications, estimating the covariance for a set of random variables is a critical task. Unfortunately, estimating $\Sigma$ well is often expensive and, in a few settings, extremely challenging. For this reason, emphasis in the literature and elsewhere has been placed on estimating the inverse of $\Sigma$ which we like to denote as $\Omega \equiv \Sigma^{-1}$.
 
+If we have data that is normally distributed with mean $\mu$ and variance $\Sigma$ (that is, $X_{i} \sim N_{p}\left(\mu, \Sigma \right)$), the optimal estimator for $\Omega$ with respect to the log-likelihood is of the form
+
+\[ \hat{\Omega}_{MLE} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| \right\} \]
+
+where $S$ denotes the usual sample estimator ($S = \sum_{i = 1}^{n}\left(X_{i} - \bar{X} \right)\left(X_{i} - \bar{X} \right)^{T})$). As in regression settings, we can construct *penalized* log-likelihood estimators by adding a penalty term, $P\left(\Omega\right)$, to the log-likelihood so that
+
+\[ \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + P\left( \Omega \right) \right\} \]
+
+$P\left( \Omega \right)$ is often of the form $P\left(\Omega \right) = \lambda\|\Omega \|_{F}^{2}/2$ or $P\left(\Omega \right) = \|\Omega\|_{1}$ where $\lambda > 0$, $\left\|\cdot \right\|_{F}^{2}$ is the Frobenius norm and we define $\left\|A \right\|_{1} = \sum_{i, j} \left| A_{ij} \right|$. These penalties are the ridge and lasso, respectively. The penalty proposed in @molstad2017shrinking, however, is of the form $P\left(\Omega\right) = \left\|A\Omega B - C\right\|_{1}$ so that the general optimization problem is
+
+\begin{align}
+  \hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \lambda\left\| A\Omega B - C \right\|_{1} \right\}
+\end{align}
+
+`SCPME` is an implementation of the proposed augmented ADMM algorithm in @molstad2017shrinking for solving the previous optimization problem. In addition, this package places a big emphasis on flexibility that allows for rapid experimentation for the end user.
+
+We will illustrate this with a short simulation and show some of the new and interesting estimators for $\Omega$ that are a result of this penalty.
 
 
 ## Simulations
-
 
 We compare the performance of various shrinkage estimators under different data realizations. Each data scenario was replicated a total of 20 times.
 
