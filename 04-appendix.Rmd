@@ -3,49 +3,58 @@
 
 # Appendix
 
-## Proof of (1):
+## Proofs
+
+### Proof of \@ref(eq:omegaalgo) {#proofomegaalgo}
 
 \begin{equation}
 \Omega^{k + 1} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[\Lambda^{k}\left(\Omega - Z^{k}\right)\right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} \right\}
-(\#eq:appendixomegaloglik)
+(\#eq:appendixomegaloglik)\notag
 \end{equation}
 
 \begin{equation}
 \begin{split}
   \nabla_{\Omega}&\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[\Lambda^{k}\left(\Omega - Z^{k}\right)\right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} \right\} \\
   &= S - \Omega^{-1} + \Lambda^{k} + \rho\left( \Omega - Z^{k} \right)
-(\#eq:appendixomegagradient)
+(\#eq:appendixomegagradient)\notag
 \end{split}
 \end{equation}
 
 Note that because all of the variables are symmetric, we can ignore the symmetric constraint when deriving the gradient. First set the gradient equal to zero and decompose $\Omega^{k + 1} = VDV^{T}$ where $D$ is a diagonal matrix with diagonal elements equal to the eigen values of $\Omega^{k + 1}$ and $V$ is the matrix with corresponding eigen vectors as columns:
 
-\[ S + \Lambda^{k} - \rho Z^{k} = (\Omega^{k + 1})^{-1} - \rho \Omega^{k + 1} = VD^{-1}V^{T} - \rho VDV^{T} =  V\left(D^{-1} - \rho D\right)V^{T} \]
+\begin{equation}
+S + \Lambda^{k} - \rho Z^{k} = (\Omega^{k + 1})^{-1} - \rho \Omega^{k + 1} = VD^{-1}V^{T} - \rho VDV^{T} =  V\left(D^{-1} - \rho D\right)V^{T}\notag
+\end{equation}
 
 This equivalence implies that
 
-\[ \phi_{j}\left( S + \Lambda^{k} - \rho Z^{k} \right) = \frac{1}{\phi_{j}(\Omega^{k + 1})} - \rho\phi_{j}(\Omega^{k + 1}) \]
+\begin{equation}
+\phi_{j}\left( S + \Lambda^{k} - \rho Z^{k} \right) = \frac{1}{\phi_{j}(\Omega^{k + 1})} - \rho\phi_{j}(\Omega^{k + 1})\notag
+\end{equation}
 
 where $\phi_{j}(\cdot)$ is the $j$th eigen value.
 
-\begin{align*}
+\begin{equation}
+\begin{split}
   &\Rightarrow \rho\phi_{j}^{2}(\Omega^{k + 1}) + \phi_{j}\left( S + \Lambda^{k} - \rho Z^{k} \right)\phi_{j}(\Omega^{k + 1}) - 1 = 0 \\
   &\Rightarrow \phi_{j}(\Omega^{k + 1}) = \frac{-\phi_{j}(S + \Lambda^{k} - \rho Z^{k}) \pm \sqrt{\phi_{j}^{2}(S + \Lambda^{k} - \rho Z^{k}) + 4\rho}}{2\rho}
-\end{align*}
+\end{split}
+\notag
+\end{equation}
 
 In summary, if we decompose $S + \Lambda^{k} - \rho Z^{k} = VQV^{T}$ then
 
 \begin{equation}
 \Omega^{k + 1} = \frac{1}{2\rho}V\left[ -Q + (Q^{2} + 4\rho I_{p})^{1/2}\right] V^{T}
-(\#eq:appendixomegaproof)
+(\#eq:appendixomegaproof)\notag
 \end{equation}
 
 
-## Proof of (2)
+### Proof of \@ref(eq:ZZalgo) {#proofZZalgo}
 
 \begin{equation}
 Z^{k + 1} = \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\}
-(\#eq:appendixZZloglik)
+(\#eq:appendixZZloglik)\notag
 \end{equation}
 
 
@@ -54,7 +63,7 @@ Z^{k + 1} = \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alph
   \partial&\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\} \\
   &= \partial\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] \right\} + \nabla_{\Omega}\left\{ tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\} \\
   &= \lambda(1 - \alpha)Z + \mbox{sign}(Z)\lambda\alpha - \Lambda^{k} - \rho\left( \Omega^{k + 1} - Z \right)
-(\#eq:appendixZZgradient)
+(\#eq:appendixZZgradient)\notag
 \end{split}
 \end{equation}
 
@@ -62,19 +71,23 @@ where sign is the elementwise sign operator. By setting the gradient/sub-differe
 
 \begin{equation}
 Z_{ij}^{k + 1} = \frac{1}{\lambda(1 - \alpha) + \rho}\left( \rho \Omega_{ij}^{k + 1} + \Lambda_{ij}^{k} - \mbox{sign}(Z_{ij}^{k + 1})\lambda\alpha \right)
-(\#eq:ZZsoftproof)
+(\#eq:ZZsoftproof)\notag
 \end{equation}
 
 for all $i = 1,..., p$ and $j = 1,..., p$. We observe two scenarios:
 
 - If $Z_{ij}^{k + 1} > 0$ then
 
-\[ \rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k} > \lambda\alpha \]
+\begin{equation}
+\rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k} > \lambda\alpha \notag
+\end{equation}
 
 
 - If $Z_{ij}^{k + 1} < 0$ then
 
-\[ \rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k} < -\lambda\alpha \]
+\begin{equation}
+\rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k} < -\lambda\alpha \notag
+\end{equation}
 
 This implies that $\mbox{sign}(Z_{ij}) = \mbox{sign}(\rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k})$. Putting all the pieces together, we arrive at
 
@@ -82,7 +95,7 @@ This implies that $\mbox{sign}(Z_{ij}) = \mbox{sign}(\rho\Omega_{ij}^{k + 1} + \
 \begin{split}
 Z_{ij}^{k + 1} &= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{sign}\left(\rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k}\right)\left( \left| \rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k} \right| - \lambda\alpha \right)_{+} \\
 &= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{soft}\left(\rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k}, \lambda\alpha\right)
-(\#eq:appendixZZproof)
+(\#eq:appendixZZproof)\notag
 \end{split}
 \end{equation}
 
@@ -90,11 +103,40 @@ where soft is the soft-thresholding function.
 
 
 
-## Proof of (2-3):
+### Proof of \@ref(eq:dualresidual) {#proofdualresidual}
+
+\begin{equation}
+\begin{split}
+  0 &\in \partial \left\{ f\left(\Omega^{k + 1}\right) + tr\left[ \Lambda^{k}\left( \Omega^{k + 1} - Z^{k} \right) \right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z^{k} \right\|_{F}^{2} \right\} \\
+  &= \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k} + \rho\left(\Omega^{k + 1} - Z^{k}\right) \\
+  &= \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k} + \rho\left(\Omega^{k + 1} + Z^{k + 1} - Z^{k + 1} - Z^{k}\right) \\
+  &= \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k} + \rho\left(\Omega^{k + 1} - Z^{k + 1}\right) + \rho\left(Z^{k + 1} - Z^{k}\right) \\
+  &= \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k + 1} + \rho\left(Z^{k + 1} - Z^{k}\right) \\
+  \Rightarrow 0 &\in \rho\left( Z^{k + 1} - Z^{k} \right)
+(\#eq:appendixdualresidual)\notag
+\end{split}
+\end{equation}
+
+
+
+### Proof of \@ref(eq:dualopt) {#proofdualopt}
+
+\begin{equation}
+\begin{split}
+  0 &\in \partial \left\{ g\left(Z^{k + 1}\right) + tr\left[ \Lambda^{k}\left( \Omega^{k + 1} - Z^{k + 1} \right) \right] + \rho\left\| \Omega^{k + 1} - Z^{k + 1} \right\|_{F}^{2} \right\} \\
+  &\in \partial g\left(Z^{k + 1}\right) - \Lambda^{k} - \rho\left(\Omega^{k + 1} - Z^{k + 1}\right) \\
+  &\in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1} \\
+(\#eq:appendixdualopt)\notag
+\end{split}
+\end{equation}
+
+
+
+### Proof of (2-3):
 
 \begin{equation}
 \Omega^{k + 1} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{tr\left[\left(S + G^{k}\right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\}
-(\#eq:appendixomegaloglik2)
+(\#eq:appendixomegaloglik2)\notag
 \end{equation}
 
 \begin{equation}
@@ -102,44 +144,53 @@ where soft is the soft-thresholding function.
   &\nabla_{\Omega}\left\{tr\left[\left(S + G^{k}\right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\} \\
   &= 2S - S\circ I_{p} + G^{k} + (G^{k})^{T} - G^{k}\circ I_{p} - 2\Omega^{-1} + \Omega^{-1}\circ I_{p} \\
   &+ \frac{\rho\tau}{2}\left[2\Omega - 2(\Omega^{k})^{T} + 2\Omega^{T} - 2\Omega^{k} - 2(\Omega - \Omega^{k})^{T}\circ I_{p} \right]
-(\#eq:appendixomegagradient2)
+(\#eq:appendixomegagradient2)\notag
 \end{split}
 \end{equation}
 
 Note that we need to honor the symmetric constraint given by $\Omega$. By setting the gradient equal to zero and multiplying all off-diagonal elements by $1/2$, this simplifies to
 
-\[ S + \frac{1}{2}\left(G^{k} + (G^{k})^{T}\right) - \rho\tau\Omega^{k} = (\Omega^{k + 1})^{-1} - \rho\tau\Omega^{k + 1} \]
+\begin{equation}
+S + \frac{1}{2}\left(G^{k} + (G^{k})^{T}\right) - \rho\tau\Omega^{k} = (\Omega^{k + 1})^{-1} - \rho\tau\Omega^{k + 1} \notag
+\end{equation}
 
 We can then decompose $\Omega^{k + 1} = VDV^{T}$ where $D$ is a diagonal matrix with diagonal elements equal to the eigen values of $\Omega^{k + 1}$ and $V$ is the matrix with corresponding eigen vectors as columns.
 
-\[ S + \frac{1}{2}\left(G^{k} + (G^{k})^{T}\right) - \rho\tau\Omega^{k} = VD^{-1}V^{T} - \rho\tau VDV^{T} = V\left(D^{-1} - \rho\tau D\right)V^{T} \]
+\begin{equation}
+S + \frac{1}{2}\left(G^{k} + (G^{k})^{T}\right) - \rho\tau\Omega^{k} = VD^{-1}V^{T} - \rho\tau VDV^{T} = V\left(D^{-1} - \rho\tau D\right)V^{T} \notag
+\end{equation}
 
 This equivalence implies that
 
-\[ \phi_{j}\left( D^{k} \right) = \frac{1}{\phi_{j}(\Omega^{k + 1})} - \rho\tau\phi_{j}(\Omega^{k + 1}) \]
+\begin{equation}
+\phi_{j}\left( D^{k} \right) = \frac{1}{\phi_{j}(\Omega^{k + 1})} - \rho\tau\phi_{j}(\Omega^{k + 1}) \notag
+\end{equation}
 
 where $\phi_{j}(\cdot)$ is the $j$th eigen value and $D^{k} = S + \left(G^{k} + (G^{k})^{T}\right)/2 - \rho\tau\Omega^{k}$. Therefore
 
-\begin{align*}
+\begin{equation}
+\begin{split}
   &\Rightarrow \rho\tau\phi_{j}^{2}(\Omega^{k + 1}) + \phi_{j}\left( D^{k} \right)\phi_{j}(\Omega^{k + 1}) - 1 = 0 \\
   &\Rightarrow \phi_{j}(\Omega^{k + 1}) = \frac{-\phi_{j}(D^{k}) \pm \sqrt{\phi_{j}^{2}(D^{k}) + 4\rho\tau}}{2\rho\tau}
-\end{align*}
+\end{split}
+\notag
+\end{equation}
 
 In summary, if we decompose $S + \left(G^{k} + (G^{k})^{T}\right)/2 - \rho\tau\Omega^{k} = VQV^{T}$ then
 
 \begin{equation}
 \Omega^{k + 1} = \frac{1}{2\rho\tau}V\left[ -Q + (Q^{2} + 4\rho\tau I_{p})^{1/2}\right] V^{T}
-(\#eq:appendixomegaproof2)
+(\#eq:appendixomegaproof2)\notag
 \end{equation}
 
 
 
-## Proof of (4)
+### Proof of (4)
 
 
 \begin{equation}
 Z^{k + 1} = \arg\min_{Z \in \mathbb{R}^{n \times r}}\left\{ \lambda\left\| Z \right\|_{1} + tr\left[(\Lambda^{k})^{T}\left(A\Omega^{k + 1}B - Z - C\right)\right] + \frac{\rho}{2}\left\| A\Omega^{k + 1}B - Z - C \right\|_{F}^{2} \right\}
-(\#eq:appendixZZloglik2)
+(\#eq:appendixZZloglik2)\notag
 \end{equation}
 
 
@@ -148,7 +199,7 @@ Z^{k + 1} = \arg\min_{Z \in \mathbb{R}^{n \times r}}\left\{ \lambda\left\| Z \ri
   \partial&\left\{ \lambda\left\| Z \right\|_{1} + tr\left[(\Lambda^{k})^{T}\left(A\Omega^{k + 1}B - Z - C\right)\right] + \frac{\rho}{2}\left\| A\Omega^{k + 1}B - Z - C \right\|_{F}^{2} \right\} \\
   &= \partial\left\{ \lambda\left\| Z \right\|_{1} \right\} + \nabla_{\Omega}\left\{ tr\left[(\Lambda^{k})^{T}\left(A\Omega^{k + 1}B - Z - C\right)\right] + \frac{\rho}{2}\left\| A\Omega^{k + 1}B - Z - C \right\|_{F}^{2} \right\} \\
   &= \mbox{sign}(Z)\lambda - \Lambda^{k} - \rho\left( A\Omega^{k + 1}B - Z - C \right)
-(\#eq:appendixZZgradient2)
+(\#eq:appendixZZgradient2)\notag
 \end{split}
 \end{equation}
 
@@ -156,19 +207,23 @@ where $\mbox{sign(Z)}$ is the elementwise sign operator. By setting the gradient
 
 \begin{equation}
 Z_{ij}^{k + 1} = \frac{1}{\rho}\left( \rho(A\Omega_{ij}^{k + 1}B - C) + \Lambda_{ij}^{k} - Sign(Z_{ij}^{k + 1})\lambda \right)
-(\#eq:ZZsoftproof2)
+(\#eq:ZZsoftproof2)\notag
 \end{equation}
 
 for all $i = 1,..., p$ and $j = 1,..., p$. We observe two scenarios:
 
 - If $Z_{ij}^{k + 1} > 0$ then
 
-\[ \rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k} > \lambda\alpha \]
+\begin{equation}
+\rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k} > \lambda\alpha \notag
+\end{equation}
 
 
 - If $Z_{ij}^{k + 1} < 0$ then
 
-\[ \rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k} < -\lambda\alpha \]
+\begin{equation}
+\rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k} < -\lambda\alpha \notag
+\end{equation}
 
 This implies that $\mbox{sign}(Z_{ij}^{k + 1}) = \mbox{sign}\left(\rho(A\Omega_{ij}^{k + 1}B - C) + \Lambda_{ij}^{k}\right)$. Putting all the pieces together, we arrive at
 
@@ -176,7 +231,7 @@ This implies that $\mbox{sign}(Z_{ij}^{k + 1}) = \mbox{sign}\left(\rho(A\Omega_{
 \begin{split}
 Z_{ij}^{k + 1} &= \frac{1}{\rho}\mbox{sign}\left(\rho(A\Omega_{ij}^{k + 1}B - C) + \Lambda_{ij}^{k}\right)\left( \left| \rho(A\Omega_{ij}^{k + 1}B - C) + \Lambda_{ij}^{k} \right| - \lambda \right)_{+} \\
 &= \frac{1}{\rho}\mbox{soft}\left(\rho(A\Omega_{ij}^{k + 1}B - C) + \Lambda_{ij}^{k}, \lambda\right)
-(\#eq:appendixZZproof2)
+(\#eq:appendixZZproof2)\notag
 \end{split}
 \end{equation}
 

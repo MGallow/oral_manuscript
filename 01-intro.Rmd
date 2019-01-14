@@ -19,22 +19,22 @@ Unfortunately, estimating $\Sigma$ well is often computationally expensive and, 
 If we have data that is normally distributed with mean $\mu$ and variance $\Sigma$ (that is, $X_{i} \sim N_{p}\left(\mu, \Sigma \right)$), the optimal estimator for $\Omega$ with respect to the log-likelihood is of the form
 
 \begin{equation}
-\hat{\Omega}_{MLE} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| \right\}
-(\#eq:mleoptim)
+\hat{\Omega}^{MLE} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| \right\}
+(\#eq:mleoptim)\notag
 \end{equation}
 
 where $S$ denotes the usual sample estimator ($S = \sum_{i = 1}^{n}\left(X_{i} - \bar{X} \right)\left(X_{i} - \bar{X} \right)^{T})$). As in regression settings, we can construct *penalized* log-likelihood estimators by adding a penalty term, $P\left(\Omega\right)$, to the log-likelihood so that
 
 \begin{equation}
 \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + P\left( \Omega \right) \right\}
-(\#eq:penoptim)
+(\#eq:penoptim)\notag
 \end{equation}
 
 $P\left( \Omega \right)$ is often of the form $P\left(\Omega \right) = \lambda\|\Omega \|_{F}^{2}/2$ or $P\left(\Omega \right) = \|\Omega\|_{1}$ where $\lambda > 0$, $\left\|\cdot \right\|_{F}^{2}$ is the Frobenius norm and we define $\left\|A \right\|_{1} = \sum_{i, j} \left| A_{ij} \right|$. These penalties are the ridge and lasso, respectively. The penalty proposed in @molstad2017shrinking, however, is of the form $P\left(\Omega\right) = \left\|A\Omega B - C\right\|_{1}$ so that the general optimization problem is
 
 \begin{equation}
 \hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \lambda\left\| A\Omega B - C \right\|_{1} \right\}
-(\#eq:molstadeq)
+(\#eq:molstadeq)\notag
 \end{equation}
 
 `SCPME` is an implementation of the proposed augmented ADMM algorithm in @molstad2017shrinking for solving the previous optimization problem. In addition, this package places a big emphasis on flexibility that allows for rapid experimentation for the end user.

@@ -15,14 +15,14 @@ Because we assume independence, we know that the probability of observing these 
   f(X_{1}, ..., X_{n}; \mu, \Sigma) &= \prod_{i = 1}^{n}(2\pi)^{-p/2}\left| \Sigma \right|^{-1/2}\exp\left[ -\frac{1}{2}\left( X_{i} - \mu \right)'\Sigma^{-1}\left( X_{i} - \mu \right) \right] \\
   &= (2\pi)^{-nr/2}\left| \Sigma \right|^{-n/2}\mbox{etr}\left[ -\frac{1}{2}\sum_{i = 1}^{n}\left( X_{i} - \mu \right)\left( X_{i} - \mu \right)'\Sigma^{-1} \right]
 \end{split}
-(\#eq:lik)
+(\#eq:normallik)
 \end{equation} 
 
 where $\mbox{etr}\left( \cdot \right)$ denotes the exponential trace operator. It follows that the log-likelihood for $\mu$ and $\Sigma$ is equal to the following:
 
 \begin{equation}
   l(\mu, \Sigma | X) = const. - \frac{n}{2}\log\left| \Sigma \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \mu \right)\left(X_{i} - \mu \right)'\Sigma^{-1} \right]
-(\#eq:loglik)
+(\#eq:normalloglik)
 \end{equation}
 
 If we are interested in estimating $\mu$, it is relatively straight forward to show that the maximum likelihood estimator (MLE) for $\mu$ is $\hat{\mu}_{MLE} = \sum_{i = 1}^{n}X_{i}/n$ which we typically denote as $\bar{X}$. However, in addition to $\mu$, many applications require the estimation of $\Sigma$ as well. We can also find a maximum likelihood estimator:
@@ -49,7 +49,7 @@ By setting the gradient equal to zero and plugging in the MLE for $\mu$, we find
 (\#eq:omegamle)
 \end{equation}
 
-so that $\hat{\Omega}_{MLE} = S^{-1}$. Beyond the formatting convenience, computing estimates for $\Omega$ as opposed to $\Sigma$ often poses less computational challenges -- and accordingly, the literature has placed more emphasis on efficiently solving for $\Omega$ instead of $\Sigma$ ^[Notice that here we are *minimizing* the negative log-likelihood as opposed to maximizing the log-likelihood. Both procedures will result in the same estimate.].
+so that $\hat{\Omega}^{MLE} = S^{-1}$. Beyond the formatting convenience, computing estimates for $\Omega$ as opposed to $\Sigma$ often poses less computational challenges -- and accordingly, the literature has placed more emphasis on efficiently solving for $\Omega$ instead of $\Sigma$^[Notice that here we are *minimizing* the negative log-likelihood as opposed to maximizing the log-likelihood. Both procedures will result in the same estimate.].
 
 As in regression settings, we can construct a *penalized* log-likelihood estimator by adding a penalty term, $P\left(\Omega\right)$, to the log-likelihood so that
 
@@ -62,14 +62,14 @@ $P\left( \Omega \right)$ is often of the form $P\left(\Omega \right) = \lambda\|
 
 \begin{equation}
 P\left( \Omega \right) = \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right]
-(\#eq:pen)
+(\#eq:penelastic)
 \end{equation}
 
 so that solving the full penalized log-likelihood for $\Omega$ results in solving
 
 \begin{equation}
 \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right] \right\}
-(\#eq:omegaloglik)
+(\#eq:optimelastic)
 \end{equation}
 
 where $0 \leq \alpha \leq 1$. This penalty, know as the *elastic-net* penalty, was explored by Hui Zou and Trevor Hastie [@zou2005regularization] and is identical to the penalty used in the popular penalized regression package `glmnet`. Clearly, when $\alpha = 0$ the elastic-net reduces to a ridge-type penalty and when $\alpha = 1$ it reduces to a lasso-type penalty. Having this flexibility and generalization allows us to perform cross validation across proposed $\alpha$ values in addition to proposed $\lambda$ values.
@@ -78,7 +78,7 @@ The penalty proposed by @molstad2017shrinking is one of the following form:
 
 \begin{equation}
 P\left(\Omega\right) = \lambda\left\| A\Omega B - C \right\|_{1}
-(\#eq:pen2)
+(\#eq:penmolstad)
 \end{equation}
 
 where $A \in \mathbb{R}^{m \times p}, B \in \mathbb{R}^{p \times q}, \mbox{ and } C \in \mathbb{R}^{m \times q}$ are matrices assumed to be known and specified by the user. Solving the full penalized log-likelihood for $\Omega$ results in solving
@@ -110,11 +110,15 @@ In general, suppose we want to solve an optimization problem of the following fo
   \mbox{minimize } f(x) + g(z) \\
   \mbox{subject to } Ax + Bz = c
 \end{split}
+(\#eq:boyd)
 \end{equation}
 
 where $x \in \mathbb{R}^{n}, z \in \mathbb{R}^{m}, A \in \mathbb{R}^{p \times n}, B \in \mathbb{R}^{p \times m}$, $c \in \mathbb{R}^{p}$, and $f$ and $g$ are assumed to be convex functions (following @boyd2011distributed, the estimation procedure will be introduced in vector form though we could just as easily take $x$ and $z$ to be matrices). In addition to penalized precision matrix estimation, optimization problems like this arise naturally in several statistics and machine learning applications -- particularly regularization methods. For instance, we could take $f$ to be the squared error loss, $g$ to be the $l_{2}$-norm, $c$ to be equal to zero and $A$ and $B$ to be identity matrices to solve the ridge regression optimization problem. In all cases, our goal is to find $x^{*} \in \mathbb{R}^{n}$ and $z^{*} \in \mathbb{R}^{m}$ that achieves the infimum $p^{*}$:
 
-\[ p^{*} = inf\left\{ f(x) + g(z) | Ax + Bz = c \right\} \]
+\begin{equation}
+p^{*} = inf\left\{ f(x) + g(z) | Ax + Bz = c \right\}
+(\#eq:infimum)
+\end{equation}
 
 To do so, the ADMM algorithm uses the *augmented lagrangian*
 
@@ -127,24 +131,27 @@ where $y \in \mathbb{R}^{p}$ is the lagrange multiplier and $\rho > 0$ is a scal
 
 The algorithm consists of the following repeated iterations:
 
-\begin{align}
-  x^{k + 1} &= \arg\min_{x \in \mathbb{R}^{n}}L_{\rho}(x, z^{k}, y^{k}) (\#eq:xauglagrange) \\
-  z^{k + 1} &= \arg\min_{z \in \mathbb{R}^{m}}L_{\rho}(x^{k + 1}, z, y^{k}) (\#eq:zauglagrange) \\
-  y^{k + 1} &= y^{k} + \rho(Ax^{k + 1} + Bz^{k + 1} - c) (\#eq:yauglagrange)
-\end{align}
+\begin{equation}
+\begin{split}
+  x^{k + 1} &= \arg\min_{x \in \mathbb{R}^{n}}L_{\rho}(x, z^{k}, y^{k}) \\
+  z^{k + 1} &= \arg\min_{z \in \mathbb{R}^{m}}L_{\rho}(x^{k + 1}, z, y^{k}) \\
+  y^{k + 1} &= y^{k} + \rho(Ax^{k + 1} + Bz^{k + 1} - c)
+\end{split}  
+(\#eq:admmalgo)
+\end{equation}
 
 In the context of precision matrix estimation, we can let $f$ be equal to the non-penalized likelihood, $g$ be equal to $P\left( \Omega \right)$, and use the constraint $\Omega$ equal to some $Z$ so that the lagrangian is
 
 \begin{equation}
 L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda\left(\Omega - Z\right)\right]
-(\#eq:lagrange)
+(\#eq:lagrange2)
 \end{equation}
 
 and the augmented lagrangian is
 
 \begin{equation}
 L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda\left(\Omega - Z\right)\right] + \frac{\rho}{2}\left\|\Omega - Z\right\|_{F}^{2}
-(\#eq:auglagrangian)
+(\#eq:auglagrange2)
 \end{equation}
 
 
@@ -162,14 +169,14 @@ The ADMM algorithm is now the following:
 
 Set $k = 0$ and initialize $Z^{0}, \Lambda^{0}$, and $\rho$. Repeat steps 1-3 until convergence:
 
-1. Decompose $S + \Lambda^{k} - \rho Z^{k} = VQV'$ via spectral decomposition.
+1. Decompose $S + \Lambda^{k} - \rho Z^{k} = VQV'$ via spectral decomposition^[Proof of \@ref(eq:omegaalgo) in section \@ref(proofomegaalgo).]. Then
 
 \begin{equation}
 \Omega^{k + 1} = \frac{1}{2\rho}V\left[ -Q + \left( Q^{2} + 4\rho I_{p} \right)^{1/2} \right]V'
 (\#eq:omegaalgo)
 \end{equation}
 
-2. Elementwise soft-thresholding for all $i = 1,..., p$ and $j = 1,..., p$.
+2. Elementwise soft-thresholding for all $i = 1,..., p$ and $j = 1,..., p$^[Proof of \@ref(eq:ZZalgo) in section \@ref(proofZZalgo).].
 
 \begin{equation}
 \begin{split}
@@ -250,27 +257,18 @@ The first dual optimality condition is a result of taking the sub-differential o
 
 We will define the left-hand side of the first condition as the primal residual $r^{k + 1} = \Omega^{k + 1} - Z^{k + 1}$. At convergence, optimality conditions require that $r^{k + 1} \approx 0$. The second residual we will define is the dual residual $s^{k + 1} = \rho\left( Z^{k + 1} - Z^{k} \right)$. This residual is derived from the following:
 
-Because $\Omega^{k + 1}$ is the argument that minimizes $L_{p}\left( \Omega, Z^{k}, \Lambda^{k} \right)$,
+Because $\Omega^{k + 1}$ is the minimizer of the augmented lagragian, this implies that $0 \in \partial L_{p}\left( \Omega, Z^{k}, \Lambda^{k} \right)$ which further implies that^[Proof in section \@ref(proofdualresidual).]
 
 \begin{equation}
-\begin{split}
-  0 &\in \partial \left\{ f\left(\Omega^{k + 1}\right) + tr\left[ \Lambda^{k}\left( \Omega^{k + 1} - Z^{k} \right) \right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z^{k} \right\|_{F}^{2} \right\} \\
-  &= \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k} + \rho\left(\Omega^{k + 1} - Z^{k}\right) \\
-  &= \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k} + \rho\left(\Omega^{k + 1} + Z^{k + 1} - Z^{k + 1} - Z^{k}\right) \\
-  &= \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k} + \rho\left(\Omega^{k + 1} - Z^{k + 1}\right) + \rho\left(Z^{k + 1} - Z^{k}\right) \\
-  &= \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k + 1} + \rho\left(Z^{k + 1} - Z^{k}\right) \\
-  \Rightarrow 0 &\in \rho\left( Z^{k + 1} - Z^{k} \right)
+0 \in \rho\left( Z^{k + 1} - Z^{k} \right)
 (\#eq:dualresidual)
-\end{split}
 \end{equation}
 
-Like the primal residual, at convergence optimality conditions require that $s^{k + 1} \approx 0$. Note that the second dual optimality condition is always satisfied:
+Like the primal residual, at convergence optimality conditions require that $s^{k + 1} \approx 0$. Note that the second dual optimality condition is always satisfied^[Proof in section \@ref(proofdualopt).]:
 
 \begin{equation}
 \begin{split}
-  0 &\in \partial \left\{ g\left(Z^{k + 1}\right) + tr\left[ \Lambda^{k}\left( \Omega^{k + 1} - Z^{k + 1} \right) \right] + \rho\left\| \Omega^{k + 1} - Z^{k + 1} \right\|_{F}^{2} \right\} \\
-  &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k} - \rho\left(\Omega^{k + 1} - Z^{k + 1}\right) \\
-  &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1} \\
+  0 \in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1} \\
 (\#eq:dualopt)
 \end{split}
 \end{equation}
@@ -295,6 +293,7 @@ In the simulations below, we generate data from a number of different oracle pre
 
 We can see below that our cross validation procedure consistently chooses tuning parameters that are close to the optimal parameters with respsect to the oracle.
 
+HOW DID WE GENERATE THE DATA?
 
 
 ### Plots
