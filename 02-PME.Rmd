@@ -2,47 +2,54 @@
 # Precision Matrix Estimation
 
 
+### Literature Review?
 
+- Articles that review covariance and precision matrix estimation in high dimensional settings are @pourahmadi2013high and @fan2016overview.
+
+- The person who initially proposed the lasso-penalized gaussian likelihood precision matrix estimation is @yuan2007model.
+
+- Other authors who have proposed methods with non-lasso penalizations are (Frobenius norms) @witten2009covariance, @rothman2014existence, (non-convex penalties) @lam2009sparsistency, and @fan2009network.
+
+- Standard alternating direction method of multipliers approaches are found in @boyd11distributed.
+
+- ADMM with modification based on majorize-minimize principle is found in @lange2016mm.
+
+- Quadratic equation with ridge is solve in closed form using a similar approach to @witten2009covariance; @price2015ridge.
+
+- L1-penalized gaussian likelihood precision matrix estimator (@yuan2007model; @rothman2008sparse; @friedman2008sparse).
 
 ## Background
 
-Consider the case where we observe $n$ independent, identically distributed copies of the random variable ($X_{i}$) where $X_{i} \in \mathbb{R}^{p}$ is normally distributed with some mean, $\mu$, and some variance, $\Sigma$. That is, $X_{i} \sim N_{p}\left( \mu, \Sigma \right)$.
+Consider the case where we observe $n$ independent, identically distributed copies of the random variable ($X_{i}$) where $X_{i} \in \mathbb{R}^{p}$ is normally distributed with some mean, $\mu$, and some variance, $\Omega^{-1}$. That is, $X_{i} \sim N_{p}\left( \mu, \Omega^{-1} \right)$.
 
 Because we assume independence, we know that the probability of observing these specific observations $X_{1}, ..., X_{n}$ is equal to
 
 \begin{equation} 
 \begin{split}
-  f(X_{1}, ..., X_{n}; \mu, \Sigma) &= \prod_{i = 1}^{n}(2\pi)^{-p/2}\left| \Sigma \right|^{-1/2}\exp\left[ -\frac{1}{2}\left( X_{i} - \mu \right)'\Sigma^{-1}\left( X_{i} - \mu \right) \right] \\
-  &= (2\pi)^{-nr/2}\left| \Sigma \right|^{-n/2}\mbox{etr}\left[ -\frac{1}{2}\sum_{i = 1}^{n}\left( X_{i} - \mu \right)\left( X_{i} - \mu \right)'\Sigma^{-1} \right]
+  f(X_{1}, ..., X_{n}; \mu, \Omega^{-1}) &= \prod_{i = 1}^{n}(2\pi)^{-p/2}\left| \Omega \right|^{1/2}\exp\left[ -\frac{1}{2}\left( X_{i} - \mu \right)'\Omega\left( X_{i} - \mu \right) \right] \\
+  &= (2\pi)^{-np/2}\left| \Omega \right|^{n/2}\mbox{etr}\left[ -\frac{1}{2}\sum_{i = 1}^{n}\left( X_{i} - \mu \right)\left( X_{i} - \mu \right)'\Omega \right]
 \end{split}
 (\#eq:normallik)
 \end{equation} 
 
-where $\mbox{etr}\left( \cdot \right)$ denotes the exponential trace operator. It follows that the log-likelihood for $\mu$ and $\Sigma$ is equal to the following:
+where $\mbox{etr}\left( \cdot \right)$ denotes the exponential trace operator. It follows that the log-likelihood for $\mu$ and $\Omega$ is equal to the following:
 
 \begin{equation}
-  l(\mu, \Sigma | X) = const. - \frac{n}{2}\log\left| \Sigma \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \mu \right)\left(X_{i} - \mu \right)'\Sigma^{-1} \right]
+  l(\mu, \Omega | X) = const. + \frac{n}{2}\log\left| \Omega \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \mu \right)\left(X_{i} - \mu \right)'\Omega \right]
 (\#eq:normalloglik)
 \end{equation}
 
-If we are interested in estimating $\mu$, it is relatively straight forward to show that the maximum likelihood estimator (MLE) for $\mu$ is $\hat{\mu}_{MLE} = \sum_{i = 1}^{n}X_{i}/n$ which we typically denote as $\bar{X}$. However, in addition to $\mu$, many applications require the estimation of $\Sigma$ as well. We can also find a maximum likelihood estimator:
+If we are interested in estimating $\mu$, it is relatively straight forward to show that the maximum likelihood estimator (MLE) for $\mu$ is $\hat{\mu}^{MLE} = \sum_{i = 1}^{n}X_{i}/n$ which we typically denote as $\bar{X}$. However, in addition to $\mu$, many applications require the estimation of $\Sigma$ as well. We can also find a maximum likelihood estimator:
 
 \begin{equation}
-\hat{\Sigma}^{mle} = \arg\max_{\Sigma \in \mathbb{S}_{+}^{p}}\left\{ const. - \frac{n}{2}\log\left| \Sigma \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \mu \right)\left(X_{i} - \mu \right)'\Sigma^{-1} \right] \right\}
-(\#eq:sigmaloglik)
+\begin{split}
+\hat{\Omega}^{mle} &= \arg\max_{\Omega \in S_{+}^{p}}\left\{ const. + \frac{n}{2}\log\left| \Omega \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \mu \right)\left(X_{i} - \mu \right)'\Omega \right] \right\} \\
+  &= \left[ \frac{1}{n}\sum_{i = 1}^{n}\left(X_{i} - \bar{X} \right)\left(X_{i} - \bar{X} \right)' \right]^{-1}
+\end{split}
+(\#eq:omegamle)
 \end{equation}
 
-\begin{equation}
-\nabla_{\Sigma}l(\mu, \Sigma | X) = -\frac{n}{2}\Sigma^{-1} + \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \mu \right)\left(X_{i} - \mu \right)'\Sigma^{-2}
-(\#eq:nablasigma)
-\end{equation}
-
-\begin{equation}
-\Rightarrow \hat{\Sigma}^{mle} = \left[ \frac{1}{n}\sum_{i = 1}^{n}\left(X_{i} - \bar{X} \right)\left(X_{i} - \bar{X} \right)' \right]
-(\#eq:sigmamle)
-\end{equation}
-
-By setting the gradient equal to zero and plugging in the MLE for $\mu$, we find that the MLE for $\Sigma$ is our usual sample estimator often denoted as $S$. It turns out that we could have just as easily computed the maximum likelihood estimator for the precision matrix $\Omega \equiv \Sigma^{-1}$ and taken its inverse:
+By setting the gradient equal to zero and plugging in the MLE for $\mu$, we find that the MLE for $\Omega$ is the inverse our usual sample estimator for the covariance matrix, denoted here as $S^{-1}$. It turns out that we could have just as easily computed the maximum likelihood estimator for the precision matrix $\Omega \equiv \Sigma^{-1}$ and taken its inverse:
 
 \begin{equation}
 \hat{\Omega}^{mle} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| \right\}

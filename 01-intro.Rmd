@@ -45,6 +45,51 @@ We will illustrate this with a short simulation and show some of the new and int
 
 - What is SCPME?
 
+The reference we need here is @molstad2017shrinking!
+
+1. From @molstad2017shrinking: "To fit many predictive models, only a characteristic of the population precision matrix needs to be estimated. For example, in binary linear discriminant analysis, the population precision matrix is needed for prediction only through the product of the precision matrix and the difference between the two conditional distribution mean vectors. Many authors have proposed methods that directly estimate this characteristic @cai2011direct; @fan2012road; @mai2012direct."
+
+2. From @molstad2017shrinking: "@chen2016regularized proposed a method for estimating the characteristic $\Omega_{*}\mu_{*}$ directly, but like the direct linear discriminant methods, this apporach does not lead to an estimate of $\Omega_{*}$."
+
+3. Discuss linear regression application.... where $\beta = \Omega_{*}\Sigma_{*XY}$. Like @witten2009covariance, this approach estimates the regression coefficients "using shrinkage estimators of the marginal precision matrix for the predictors".
+
 - Guide
 
 - Model and notation
+
+
+## Outline
+
+
+- Why do we care about covariance matrices? Covariance matrices are an object that summarizes the relationship between variables.
+
+- What is a precision matrix? Precision matrix is the inverse of a covariance matrix.
+
+- Precision matrices are powerful, essential in representing relationships in variables
+
+- In fact, required to be estimated to fit many statistical models.
+
+- That is, we must provide an object that accurately summarizes the relationship and interaction between variables in our model.
+
+- Many proposed shrinkage estimators when p is particularly large. Shrinkage.
+
+- However, to fit these models, Molstad and Rothman focused on the fact that onnly a "characteristic" of a precision matrix is required to fit these models. "We propose a framework to shrink a user-specified characteristic of a precision matrix estimator."
+
+- For instance, LDA, linear regression, ...
+
+- Their approach/methodology was published in BLAH. Shrinking characteristic of precision matrix estimators.
+
+- BREAK
+
+- We wanted to explore the regression application that was mentioned but not pursued/investigated
+
+- This document will outline the research and work leading up to that
+
+- The document is outlined as follows...
+
+- We will begin chapter 2 with a brief introduction to precision matrix estimation. This will include mentions of estimation methods/approaches and we will spend a particular amount of time elaborating on one approach which is estimation via the ADMM algorithm. This dicussion will be useful when we circle back to SCPME, the regression application, and the augmented ADMM algorithm developed in BLAH.
+
+- Lastly, the document will end with two brief tutorials for the R packages ADMMsigma and SCPME. These packages, developed by myself, will be mentioned throughout the document and were instrumental in this pursued line of research and facilitated many simulations and research direction explored throughout. Both packages have since been published on CRAN
+
+
+## Model and Notation

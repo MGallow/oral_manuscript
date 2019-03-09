@@ -124,15 +124,77 @@ where soft is the soft-thresholding function.
 \begin{equation}
 \begin{split}
   0 &\in \partial \left\{ g\left(Z^{k + 1}\right) + tr\left[ \Lambda^{k}\left( \Omega^{k + 1} - Z^{k + 1} \right) \right] + \rho\left\| \Omega^{k + 1} - Z^{k + 1} \right\|_{F}^{2} \right\} \\
-  &\in \partial g\left(Z^{k + 1}\right) - \Lambda^{k} - \rho\left(\Omega^{k + 1} - Z^{k + 1}\right) \\
-  &\in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1} \\
+  &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k} - \rho\left(\Omega^{k + 1} - Z^{k + 1}\right) \\
+  &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1} \\
 (\#eq:appendixdualopt)\notag
 \end{split}
 \end{equation}
 
 
 
-### Proof of (2-3):
+### Proof of BLAHHHH
+
+To see why this particular function was used, consider the Taylor's expansion of $\rho\left\|A\Omega B - Z^{k} - C\right\|_{F}^{2}/2$:
+
+\begin{equation}
+\begin{split}
+  \frac{\rho}{2}\left\| A\Omega B - Z^{k} - C \right\|_{F}^{2} &\approx \frac{\rho}{2}\left\| A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2} \\
+  &+ \frac{\rho}{2}vec\left( \Omega - \Omega^{k}\right)^{T}\left(A^{T}A \otimes BB^{T}\right)vec\left(\Omega - \Omega^{k}\right) \\
+  &+ \rho vec\left(\Omega - \Omega^{k}\right)^{T}vec\left(BB^{T}\Omega^{k}A^{T}A - B(Z^{k})^{T}A - BC^{T}A \right)
+(\#eq:taylors)\notag
+\end{split}
+\end{equation}
+
+**Note:**
+
+\begin{equation}
+  \nabla_{\Omega}\left\{ \frac{\rho}{2}\left\|A\Omega B - Z - C\right\|_{F}^{2} \right\} = \rho BB^{T}\Omega A^{T}A - \rho BZ^{T}A - \rho BC^{T}A
+(\#eq:gradient)\notag
+\end{equation}
+
+\begin{equation}
+\nabla_{\Omega}^{2}\left\{ \frac{\rho}{2}\left\|A\Omega B - Z - C \right\|_{F}^{2} \right\} = \rho\left(A^{T}A \otimes BB^{T} \right)
+(\#eq:hessian)\notag
+\end{equation}
+
+This implies that
+
+\begin{equation}
+\begin{split}
+  \frac{\rho}{2}\left\| A\Omega B - Z^{k} - C \right\|_{F}^{2} &+ \frac{\rho}{2}vec\left(\Omega - \Omega^{k} \right)^{T}Q\left(\Omega - \Omega^{k} \right) \\
+  &\approx \frac{\rho}{2}\left\| A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2} + \frac{\rho}{2}vec\left(\Omega - \Omega^{k} \right)^{T}Q\left(\Omega - \Omega^{k} \right) \\
+  &+ \frac{\rho}{2}vec\left( \Omega - \Omega^{k}\right)^{T}\left(A^{T}A \otimes BB^{T}\right)vec\left(\Omega - \Omega^{k}\right) \\
+  &+ \rho vec\left(\Omega - \Omega^{k}\right)^{T}vec\left(BB^{T}\Omega^{k}A^{T}A - B(Z^{k})^{T}A - BC^{T}A \right) \\
+  &= \frac{\rho}{2}\left\| A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2} + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \\
+  &+ \rho tr\left[\left(\Omega - \Omega^{k}\right)\left(BB^{T}\Omega^{k}A^{T}A - B(Z^{k})^{T}A - BC^{T}A \right)\right]
+(\#eq:penapprox)\notag
+\end{split}
+\end{equation}
+
+Let us now plug in this equality into our optimization problem in step one:
+
+\begin{equation}
+\begin{split}
+  \Omega^{k + 1} &:= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\tilde{L}_{\rho}(\Omega, Z^{k}, \Lambda^{k}) \\
+  &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{\begin{matrix}
+ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \end{matrix}\right. \\
+  &+ \left.\begin{matrix} \frac{\rho}{2}vec\left(\Omega - \Omega^{k}\right)^{T}Q\left(\Omega - \Omega^{k}\right) \end{matrix}\right\} \\
+  &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{\begin{matrix}
+ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2} \end{matrix}\right. \\
+  &+ \left.\begin{matrix} \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} + \rho tr\left[\left(\Omega - \Omega^{k}\right)\left(BB^{T}\Omega^{k}A^{T}A - B(Z^{k})^{T}A - BC^{T}A \right)\right] \end{matrix}\right\} \\
+  &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{\begin{matrix}
+ tr\left[\left(S + \rho A^{T}(A\Omega^{k}B - Z^{k} - C + \Lambda^{k}/\rho)B^{T} \right)\Omega\right] \end{matrix}\right. \\
+  &- \left.\begin{matrix} \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \end{matrix}\right\} \\
+  &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{
+ tr\left[\left(S + G^{k} \right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\} \\
+(\#eq:omegaapprox)\notag
+\end{split}
+\end{equation}
+
+where $G^{k} = \rho A^{T}(A\Omega^{k}B - Z^{k} - C + \Lambda^{k}/\rho)B^{T}$.
+
+
+### Proof of \@ref(eq:Omegak) {#proofOmegak}
 
 \begin{equation}
 \Omega^{k + 1} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{tr\left[\left(S + G^{k}\right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\}
@@ -185,7 +247,7 @@ In summary, if we decompose $S + \left(G^{k} + (G^{k})^{T}\right)/2 - \rho\tau\O
 
 
 
-### Proof of (4)
+### Proof of \@ref(eq:Zk) {#proofZk}
 
 
 \begin{equation}
@@ -236,3 +298,207 @@ Z_{ij}^{k + 1} &= \frac{1}{\rho}\mbox{sign}\left(\rho(A\Omega_{ij}^{k + 1}B - C)
 \end{equation}
 
 where soft is the soft-thresholding function.
+
+
+
+### Proof of \@ref(eq:stopproof) {#proofstopproof}
+
+This residual is derived from the fact. Because $\Omega^{k + 1}$ is the argument that minimizes $L_{p}\left( \Omega, Z^{k}, \Lambda^{k} \right)$,
+
+\begin{equation}
+\begin{split}
+  0 &\in \partial \left\{ f\left(\Omega^{k + 1}\right) + tr\left[ \Lambda^{k}\left( A\Omega^{k + 1}B - Z^{k} - C \right) \right] + \frac{\rho}{2}\left\| A\Omega^{k + 1}B - Z^{k} - C \right\|_{F}^{2} \right\} \\
+  &= \partial f\left(\Omega^{k + 1} \right) + \frac{1}{2}\left(B(\Lambda^{k})^{T}A + A^{T}\Lambda^{k}B^{T} \right) + \frac{\rho}{2}\left( BB^{T}\Omega^{k + 1}A^{T}A + A^{T}A\Omega^{k + 1}BB^{T} \right) \\
+  &- \frac{\rho}{2}\left( A^{T}(Z^{k} + C)B^{T} + B(Z^{k} + C)^{T}A \right) \\
+  &= \partial f\left(\Omega^{k + 1} \right) + \frac{1}{2}\left(B(\Lambda^{k})^{T}A + A^{T}\Lambda^{k}B^{T} \right) \\
+  &+ \frac{\rho}{2}\left( B(B^{T}\Omega^{k + 1}A^{T} - (Z^{k})^{T} - C^{T})A + A^{T}(A\Omega^{k + 1}B - Z^{k} - C)B^{T} \right) \\
+  &= \partial f\left(\Omega^{k + 1} \right) + \frac{1}{2}\left( B(\Lambda^{k})^{T}A + A^{T}\Lambda^{k}B^{T} \right) + \frac{\rho}{2}\left(A^{T}(A\Omega^{k + 1}B - Z^{k + 1} + Z^{k + 1} - Z^{k} - C)B^{T} \right) \\
+  &+ \frac{\rho}{2}\left(B(B^{T}\Omega^{k + 1}A^{T} - (Z^{k + 1})^{T} + (Z^{k + 1})^{T} - (Z^{k})^{T} - C^{T})A \right) \\
+  &= \partial f\left(\Omega^{k + 1} \right) + \frac{1}{2}\left[ B\left((\Lambda^{k})^{T} + \rho(B^{T}\Omega^{k + 1}A^{T} - (Z^{k + 1})^{T} - C^{T}) \right)A \right] \\
+  &+ \frac{1}{2}\left[ A^{T}\left(\Lambda^{k} + \rho(A\Omega^{k + 1}B - Z^{k + 1} - c)B \right)B^{T} \right] + \frac{\rho}{2}\left(B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right) \\
+  &= \partial f\left(\Omega^{k + 1} \right) + \frac{1}{2}\left(B(\Lambda^{k + 1})^{T}A + A^{T}\Lambda^{k + 1}B^{T} \right) + \frac{\rho}{2}\left(B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right) \\
+  \Rightarrow 0 &\in \frac{\rho}{2}\left( B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right)
+(\#eq:appendixstopproof)\notag
+\end{split}
+\end{equation}
+
+
+
+### Proof of \@ref(eq:dualopt2) {#proofdualopt2}
+
+\begin{equation}
+\begin{split}
+  0 &\in \partial \left\{ g\left(Z^{k + 1}\right) + tr\left[ \Lambda^{k}\left( A\Omega^{k + 1}B - Z^{k + 1} - C \right) \right] + \rho\left\| A\Omega^{k + 1}B - Z^{k + 1} - C \right\|_{F}^{2} \right\} \\
+  &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k} - \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right) \\
+  &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1} \\
+(\#eq:dualopt2)\notag
+\end{split}
+\end{equation}
+
+
+
+### Connection to joint log-likelihood
+
+The last estimator in the previous section reveals an interesting connection to the joint log-likelihood of $X$ and $Y$ (under a few assumptions) when we consider its analogous *ridge* version - the *ridge SCPME estimator*:
+
+\begin{equation}
+\hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega \Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
+(\#eq:penregression)\notag
+\end{equation}
+
+To see this, let us suppose that we have $n$ independent copies of the random pair $(Y_{i}, X_{i})$ and we assume a linear relationship of the following form:
+
+\begin{equation}
+Y_{i} = \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right) + E_{i}
+(\#eq:linregression)\notag
+\end{equation}
+
+where $E_{i} \sim N_{r}\left( 0, \Omega_{y | x}^{-1} \right)$ and $X_{i} \sim N_{p}\left( \mu_{x}, \Omega^{-1} \right)$. These two assumptions imply that the conditional distribution of $Y_{i}|X_{i}$ is of the form
+
+\begin{equation}
+Y_{i} | X_{i} \sim N_{r}\left( \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right), \Omega_{y | x}^{-1} \right)
+(\#eq:linnormal)\notag
+\end{equation}
+
+We can use this conditional distribution along with the marginal distribution of $X$ to derive the joint likelihood of $X$ and $Y$. Similar to before, we will take $\Omega_{y | x} \equiv \Sigma_{y | x}^{-1}, \Omega \equiv \Sigma_{xx}^{-1}, \mbox{ and } \beta \equiv \Omega\Sigma_{xy}$ for convenience. We will also let $f$ denote the probability distribution function for each respective variable.
+
+\begin{equation}
+\begin{split}
+  L&\left( \Omega_{y | x}, \Omega, \mu_{x}, \mu_{y}, \beta | Y, X \right) \propto f\left(Y | X; \Omega_{y | x}, \Omega, \mu_{x}, \mu_{y}, \beta \right) \times f\left(X; \Omega, \mu_{x} \right) \\
+  &= \prod_{i = 1}^{n} (2\pi)^{-r/2}\left| \Omega_{y | x} \right|^{1/2} \exp\left[ -\frac{1}{2}\left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right)^{T}\Omega_{y | x}\left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right) \right] \\
+  &\times (2\pi)^{-p/2}\left| \Omega \right|^{1/2} \exp\left[ -\frac{1}{2}\left( X_{i} - \mu_{x} \right)^{T}\Omega\left( X_{i} - \mu_{x} \right) \right] \\
+  &\propto \left| \Omega_{y | x} \right|^{n/2}\mbox{etr}\left[ -\frac{1}{2}\sum_{i = 1}^{n}\left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right)\left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right)^{T}\Omega_{y | x} \right] \\
+  &\times \left| \Omega \right|^{n/2}\mbox{etr}\left[ -\frac{1}{2}\sum_{i = 1}^{n}\left( X_{i} - \mu_{x} \right)\left( X_{i} - \mu_{x} \right)^{T}\Omega \right]
+(\#eq:jointlik)\notag
+\end{split}
+\end{equation}
+
+where $\mbox{etr}\left( \cdot \right)$ denotes the exponential trace operator. This implies that the joint log-likelihood is of the following form:
+
+\begin{equation}
+\begin{split}
+  l&\left( \Omega_{y | x}, \Omega, \mu_{x}, \mu_{y}, \beta | Y, X \right) = const. + \frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}\sum_{i = 1}^{n}tr\left[ \left( X_{i} - \mu_{x} \right)\left( X_{i} - \mu_{x} \right)^{T}\Omega \right] \\
+  &+ \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}\sum_{i = 1}^{n} tr\left[ \left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right)\left( Y_{i} - \mu_{y} - \beta^{T}\left(X_{i} - \mu_{x}\right) \right)^{T}\Omega_{y | x} \right]
+(\#eq:jointloglik)\notag
+\end{split}
+\end{equation}
+
+**Note:** this form simplifies significantly if we solve for $\mu_{x}$ and $\mu_{y}$ and make a few additional assumptions about our data.
+
+\begin{equation}
+\begin{split}
+ \nabla_{\mu_{y}}l\left\{\cdot\right\} &= \nabla_{\mu_{y}}\left\{ -\frac{1}{2}tr\left[ -n\mu_{y}\left(\bar{Y} - \beta^{T}(\bar{X} - \mu_{x})\right)^{T}\Omega_{y | x} - n\left(\bar{Y} - \beta^{T}(\bar{X} - \mu_{x})\right)\mu_{y}^{T}\Omega_{y | x} + n\mu_{y}\mu_{y}^{T}\Omega_{y | x} \right] \right\} \\
+ &= -\frac{1}{2}\left[ -n\Omega_{y | x}\left(\bar{Y} - \beta^{T}(\bar{X} - \mu_{x}) \right) - n\Omega_{y | x}\left(\bar{Y} - \beta^{T}(\bar{X} - \mu_{x}) \right) + 2n\Omega_{y | x}\mu_{y} \right] \\
+ \Rightarrow \hat{\mu}_{y} &= \bar{Y} - \hat{\beta}^{T}\left(\bar{X} - \hat{\mu_{x}}\right)
+ (\#eq:gradient2)\notag
+\end{split}
+\end{equation}
+
+
+\begin{equation}
+\begin{split}
+  \nabla_{\mu_{x}}l\left\{\cdot\right\} &= \nabla_{\mu_{x}}\left\{ -\frac{1}{2}tr\left[n\beta^{T}\mu_{x}\left(\bar{Y} - \mu_{y} - \beta^{T}\bar{X} \right)^{T}\Omega_{y | x} + n\left(\bar{Y} - \mu_{y} - \beta^{T}\bar{X} \right)\mu_{x}^{T}\beta\Omega_{y | x} + \beta^{T}\mu_{x}\mu_{x}^{T}\beta\Omega_{y | x} \right] \right\} \\
+ &-\nabla_{\mu_{x}}\left\{\frac{1}{2}tr\left[ -n\mu_{x}\bar{X}^{T}\Omega - n\bar{X}\mu_{x}^{T}\Omega + n\mu_{x}\mu_{x}^{T}\Omega \right] \right\} \\
+ &= -\frac{1}{2}\left[n\beta\Omega_{y | x}\left(\bar{Y} - \mu_{y} - \beta^{T}\bar{X} \right) + n\beta\Omega_{y | x}\left(\bar{Y} - \mu_{y} - \beta^{T}\bar{X} \right) + 2\beta\Omega_{y | x}\beta^{T}\mu_{x} \right] \\
+ &-\frac{1}{2}\left( -n\Omega\bar{X} - n\Omega\bar{X} + 2n\Omega\mu_{x} \right) \\
+ \Rightarrow 0 &= -n\hat{\beta}\hat{\Omega}_{y | x}(\bar{Y} - \hat{\mu}_{y} - \hat{\beta}^{T}\bar{X}) - \hat{\beta}\hat{\Omega}_{y | x}\hat{\beta}^{T}\hat{\mu}_{x} + n\hat{\Omega}\bar{X} - n\hat{\Omega}\hat{\mu}_{x} \\
+ \Rightarrow 0 &= n\hat{\Omega}\bar{X} - n\hat{\Omega}\hat{\mu}_{x} \\
+ \Rightarrow \hat{\mu}_{x} &= \bar{X}
+(\#eq:gradient3)\notag
+\end{split}
+\end{equation}
+
+Therefore, by plugging in $\hat{\mu}_{x}$ into $\hat{\mu}_{y}$, we find that $\hat{\mu}_{y} = \bar{Y}$ and $\hat{\mu}_{x} = \bar{X}$.
+
+Without loss of generality, let us assume that $\bar{X} = \bar{Y} = 0$. This can be achieved by simply centering the data by the sample averages. Putting all of this together and recalling that $\beta \equiv \Omega\Sigma_{xy}$, we have that the partially maximized joint log-likelihood is the following:
+
+\begin{equation}
+\begin{split}
+  l\left( \Omega_{y | x}, \Omega, \Sigma_{xy} | Y, X \right) &= const. + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}\sum_{i = 1}^{n} tr\left[ \left( Y_{i} - \Sigma_{xy}^{T}\Omega X_{i} \right)\left( Y_{i} - \Sigma_{xy}^{T}\Omega X_{i} \right)^{T}\Omega_{y | x} \right] \\
+  &+\frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}\sum_{i = 1}^{n}tr\left( X_{i}X_{i}^{T}\Omega \right) \\
+  &= const. + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{xy} \right)^{T}\left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{xy} \right)\Omega_{y | x} \right] \\
+  &+ \frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}tr\left( \mathbb{X}^{T}\mathbb{X}\Omega \right) \\
+  &= const. + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{xy} \right)^{T}\left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{y | x} \right)\Omega_{y | x} \right] \\
+  &+ \frac{n}{2}\log\left| \Omega \right| - \frac{n}{2}tr\left( S\Omega \right)
+(\#eq:partialjointloglik)\notag
+\end{split}
+\end{equation}
+
+where $S = \mathbb{X}^{T}\mathbb{X}/n$. Now suppose we are interested in solving for $\Omega$:
+
+\begin{equation}
+\begin{split}
+  \hat{\Omega} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}-l\left( \Omega_{y | x}, \Omega, \Sigma_{xy} | Y, X \right) \\
+  &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{xy} \right)^{T}\left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{xy} \right)\Omega_{y | x} \right] + \frac{n}{2}tr\left( S\Omega \right) - \frac{n}{2}\log\left| \Omega \right| \right\} \\
+  &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left( S\Omega \right) - \log\left| \Omega \right| + \frac{1}{n}\left\| \left( \mathbb{Y} - \mathbb{X}\Omega\Sigma_{xy} \right)\Omega_{y | x}^{1/2} \right\|_{F}^{2} \right\}
+(\#eq:omegajointloglik)\notag
+\end{split}
+\end{equation}
+
+where $\left\|\cdot\right\|_{F}$ denotes the Frobenius norm. Further, let us assume that, given $X$, each of the $r$ responses are pairwise independent with equal variance so that $\Omega_{y | x}^{1/2} = I_{r}/\sigma_{y | x}$ and let $\lambda = 2/(n\sigma_{y | x}^{2})$. Therefore, we have that
+
+\begin{equation}
+\hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left( S\Omega \right) - \log\left| \Omega \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega\Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
+(\#eq:omegajointmle)\notag
+\end{equation}
+
+Notice that this is exactly the ridge SCPME estimator!
+
+
+
+### Takeaways from connection to joint log-likelihood
+
+We have shown that solving for the ridge SCPME estimator is equivalent to solving for the MLE for $\Omega \equiv \Sigma_{xx}^{-1}$ when the following assumptions hold:
+
+1. Each observation $(Y_{i}, X_{i})$ is independent and linearly distributed such that
+
+\begin{equation}
+Y_{i} = \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right) + E_{i}
+(\#eq:linregression2)\notag
+\end{equation}
+
+where $E_{i} \sim N_{r}\left( 0, \Omega_{y | x}^{-1} \right)$ and $X_{i} \sim N_{p}\left( \mu_{x}, \Omega^{-1} \right)$.
+
+2. Given $X$, each of the $r$ responses in $Y \in \mathbb{R}^{r}$ is independent of one another with equal variance such that $\Omega_{y | x}^{-1} \equiv \Sigma_{y | x} = I_{r}/\sigma_{y | x}^{2}$.
+
+3. Let the tuning parameter $\lambda = 2/(n\sigma_{y | x}^{2})$.
+
+In addition, only a very slight modification of the augmented ADMM algorithm in @molstad2017shrinking is required to compute this estimate:
+
+Set $k = 0$ and repeat steps 1-6 until convergence.
+
+1. Compute $G^{k} = \rho A^{T}\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}\Lambda^{k} \right)B^{T}$
+
+2. Decompose $S + \left( G^{k} + (G^{k})^{T} \right)/2 - \rho\tau\Omega^{k} = VQV^{T}$ (via the spectral decomposition).
+
+3. Set $\Omega^{k + 1} = V\left( -Q + (Q^{2} + 4\rho\tau I_{p})^{1/2} \right)V^{T}/(2\rho\tau)$
+
+4. Set $Z^{k + 1} = \left[ \rho\left( A\Omega^{k + 1} B - C \right) + \Lambda^{k} \right]/(\lambda + \rho)$
+
+5. Set $\Lambda^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)$
+
+6. Replace $k$ with $k + 1$.
+
+Note that the only difference is in step 4.
+
+There are a few takeaways we can make after revealing this connection. The first is that the estimator constructed in the previous section is, in fact, solving a very similar problem to that of optimizing the joint likelihood with respect to $\Omega$. The second takeaway is that the SCPME algorithmic framework offers a very efficient method of computing this joint likelihood estimator. No closed-form solution to this estimator exists (to the best of my knowledge) and so we must resort to some iterative algorithm like the SCPME agumented ADMM algorithm in order to solve it. We show this below:
+
+\begin{equation}
+\hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\lambda}{2}\left\|\mathbb{X}\Omega\hat{\Sigma}_{xy} - \mathbb{Y}\right\|_{F}^{2} \right\}
+(\#eq:penregression2)\notag
+\end{equation}
+
+\begin{equation}
+\begin{split}
+  \nabla_{\Omega}&\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\lambda}{2}\left\|\mathbb{X}\Omega\hat{\Sigma}_{xy} - \mathbb{Y}\right\|_{F}^{2} \right\} \\
+  &= \nabla_{\Omega}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\lambda}{2}tr\left[(\mathbb{X}\Omega\hat{\Sigma}_{xy} - \mathbb{Y})^{T}(\mathbb{X}\Omega\hat{\Sigma}_{xy} - \mathbb{Y}) \right] \right\} \\
+  &= \nabla_{\Omega}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\lambda}{2}tr\left(\Omega\mathbb{X}^{T}\mathbb{X}\Omega\hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T} - 2\Omega\hat{\Sigma}_{xy}\mathbb{Y}^{T}\mathbb{X} \right) \right\} \\
+  &= 2S - S\circ I_{p} - 2\Omega^{-1} + \Omega^{-1}\circ I_{p} + \lambda\mathbb{X}^{T}\mathbb{X}\Omega\hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T} + \lambda\hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T}\Omega\mathbb{X}^{T}\mathbb{X} \\
+  &- \lambda\mathbb{X}^{T}\mathbb{X}\Omega\hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T}\circ I_{p} - \hat{\Sigma}_{xy}\mathbb{Y}^{T}\mathbb{X} - \mathbb{X}^{T}\mathbb{Y}\hat{\Sigma}_{xy} + \hat{\Sigma}_{xy}\mathbb{Y}^{T}\mathbb{X}\circ I_{P} \\
+  \Rightarrow 0 &= S - \hat{\Omega}^{-1} + \frac{\lambda}{2}\left(\mathbb{X}^{T}\mathbb{X}\hat{\Omega}\hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T} + \hat{\Sigma}_{xy}\hat{\Sigma}_{xy}^{T}\hat{\Omega}\mathbb{X}^{T}\mathbb{X} \right) - \lambda\hat{\Sigma}_{xy}\mathbb{Y}^{T}\mathbb{X}
+(\#eq:penregressionproof)\notag
+\end{split}
+\end{equation}
+
+by multiplying all of the off-diagonal elements by $1/2$. Note that we cannot isolate $\hat{\Omega}$.
+
