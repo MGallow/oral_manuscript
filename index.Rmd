@@ -25,9 +25,9 @@ toc_appendix: yes
 fontsize: 11pt
 linestretch: 1.5
 link-citations: yes
-#url: 'https://mgallow.github.io/oral_manuscript/'
+url: 'http://mattxgalloway.com/oral_manuscript/'
 github-repo: MGallow/oral_manuscript
-description: "This is a working manuscript in preparation for Matt Galloway's master's thesis defense."
+description: "Matt Galloway's Master's thesis."
 ---
 
 ```{r setup, include=FALSE}

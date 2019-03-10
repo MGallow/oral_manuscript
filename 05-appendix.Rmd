@@ -331,7 +331,7 @@ This residual is derived from the fact. Because $\Omega^{k + 1}$ is the argument
   0 &\in \partial \left\{ g\left(Z^{k + 1}\right) + tr\left[ \Lambda^{k}\left( A\Omega^{k + 1}B - Z^{k + 1} - C \right) \right] + \rho\left\| A\Omega^{k + 1}B - Z^{k + 1} - C \right\|_{F}^{2} \right\} \\
   &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k} - \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right) \\
   &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1} \\
-(\#eq:dualopt2)\notag
+(\#eq:appendixdualopt2)\notag
 \end{split}
 \end{equation}
 

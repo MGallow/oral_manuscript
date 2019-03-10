@@ -1,7 +1,7 @@
 
 # `ADMMsigma` R Package
 
-`ADMMsigma` is an R package that estimates a penalized precision matrix, often denoted $\Omega$, via the alternating direction method of multipliers (ADMM) algorithm. Though not the fastest estimation method, the ADMM algorithm is easily adaptable and allows for rapid experimentation by the user -- the primary goal of this package.
+`ADMMsigma` is an R package that estimates a penalized precision matrix, often denoted $\Omega$, via the alternating direction method of multipliers (ADMM) algorithm. Though not the fastest estimation method, the ADMM algorithm is easily adaptable and allows for rapid experimentation by the user, which is the primary goal of this package.
 
 The package currently supports a general elastic-net penalty that allows for both ridge and lasso-type penalties as special cases. In particular, the algorithm solves the following optimization problem:
 
@@ -11,19 +11,19 @@ where $\lambda > 0$, $0 \leq \alpha \leq 1$ are tuning parameters, $\left\|\cdot
 
 A list of functions contained in the package can be found below:
 
-* `ADMMsigma()` computes the estimated precision matrix (ridge, lasso, and elastic-net type regularization optional)
+* `ADMMsigma()` computes the estimated precision matrix via the ADMM algorithm (ridge, lasso, and elastic-net regularization optional)
 
 * `RIDGEsigma()` computes the estimated ridge penalized precision matrix via closed-form solution
 
-* `plot.ADMMsigma()` produces a heat map or line graph for cross validation errors
+* `plot.ADMMsigma()` produces a heat map or optional line graph for cross validation errors
 
-* `plot.RIDGEsigma()` produces a heat map or line graph for cross validation errors
+* `plot.RIDGEsigma()` produces a heat map or optional line graph for cross validation errors
 
 
 
 ## Installation
 
-<br>\vspace{0.5cm}
+
 ```{r, eval = FALSE}
 # The easiest way to install is from CRAN
 install.packages("ADMMsigma")
@@ -34,7 +34,7 @@ devtools::install_github("MGallow/ADMMsigma")
 ```
 <br>\vspace{0.5cm}
 
-This package is hosted on Github at [github.com/MGallow/ADMMsigma](https://github.com/MGallow/ADMMsigma).
+This package is hosted on Github at [github.com/MGallow/ADMMsigma](https://github.com/MGallow/ADMMsigma). The project website is located at [mattxgalloway.com/ADMMsigma](http://mattxgalloway.com/ADMMsigma/).
 
 
 
@@ -42,7 +42,7 @@ This package is hosted on Github at [github.com/MGallow/ADMMsigma](https://githu
 
 By default, `ADMMsigma` will estimate a penalized precision matrix, $\Omega$, using the elastic-net penalty and choose the optimal $\lambda$ and $\alpha$ tuning parameters. The primary function is simply `ADMMsigma()`. The input value $X$ is an $n \times p$ data matrix so that there are $n$ rows each representing an observation and $p$ columns each representing a unique feauture or variable.
 
-Here, the data matrix is $100 \times 5$ and generated from a multivariate normal distribution with mean zero and tapered oracle covariance matrix $S$. A tapered covariance matrix has an inverse - or precision matrix - that is tri-diagonal. That is, the precision matrix is sparse and the shrinkage penalty used here should prove useful.
+Here, we will use a $100 \times 5$ data matrix that is generated from a multivariate normal distribution with mean zero and tapered oracle covariance matrix $S$. A tapered covariance matrix has an inverse - or precision matrix - that is tri-diagonal, which is useful for illustration purposes because the object is sparse (many zero entries) and the shrinkage penalty should prove useful.
 
 <br>\vspace{0.5cm}
 ```{r, message = FALSE, echo = FALSE}
@@ -77,7 +77,7 @@ ADMMsigma(X, tol.abs = 1e-8, tol.rel = 1e-8)
 
 We can see that the optimal $\alpha$ value selected is one. This selection corresponds with a lasso penalty -- a special case of the elastic-net penalty.
 
-We can also explicitly assume sparsity in our estimate - rather than let the package decide - by restricting the class of penalties to the lasso. We do this by simply setting `alpha = 1` in our function:
+We can also explicitly assume sparsity in our estimate rather than let the package decide by restricting the class of penalties to the lasso. We do this by simply setting `alpha = 1` in our function:
 
 <br>\vspace{0.5cm}
 ```{r, message = FALSE, echo = TRUE}
@@ -88,7 +88,7 @@ ADMMsigma(X, alpha = 1)
 ```
 <br>\vspace{0.5cm}
 
-`ADMMsigma` also has the capability to provide plots for the cross validation errors. This allows the user to analyze and select the appropriate tuning parameters. In the heatmap plot below, the more bright (white) areas of the heat map correspond to a better tuning parameter selection. In the line graph, each line corresponds to a different $\alpha$ tuning parameter.
+`ADMMsigma` also has the capability to provide plots for the cross validation errors. This allows the user to analyze and manually select the appropriate tuning parameters. In the heatmap plot below, the bright, white areas of the heat map correspond to a better tuning parameter selection (low validation error). In the line graph, each line corresponds to a different $\alpha$ tuning parameter.
 
 <br>\vspace{0.5cm}
 ```{r ADMMsigmapackage1, message = FALSE, echo = TRUE, fig.cap = "CV heatmap for ADMMsigma tutorial.", out.width = "80%"}
@@ -107,4 +107,4 @@ plot(ADMM, type = "line")
 ```
 <br>\vspace{0.5cm}
 
-`ADMMsigma` has a number of more advanced options such as cross validation criteria, regularization path, and parallel processing that are explained in detail on the project website at [mattxgalloway.com/ADMMsigma](http://mattxgalloway.com/ADMMsigma/).
+`ADMMsigma` has a number of more advanced options such as cross validation criteria, regularization path, and parallel CV that are explained in more detail on the project website at [mattxgalloway.com/ADMMsigma](http://mattxgalloway.com/ADMMsigma/).

@@ -29,14 +29,14 @@ Because we assume independence, we know that the probability of observing these 
   f(X_{1}, ..., X_{n}; \mu, \Omega^{-1}) &= \prod_{i = 1}^{n}(2\pi)^{-p/2}\left| \Omega \right|^{1/2}\exp\left[ -\frac{1}{2}\left( X_{i} - \mu \right)'\Omega\left( X_{i} - \mu \right) \right] \\
   &= (2\pi)^{-np/2}\left| \Omega \right|^{n/2}\mbox{etr}\left[ -\frac{1}{2}\sum_{i = 1}^{n}\left( X_{i} - \mu \right)\left( X_{i} - \mu \right)'\Omega \right]
 \end{split}
-(\#eq:normallik)
+(\#eq:normallik)\notag
 \end{equation} 
 
 where $\mbox{etr}\left( \cdot \right)$ denotes the exponential trace operator. It follows that the log-likelihood for $\mu$ and $\Omega$ is equal to the following:
 
 \begin{equation}
   l(\mu, \Omega | X) = const. + \frac{n}{2}\log\left| \Omega \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \mu \right)\left(X_{i} - \mu \right)'\Omega \right]
-(\#eq:normalloglik)
+(\#eq:normalloglik)\notag
 \end{equation}
 
 If we are interested in estimating $\mu$, it is relatively straight forward to show that the maximum likelihood estimator (MLE) for $\mu$ is $\hat{\mu}^{MLE} = \sum_{i = 1}^{n}X_{i}/n$ which we typically denote as $\bar{X}$. However, in addition to $\mu$, many applications require the estimation of $\Sigma$ as well. We can also find a maximum likelihood estimator:
@@ -46,14 +46,14 @@ If we are interested in estimating $\mu$, it is relatively straight forward to s
 \hat{\Omega}^{mle} &= \arg\max_{\Omega \in S_{+}^{p}}\left\{ const. + \frac{n}{2}\log\left| \Omega \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \mu \right)\left(X_{i} - \mu \right)'\Omega \right] \right\} \\
   &= \left[ \frac{1}{n}\sum_{i = 1}^{n}\left(X_{i} - \bar{X} \right)\left(X_{i} - \bar{X} \right)' \right]^{-1}
 \end{split}
-(\#eq:omegamle)
+(\#eq:omegamle)\notag
 \end{equation}
 
 By setting the gradient equal to zero and plugging in the MLE for $\mu$, we find that the MLE for $\Omega$ is the inverse our usual sample estimator for the covariance matrix, denoted here as $S^{-1}$. It turns out that we could have just as easily computed the maximum likelihood estimator for the precision matrix $\Omega \equiv \Sigma^{-1}$ and taken its inverse:
 
 \begin{equation}
 \hat{\Omega}^{mle} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| \right\}
-(\#eq:omegamle)
+(\#eq:omegamlesimple)
 \end{equation}
 
 so that $\hat{\Omega}^{MLE} = S^{-1}$. Beyond the formatting convenience, computing estimates for $\Omega$ as opposed to $\Sigma$ often poses less computational challenges -- and accordingly, the literature has placed more emphasis on efficiently solving for $\Omega$ instead of $\Sigma$^[Notice that here we are *minimizing* the negative log-likelihood as opposed to maximizing the log-likelihood. Both procedures will result in the same estimate.].
@@ -65,42 +65,7 @@ As in regression settings, we can construct a *penalized* log-likelihood estimat
 (\#eq:omegapen)
 \end{equation}
 
-$P\left( \Omega \right)$ is often of the form $P\left(\Omega \right) = \lambda\|\Omega \|_{F}^{2}/2$ or $P\left(\Omega \right) = \|\Omega\|_{1}$ where $\lambda > 0$, $\left\|\cdot \right\|_{F}^{2}$ is the Frobenius norm and we define $\left\|A \right\|_{1} = \sum_{i, j} \left| A_{ij} \right|$. These penalties are the ridge and lasso, respectively. In the `ADMMsigma` package, we instead take
-
-\begin{equation}
-P\left( \Omega \right) = \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right]
-(\#eq:penelastic)
-\end{equation}
-
-so that solving the full penalized log-likelihood for $\Omega$ results in solving
-
-\begin{equation}
-\hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right] \right\}
-(\#eq:optimelastic)
-\end{equation}
-
-where $0 \leq \alpha \leq 1$. This penalty, know as the *elastic-net* penalty, was explored by Hui Zou and Trevor Hastie [@zou2005regularization] and is identical to the penalty used in the popular penalized regression package `glmnet`. Clearly, when $\alpha = 0$ the elastic-net reduces to a ridge-type penalty and when $\alpha = 1$ it reduces to a lasso-type penalty. Having this flexibility and generalization allows us to perform cross validation across proposed $\alpha$ values in addition to proposed $\lambda$ values.
-
-The penalty proposed by @molstad2017shrinking is one of the following form:
-
-\begin{equation}
-P\left(\Omega\right) = \lambda\left\| A\Omega B - C \right\|_{1}
-(\#eq:penmolstad)
-\end{equation}
-
-where $A \in \mathbb{R}^{m \times p}, B \in \mathbb{R}^{p \times q}, \mbox{ and } C \in \mathbb{R}^{m \times q}$ are matrices assumed to be known and specified by the user. Solving the full penalized log-likelihood for $\Omega$ results in solving
-
-\begin{equation}
-\hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\left\| A\Omega B - C \right\|_{1} \right\}
-(\#eq:omegaloglik2)
-\end{equation}
-
-This form of penalty is particularly useful because matrices $A, B, \mbox{ and } C$ can be constructed so that we penalize the sum, absolute value of a *characteristic* of the precision matrix $\Omega$. This type of penalty leads to many new, interesting, and novel estimators for $\Omega$. An example of one such estimator (suppose we observe $n$ samples of $Y_{i} \in \mathbb{R}^{r}$) would be one where we set $A = I_{p}, B = \Sigma_{xy}, \mbox{ and } C = 0$ where $\Sigma_{xy}$ is the covariance matrix of $X$ and $Y$. This penalty has the effect of assuming sparsity in the forward regression coefficient $\beta \equiv \Omega\Sigma_{xy}$. Of course, in practice we do not know the true covariance matrix $\Sigma_{xy}$ but we might consider using the sample estimate $\hat{\Sigma}_{xy} = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(Y_{i} - \bar{Y}\right)^{T}/n$
-
-We will explore how to solve for $\hat{\Omega}$ in the next section.
-
-
-
+$P\left( \Omega \right)$ is often of the form $P\left(\Omega \right) = \lambda\|\Omega \|_{F}^{2}/2$ or $P\left(\Omega \right) = \|\Omega\|_{1}$ where $\lambda > 0$, $\left\|\cdot \right\|_{F}^{2}$ is the Frobenius norm and we define $\left\|A \right\|_{1} = \sum_{i, j} \left| A_{ij} \right|$. These penalties are the ridge and lasso, respectively.
 
 
 
@@ -117,21 +82,21 @@ In general, suppose we want to solve an optimization problem of the following fo
   \mbox{minimize } f(x) + g(z) \\
   \mbox{subject to } Ax + Bz = c
 \end{split}
-(\#eq:boyd)
+(\#eq:boyd)\notag
 \end{equation}
 
 where $x \in \mathbb{R}^{n}, z \in \mathbb{R}^{m}, A \in \mathbb{R}^{p \times n}, B \in \mathbb{R}^{p \times m}$, $c \in \mathbb{R}^{p}$, and $f$ and $g$ are assumed to be convex functions (following @boyd2011distributed, the estimation procedure will be introduced in vector form though we could just as easily take $x$ and $z$ to be matrices). In addition to penalized precision matrix estimation, optimization problems like this arise naturally in several statistics and machine learning applications -- particularly regularization methods. For instance, we could take $f$ to be the squared error loss, $g$ to be the $l_{2}$-norm, $c$ to be equal to zero and $A$ and $B$ to be identity matrices to solve the ridge regression optimization problem. In all cases, our goal is to find $x^{*} \in \mathbb{R}^{n}$ and $z^{*} \in \mathbb{R}^{m}$ that achieves the infimum $p^{*}$:
 
 \begin{equation}
 p^{*} = inf\left\{ f(x) + g(z) | Ax + Bz = c \right\}
-(\#eq:infimum)
+(\#eq:infimum)\notag
 \end{equation}
 
 To do so, the ADMM algorithm uses the *augmented lagrangian*
 
 \begin{equation}
 L_{\rho}(x, z, y) = f(x) + g(z) + y'(Ax + Bz - c) + \frac{\rho}{2}\left\| Ax + Bz - c \right\|_{2}^{2}
-(\#eq:auglagrange)
+(\#eq:auglagrange)\notag
 \end{equation}
 
 where $y \in \mathbb{R}^{p}$ is the lagrange multiplier and $\rho > 0$ is a scalar. Clearly any minimizer, $p^{*}$, under the augmented lagrangian is equivalent to that of the lagrangian since any feasible point $(x, z)$ satisfies the constraint $\rho\left\| Ax + Bz - c \right\|_{2}^{2}/2 = 0$.
@@ -144,28 +109,47 @@ The algorithm consists of the following repeated iterations:
   z^{k + 1} &= \arg\min_{z \in \mathbb{R}^{m}}L_{\rho}(x^{k + 1}, z, y^{k}) \\
   y^{k + 1} &= y^{k} + \rho(Ax^{k + 1} + Bz^{k + 1} - c)
 \end{split}  
-(\#eq:admmalgo)
+(\#eq:admmalgo)\notag
 \end{equation}
 
 In the context of precision matrix estimation, we can let $f$ be equal to the non-penalized likelihood, $g$ be equal to $P\left( \Omega \right)$, and use the constraint $\Omega$ equal to some $Z$ so that the lagrangian is
 
 \begin{equation}
 L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda\left(\Omega - Z\right)\right]
-(\#eq:lagrange2)
+(\#eq:lagrange2)\notag
 \end{equation}
 
 and the augmented lagrangian is
 
 \begin{equation}
 L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda\left(\Omega - Z\right)\right] + \frac{\rho}{2}\left\|\Omega - Z\right\|_{F}^{2}
-(\#eq:auglagrange2)
+(\#eq:auglagrange2)\notag
 \end{equation}
+
+
+\vspace{3cm}
+
+In the `ADMMsigma` package, we instead take
+
+\begin{equation}
+P\left( \Omega \right) = \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right]
+(\#eq:penelastic)\notag
+\end{equation}
+
+so that solving the full penalized log-likelihood for $\Omega$ results in solving
+
+\begin{equation}
+\hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right] \right\}
+(\#eq:optimelastic)
+\end{equation}
+
+where $0 \leq \alpha \leq 1$. This penalty, know as the *elastic-net* penalty, was explored by Hui Zou and Trevor Hastie [@zou2005regularization] and is identical to the penalty used in the popular penalized regression package `glmnet`. Clearly, when $\alpha = 0$ the elastic-net reduces to a ridge-type penalty and when $\alpha = 1$ it reduces to a lasso-type penalty. Having this flexibility and generalization allows us to perform cross validation across proposed $\alpha$ values in addition to proposed $\lambda$ values.
 
 
 The ADMM algorithm is now the following:
 
 \begin{align}
-  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[\Lambda^{k}\left(\Omega - Z^{k}\right)\right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} \right\} (\#eq:omegaauglagrange) \\
+  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[\Lambda^{k}\left(\Omega - Z^{k}\right)\right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} \right\} (#eq:omegaauglagrange) \\
   Z^{k + 1} &= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\} (\#eq:ZZauglagrange) \\
   \Lambda^{k + 1} &= \Lambda^{k} + \rho\left( \Omega^{k + 1} - Z^{k + 1} \right) (\#eq:lamauglagrange)
 \end{align}
@@ -197,7 +181,7 @@ Z_{ij}^{k + 1} &= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{sign}\left(\rho\Omeg
 
 \begin{equation}
 \Lambda^{k + 1} = \Lambda^{k} + \rho\left( \Omega^{k + 1} - Z^{k + 1} \right)
-(\#eq:lamalgo)
+(\#eq:lamalgo)\notag
 \end{equation}
 
 where $\mbox{soft}(a, b) = \mbox{sign}(a)(\left| a \right| - b)_{+}$.
@@ -213,24 +197,24 @@ There is another popular, alternate form of the ADMM algorithm used by scaling t
   tr\left[ \Lambda^{k}\left( \Omega - Z^{k} \right) \right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} &= tr\left[ \Lambda^{k}R^{k} \right] + \frac{\rho}{2}\left\| R^{k} \right\|_{F}^{2} \\
   &= \frac{\rho}{2}\left\| R^{k} + \Lambda^{k}/\rho \right\|_{F}^{2} - \frac{\rho}{2}\left\| \Lambda^{k}/\rho \right\|_{F}^{2} \\
   &= \frac{\rho}{2}\left\| R^{k} + U^{k} \right\|_{F}^{2} - \frac{\rho}{2}\left\| U^{k} \right\|_{F}^{2}
-(\#eq:scaled)
+(\#eq:scaled)\notag
 \end{split}
 \end{equation}
 
 Therefore, a scaled-form can now be written as
 
 \begin{align}
-  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{R}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\rho}{2}\left\| \Omega - Z^{k} + U^{k} \right\|_{F}^{2} \right\} (\#eq:omegascaled) \\
-  Z^{k + 1} &= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z + U^{k} \right\|_{F}^{2} \right\} (\#eq:ZZscaled) \\
-  U^{k + 1} &= U^{k} + \Omega^{k + 1} - Z^{k + 1} (\#eq:Uscaled)
+  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{R}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\rho}{2}\left\| \Omega - Z^{k} + U^{k} \right\|_{F}^{2} \right\} (\#eq:omegascaled)\notag \\
+  Z^{k + 1} &= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z + U^{k} \right\|_{F}^{2} \right\} (\#eq:ZZscaled)\notag \\
+  U^{k + 1} &= U^{k} + \Omega^{k + 1} - Z^{k + 1} (\#eq:Uscaled)\notag
 \end{align}
 
 And more generally (in vector form),
 
 \begin{align}
-  x^{k + 1} &= \arg\min_{x}\left\{ f(x) + \frac{\rho}{2}\left\| Ax + Bz^{k} - c + u^{k} \right\|_{2}^{2} \right\} (\#eq:xscaled) \\
-  z^{k + 1} &= \arg\min_{z}\left\{ g(z) + \frac{\rho}{2}\left\| Ax^{k + 1} + Bz - c + u^{k} \right\|_{2}^{2} \right\} (\#eq:zscaled) \\
-  u^{k + 1} &= u^{k} + Ax^{k + 1} + Bz^{k + 1} - c (\#eq:uscaled)
+  x^{k + 1} &= \arg\min_{x}\left\{ f(x) + \frac{\rho}{2}\left\| Ax + Bz^{k} - c + u^{k} \right\|_{2}^{2} \right\} (\#eq:xscaled)\notag \\
+  z^{k + 1} &= \arg\min_{z}\left\{ g(z) + \frac{\rho}{2}\left\| Ax^{k + 1} + Bz - c + u^{k} \right\|_{2}^{2} \right\} (\#eq:zscaled)\notag \\
+  u^{k + 1} &= u^{k} + Ax^{k + 1} + Bz^{k + 1} - c (\#eq:uscaled)\notag
 \end{align}
 
 Note that there are limitations to using this method. Because the dual variable is scaled by $\rho$ (the step size), this form limits one to using a constant step size without making further adjustments to $U^{k}$. It has been shown in the literature that a dynamic step size (like the one used in `ADMMsigma`) can significantly reduce the number of iterations required for convergence.
@@ -247,7 +231,7 @@ Below we have three optimality conditions:
 
 \begin{equation}
 \Omega^{k + 1} - Z^{k + 1} = 0
-(\#eq:admmprimal)
+(\#eq:admmprimal)\notag
 \end{equation}
 
 2. Dual:
@@ -256,7 +240,7 @@ Below we have three optimality conditions:
 \begin{split}
   0 &\in \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k + 1} \\
   0 &\in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}
-(\#eq:admmdual)
+(\#eq:admmdual)\notag
 \end{split}
 \end{equation}
 
@@ -264,14 +248,14 @@ The first dual optimality condition is a result of taking the sub-differential o
 
 We will define the left-hand side of the first condition as the primal residual $r^{k + 1} = \Omega^{k + 1} - Z^{k + 1}$. At convergence, optimality conditions require that $r^{k + 1} \approx 0$. The second residual we will define is the dual residual $s^{k + 1} = \rho\left( Z^{k + 1} - Z^{k} \right)$. This residual is derived from the following:
 
-Because $\Omega^{k + 1}$ is the minimizer of the augmented lagragian, this implies that $0 \in \partial L_{p}\left( \Omega, Z^{k}, \Lambda^{k} \right)$ which further implies that^[Proof in section \@ref(proofdualresidual).]
+Because $\Omega^{k + 1}$ is the minimizer of the augmented lagragian^[Proof of \@ref(eq:dualresidual) in section \@ref(proofdualresidual).], this implies that $0 \in \partial L_{p}\left( \Omega, Z^{k}, \Lambda^{k} \right)$ which further implies that
 
 \begin{equation}
 0 \in \rho\left( Z^{k + 1} - Z^{k} \right)
 (\#eq:dualresidual)
 \end{equation}
 
-Like the primal residual, at convergence optimality conditions require that $s^{k + 1} \approx 0$. Note that the second dual optimality condition is always satisfied^[Proof in section \@ref(proofdualopt).]:
+Like the primal residual, at convergence optimality conditions require that $s^{k + 1} \approx 0$. Note that the second dual optimality condition is always satisfied^[Proof of \@ref(eq:dualopt) in section \@ref(proofdualopt).]:
 
 \begin{equation}
 \begin{split}
@@ -286,7 +270,7 @@ One possible stopping criterion is to set $\epsilon^{rel} = \epsilon^{abs} = 10^
 \begin{split}
   \epsilon^{pri} &= p\epsilon^{abs} + \epsilon^{rel}\max\left\{ \left\| \Omega^{k + 1} \right\|_{F}, \left\| Z^{k + 1} \right\|_{F} \right\} \\
   \epsilon^{dual} &= p\epsilon^{abs} + \epsilon^{rel}\left\| \Lambda^{k + 1} \right\|_{F}
-(\#eq:admmstopping)
+(\#eq:admmstopping)\notag
 \end{split}
 \end{equation}
 
@@ -368,73 +352,73 @@ knitr::include_graphics("images/compound_N1000_P10.png")
 ```
 
 
-#### Dense: P = 100, N = 50
+<!-- #### Dense: P = 100, N = 50 -->
 
-```{r, message = FALSE, echo = TRUE, eval = FALSE, tidy = FALSE}
+<!-- ```{r, message = FALSE, echo = TRUE, eval = FALSE, tidy = FALSE} -->
 
-# generate eigen values
-eigen = c(rep(1000, 5, rep(1, 100 - 5)))
+<!-- # generate eigen values -->
+<!-- eigen = c(rep(1000, 5, rep(1, 100 - 5))) -->
 
-# randomly generate orthogonal basis (via QR)
-Q = matrix(rnorm(100*100), nrow = 100, ncol = 100) %>% qr %>% qr.Q
+<!-- # randomly generate orthogonal basis (via QR) -->
+<!-- Q = matrix(rnorm(100*100), nrow = 100, ncol = 100) %>% qr %>% qr.Q -->
 
-# generate covariance matrix
-S = Q %*% diag(eigen) %*% t(Q)
+<!-- # generate covariance matrix -->
+<!-- S = Q %*% diag(eigen) %*% t(Q) -->
 
-# generate data
-Z = matrix(rnorm(100*50), nrow = 50, ncol = 100)
-out = eigen(S, symmetric = TRUE)
-S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
-X = Z %*% S.sqrt
+<!-- # generate data -->
+<!-- Z = matrix(rnorm(100*50), nrow = 50, ncol = 100) -->
+<!-- out = eigen(S, symmetric = TRUE) -->
+<!-- S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors) -->
+<!-- X = Z %*% S.sqrt -->
 
-```
-<br>\vspace{0.5cm}
+<!-- ``` -->
+<!-- <br>\vspace{0.5cm} -->
 
-<!-- <center> -->
-<!-- ![Figure caption here.](images/repsKLdenseQR_N50_P100.png){ -->
-<!-- width=90% } -->
-<!-- </center> -->
-<!-- } -->
+<!-- <!-- <center> --> -->
+<!-- <!-- ![Figure caption here.](images/repsKLdenseQR_N50_P100.png){ --> -->
+<!-- <!-- width=90% } --> -->
+<!-- <!-- </center> --> -->
+<!-- <!-- } --> -->
 
-```{r admmsim3, eval = T, echo = F, fig.cap = "Figure caption here."}
+<!-- ```{r admmsim3, eval = T, echo = F, fig.cap = "Figure caption here."} -->
 
-knitr::include_graphics("images/repsKLdenseQR_N50_P100.png")
+<!-- knitr::include_graphics("images/repsKLdenseQR_N50_P100.png") -->
 
-```
+<!-- ``` -->
 
 
-#### Dense: P = 10, N = 50
+<!-- #### Dense: P = 10, N = 50 -->
 
-```{r, message = FALSE, echo = TRUE, eval = FALSE, tidy = FALSE}
+<!-- ```{r, message = FALSE, echo = TRUE, eval = FALSE, tidy = FALSE} -->
 
-# generate eigen values
-eigen = c(rep(1000, 5, rep(1, 10 - 5)))
+<!-- # generate eigen values -->
+<!-- eigen = c(rep(1000, 5, rep(1, 10 - 5))) -->
 
-# randomly generate orthogonal basis (via QR)
-Q = matrix(rnorm(10*10), nrow = 10, ncol = 10) %>% qr %>% qr.Q
+<!-- # randomly generate orthogonal basis (via QR) -->
+<!-- Q = matrix(rnorm(10*10), nrow = 10, ncol = 10) %>% qr %>% qr.Q -->
 
-# generate covariance matrix
-S = Q %*% diag(eigen) %*% t(Q)
+<!-- # generate covariance matrix -->
+<!-- S = Q %*% diag(eigen) %*% t(Q) -->
 
-# generate data
-Z = matrix(rnorm(10*50), nrow = 50, ncol = 10)
-out = eigen(S, symmetric = TRUE)
-S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
-X = Z %*% S.sqrt
+<!-- # generate data -->
+<!-- Z = matrix(rnorm(10*50), nrow = 50, ncol = 10) -->
+<!-- out = eigen(S, symmetric = TRUE) -->
+<!-- S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors) -->
+<!-- X = Z %*% S.sqrt -->
 
-```
-<br>\vspace{0.5cm}
+<!-- ``` -->
+<!-- <br>\vspace{0.5cm} -->
 
-<!-- <center> -->
-<!-- ![Figure caption here.](images/repsKLdense_N50_P10.png){ -->
-<!-- width=90% } -->
-<!-- </center> -->
+<!-- <!-- <center> --> -->
+<!-- <!-- ![Figure caption here.](images/repsKLdense_N50_P10.png){ --> -->
+<!-- <!-- width=90% } --> -->
+<!-- <!-- </center> --> -->
 
-```{r admmsim4, eval = T, echo = F, fig.cap = "Figure caption here."}
+<!-- ```{r admmsim4, eval = T, echo = F, fig.cap = "Figure caption here."} -->
 
-knitr::include_graphics("images/repsKLdense_N50_P10.png")
+<!-- knitr::include_graphics("images/repsKLdense_N50_P10.png") -->
 
-```
+<!-- ``` -->
 
 
 #### Tridiagonal: P = 100, N = 50

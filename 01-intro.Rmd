@@ -1,6 +1,8 @@
 
 # Introduction {#intro}
 
+
+
 In many statistical applications, estimating the covariance matrix, $\Sigma$, for a set of random variables is a critical task. The covariance matrix is useful because it characterizes the *relationship* between variables. For instance, suppose we have three variables $X, Y, \mbox{ and } Z$ and their covariance matrix is of the form
 
 \begin{equation}
@@ -16,34 +18,7 @@ We can gather valuable information from this matrix. First of all, we know that 
 
 Unfortunately, estimating $\Sigma$ well is often computationally expensive and, in a few settings, extremely challenging. For this reason, emphasis in the literature and elsewhere has been placed on estimating the inverse of $\Sigma$ which we like to denote as $\Omega \equiv \Sigma^{-1}$.
 
-If we have data that is normally distributed with mean $\mu$ and variance $\Sigma$ (that is, $X_{i} \sim N_{p}\left(\mu, \Sigma \right)$), the optimal estimator for $\Omega$ with respect to the log-likelihood is of the form
-
-\begin{equation}
-\hat{\Omega}^{MLE} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| \right\}
-(\#eq:mleoptim)\notag
-\end{equation}
-
-where $S$ denotes the usual sample estimator ($S = \sum_{i = 1}^{n}\left(X_{i} - \bar{X} \right)\left(X_{i} - \bar{X} \right)^{T})$). As in regression settings, we can construct *penalized* log-likelihood estimators by adding a penalty term, $P\left(\Omega\right)$, to the log-likelihood so that
-
-\begin{equation}
-\hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + P\left( \Omega \right) \right\}
-(\#eq:penoptim)\notag
-\end{equation}
-
-$P\left( \Omega \right)$ is often of the form $P\left(\Omega \right) = \lambda\|\Omega \|_{F}^{2}/2$ or $P\left(\Omega \right) = \|\Omega\|_{1}$ where $\lambda > 0$, $\left\|\cdot \right\|_{F}^{2}$ is the Frobenius norm and we define $\left\|A \right\|_{1} = \sum_{i, j} \left| A_{ij} \right|$. These penalties are the ridge and lasso, respectively. The penalty proposed in @molstad2017shrinking, however, is of the form $P\left(\Omega\right) = \left\|A\Omega B - C\right\|_{1}$ so that the general optimization problem is
-
-\begin{equation}
-\hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \lambda\left\| A\Omega B - C \right\|_{1} \right\}
-(\#eq:molstadeq)\notag
-\end{equation}
-
-`SCPME` is an implementation of the proposed augmented ADMM algorithm in @molstad2017shrinking for solving the previous optimization problem. In addition, this package places a big emphasis on flexibility that allows for rapid experimentation for the end user.
-
-We will illustrate this with a short simulation and show some of the new and interesting estimators for $\Omega$ that are a result of this penalty.
-
-- Why do we care?
-
-- What is SCPME?
+### references
 
 The reference we need here is @molstad2017shrinking!
 
@@ -92,4 +67,10 @@ The reference we need here is @molstad2017shrinking!
 - Lastly, the document will end with two brief tutorials for the R packages ADMMsigma and SCPME. These packages, developed by myself, will be mentioned throughout the document and were instrumental in this pursued line of research and facilitated many simulations and research direction explored throughout. Both packages have since been published on CRAN
 
 
-## Model and Notation
+### Notation and Definitions
+
+For strictly positive integers $n$ and $p$, we will denote $\mathbb{R}^{n \times p}$ as the class of real matrices with dimenson $n \times p$. The class of real, symmetric matrices with dimension $p \times p$ will be denoted as $\mathbb{S}^{p}$ and $\mathbb{S}^{p}_{+}$ if we further require the object to be positive definite. The sample size in a given data set will most often correspond with $n$ and $p$ will correspond with the dimension of the prediction vector. If the dimension of the response vector exceeds one, we will denote it as $r$.
+
+Most matrices will take the form of either $\Sigma$, which should be taken to represent the population covariance matrix, or $\Omega$, which should be taken to represent the population *precision* matrix. Note that the precision matrix is simply the inverse of the covariance matrix ($\Omega \equiv \Sigma^{-1}$). We will sometimes add a subscript star if the object is oracle - or known- a priori ($\Omega_{*}$) and the population object's estimator that minimizes/maximizes a pre-specified objective function will have a hat attached to it ($\hat{\Omega}$).
+
+There will be significant matrix algebra notation throughout the document. The trace operator which sums the diagonal elements of a matrix will take the form $tr\left(\cdot\right)$ and the *exponential* trace operator will be denoted similarly as $etr\left(\cdot\right)$. The determinant of a matrix $\mathbf{A}$ will be denoted as $\left|\mathbf{A}\right|$ but may also take the form as simply $det\left(\mathbf{A}\right)$. The kronecker product of two matrices $\mathbf{A}$ and $\mathbf{B}$ will be denoted as $\mathbf{A} \otimes \mathbf{B}$. Lastly, the Frobenius norm which sums the square of all entries in a matrix will be denoted as $\left\|\mathbf{A}\right\|_{F}$ and we will define $\left\|\mathbf{A}\right\|_{1} := \sum_{i, j}\left|\mathbf{A}_{ij}\right|$ where the $i$-$j$th element in matrix $\mathbf{A}$ is denoted as $\left(\mathbf{A}\right)_{ij}$ or simply $\mathbf{A}_{ij}$.
