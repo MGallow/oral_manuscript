@@ -149,9 +149,9 @@ where $0 \leq \alpha \leq 1$. This penalty, know as the *elastic-net* penalty, w
 The ADMM algorithm is now the following:
 
 \begin{align}
-  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[\Lambda^{k}\left(\Omega - Z^{k}\right)\right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} \right\} (#eq:omegaauglagrange) \\
-  Z^{k + 1} &= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\} (\#eq:ZZauglagrange) \\
-  \Lambda^{k + 1} &= \Lambda^{k} + \rho\left( \Omega^{k + 1} - Z^{k + 1} \right) (\#eq:lamauglagrange)
+  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[\Lambda^{k}\left(\Omega - Z^{k}\right)\right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} \right\} \\
+  Z^{k + 1} &= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\} \\
+  \Lambda^{k + 1} &= \Lambda^{k} + \rho\left( \Omega^{k + 1} - Z^{k + 1} \right)
 \end{align}
 
 
@@ -204,17 +204,17 @@ There is another popular, alternate form of the ADMM algorithm used by scaling t
 Therefore, a scaled-form can now be written as
 
 \begin{align}
-  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{R}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\rho}{2}\left\| \Omega - Z^{k} + U^{k} \right\|_{F}^{2} \right\} (\#eq:omegascaled)\notag \\
-  Z^{k + 1} &= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z + U^{k} \right\|_{F}^{2} \right\} (\#eq:ZZscaled)\notag \\
-  U^{k + 1} &= U^{k} + \Omega^{k + 1} - Z^{k + 1} (\#eq:Uscaled)\notag
+  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{R}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\rho}{2}\left\| \Omega - Z^{k} + U^{k} \right\|_{F}^{2} \right\} \\
+  Z^{k + 1} &= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z + U^{k} \right\|_{F}^{2} \right\} \\
+  U^{k + 1} &= U^{k} + \Omega^{k + 1} - Z^{k + 1}
 \end{align}
 
 And more generally (in vector form),
 
 \begin{align}
-  x^{k + 1} &= \arg\min_{x}\left\{ f(x) + \frac{\rho}{2}\left\| Ax + Bz^{k} - c + u^{k} \right\|_{2}^{2} \right\} (\#eq:xscaled)\notag \\
-  z^{k + 1} &= \arg\min_{z}\left\{ g(z) + \frac{\rho}{2}\left\| Ax^{k + 1} + Bz - c + u^{k} \right\|_{2}^{2} \right\} (\#eq:zscaled)\notag \\
-  u^{k + 1} &= u^{k} + Ax^{k + 1} + Bz^{k + 1} - c (\#eq:uscaled)\notag
+  x^{k + 1} &= \arg\min_{x}\left\{ f(x) + \frac{\rho}{2}\left\| Ax + Bz^{k} - c + u^{k} \right\|_{2}^{2} \right\} \\
+  z^{k + 1} &= \arg\min_{z}\left\{ g(z) + \frac{\rho}{2}\left\| Ax^{k + 1} + Bz - c + u^{k} \right\|_{2}^{2} \right\} \\
+  u^{k + 1} &= u^{k} + Ax^{k + 1} + Bz^{k + 1} - c
 \end{align}
 
 Note that there are limitations to using this method. Because the dual variable is scaled by $\rho$ (the step size), this form limits one to using a constant step size without making further adjustments to $U^{k}$. It has been shown in the literature that a dynamic step size (like the one used in `ADMMsigma`) can significantly reduce the number of iterations required for convergence.

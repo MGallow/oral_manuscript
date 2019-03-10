@@ -39,16 +39,16 @@ We will explore how to solve for $\hat{\Omega}$ in the next section.
 The ADMM algorithm - thanks to it's flexibility - is particularly well-suited to solve penalized-likelihood optimization problems that arise naturally in several statistics and machine learning applications. Within the context of @molstad2017shrinking, this algorithm would consist of iterating over the following three steps:
 
 \begin{align}
-  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}L_{\rho}(\Omega, Z^{k}, \Lambda^{k}) (\#eq:omegaauglagrange2)\notag \\
-  Z^{k + 1} &= \arg\min_{Z \in \mathbb{R}^{n \times r}}L_{\rho}(\Omega^{k + 1}, Z, \Lambda^{k}) (\#eq:ZZauglagrange2)\notag \\
-  \Lambda^{k + 1} &= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right) (\#eq:lamauglagrange2)\notag
+  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}L_{\rho}(\Omega, Z^{k}, \Lambda^{k}) \\
+  Z^{k + 1} &= \arg\min_{Z \in \mathbb{R}^{n \times r}}L_{\rho}(\Omega^{k + 1}, Z, \Lambda^{k}) \\
+  \Lambda^{k + 1} &= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right)
 \end{align}
 
 where $L_{p}(\cdot)$ is the *augmented lagrangian* defined as
 
 \begin{equation}
 L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda^{T}\left(A\Omega B - Z - C\right)\right] + \frac{\rho}{2}\left\|A\Omega B - Z - C\right\|_{F}^{2}
-(\#eq:auglagrange2)
+(\#eq:auglagrange3)
 \end{equation}
 
 with $f\left(\Omega\right) = tr\left(S\Omega\right) - \log\left|\Omega\right|$ and $g\left(Z\right) = \lambda\left\|Z\right\|_{1}$. However, instead of solving the first step exactly, the authors propose an alternative, approximating objective function ($\tilde{L}$) based on the majorize-minimize principle -- the purpose of which is to find a solution that can be solved in closed form.
@@ -75,9 +75,9 @@ since $\rho > 0$ and $vec\left(\Omega - \Omega^{k}\right)$ is always nonzero whe
 The *augmented ADMM* algorithm is the following:
 
 \begin{align}
-  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{tr\left[\left(S + G^{k}\right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\} (\#eq:omegaaugadmm)\notag \\
-  Z^{k + 1} &= \arg\min_{Z \in \mathbb{R}^{n \times r}}\left\{\lambda\left\|Z\right\|_{1} + tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \right\} (\#eq:ZZaugadmm)\notag \\
-  \Lambda^{k + 1} &= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right) (\#eq:lamaugadmm)\notag
+  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{tr\left[\left(S + G^{k}\right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\}\\
+  Z^{k + 1} &= \arg\min_{Z \in \mathbb{R}^{n \times r}}\left\{\lambda\left\|Z\right\|_{1} + tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \right\} \\
+  \Lambda^{k + 1} &= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right)
 \end{align}
 
 
