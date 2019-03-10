@@ -1,70 +1,31 @@
 
 # Introduction {#intro}
 
+In the simplest terms, inferential statistics boils down to two primary components: estimation and prediction. Estimation tends to refer to the process by which we infer properties and behavior about individual parameters. For instance, decision theory tell us that the method by which we estimate parameters should be one that incurs low risk or variance. Prediction, on the other hand, tends to refer to the process of determining the likelihood of an unknown or unforseeable event. Right now, prediction is king. The demand for good, predictive models has sparked huge investments in research and given rise to communities - like the machine learning community - whose primary goal is establishing good predictive models.
 
+However, though prediction is getting a lot of attention, these two components are not entirely distinct and often go hand-in-hand. In fact, the success of many predictive models is largely contingent upon the ability to be efficient and proficient in estimation. That is, the succces and reliability of prediction is often a product of good estimation.
 
-In many statistical applications, estimating the covariance matrix, $\Sigma$, for a set of random variables is a critical task. The covariance matrix is useful because it characterizes the *relationship* between variables. For instance, suppose we have three variables $X, Y, \mbox{ and } Z$ and their covariance matrix is of the form
+For instance, many statistical models require the estimation of the co-variability and interaction between variables. This statistical object often comes in the form of a precision matrix ($\Omega$) - or the inverse of the covariance matrix. For this reason, in the last decade there has been an ever-expanding community devoted to matrix precision estimation. Like the covariance matrix, the precision matrix offers a powerful way of presenting the covariance - or pairwise variability between any two random variables.
 
-\begin{equation}
-\Sigma_{xyz} = \begin{pmatrix}
-1 & 0 & 0.5 \\ 
-0 & 1 & 0 \\ 
-0.5 & 0 & 1
-\end{pmatrix}
-(\#eq:ex)\notag
-\end{equation}
+Fisher's linear discriminant analysis (LDA) is one of these statistical models. Under the assumption of normal data, the model aims to classify observations into two or more populations of data. 
 
-We can gather valuable information from this matrix. First of all, we know that each of the variables has an equal variance of 1. Second,  we know that variables $X$ and $Y$ are likely independent because the covariance between the two is equal to 0. This implies that any information in $X$ is useless in trying to gather information about $Y$. Lastly, we know that variables $X$ and $Z$ are moderately, positively correlated because their covariance is 0.5.
+The central theme of this thesis is on precision matrix estimation but also expanding on a paper written by Aaron Molstad and Adam Rothman in 2017. In this paper, @molstad2017shrinking focused on the fact that only a "characteristic" of a precision matrix is required to fit these models.
 
-Unfortunately, estimating $\Sigma$ well is often computationally expensive and, in a few settings, extremely challenging. For this reason, emphasis in the literature and elsewhere has been placed on estimating the inverse of $\Sigma$ which we like to denote as $\Omega \equiv \Sigma^{-1}$.
-
-### references
-
-The reference we need here is @molstad2017shrinking!
-
-1. From @molstad2017shrinking: "To fit many predictive models, only a characteristic of the population precision matrix needs to be estimated. For example, in binary linear discriminant analysis, the population precision matrix is needed for prediction only through the product of the precision matrix and the difference between the two conditional distribution mean vectors. Many authors have proposed methods that directly estimate this characteristic @cai2011direct; @fan2012road; @mai2012direct."
+- From @molstad2017shrinking: "To fit many predictive models, only a characteristic of the population precision matrix needs to be estimated. For example, in binary linear discriminant analysis, the population precision matrix is needed for prediction only through the product of the precision matrix and the difference between the two conditional distribution mean vectors. Many authors have proposed methods that directly estimate this characteristic @cai2011direct; @fan2012road; @mai2012direct."
 
 2. From @molstad2017shrinking: "@chen2016regularized proposed a method for estimating the characteristic $\Omega_{*}\mu_{*}$ directly, but like the direct linear discriminant methods, this apporach does not lead to an estimate of $\Omega_{*}$."
 
-3. Discuss linear regression application.... where $\beta = \Omega_{*}\Sigma_{*XY}$. Like @witten2009covariance, this approach estimates the regression coefficients "using shrinkage estimators of the marginal precision matrix for the predictors".
+With the goal of improving performance..
 
-- Guide
+They offer a framework to do other things...
 
-- Model and notation
-
-
-## Outline
+Their approach/methodoloy was published in BLAH. Shrinking Characteristic of precision matrix estimators.
 
 
-- Why do we care about covariance matrices? Covariance matrices are an object that summarizes the relationship between variables.
+The purpose of this work began with the desire to expand on the work in @molstad2017shrinking and to explore avenues that were mentioned but were not further investigated. One of these research directions was the application of their shrinking characteristics approach to regression. However, in order to get to that point and to build up the knowledge to understand and contribute new material, there were a number of concepts that needed to be understood along the way. This document will follow that journey.
 
-- What is a precision matrix? Precision matrix is the inverse of a covariance matrix.
+We will begin chapter 2 with a brief introduction to the area of precision matrix estimation and the gaussian log-likelihood function. This section will include mentions of other estimation methods and algorithms but most discussion we will spent on the ADMM algorithm. This discussion will be useful when we begin elaborating on the shrinking characteristics approach (sometimes referred to as SCPME), the augmented ADMM algorithm, and later the application to regression. Lastly, the document will end with two brief tutorials for the R packages `ADMMsigma` and `SCPME`. These packages were developed by myself to aid in simulation experiments and make it easier to branch into related research directions. Both packages have since been published on CRAN.
 
-- Precision matrices are powerful, essential in representing relationships in variables
-
-- In fact, required to be estimated to fit many statistical models.
-
-- That is, we must provide an object that accurately summarizes the relationship and interaction between variables in our model.
-
-- Many proposed shrinkage estimators when p is particularly large. Shrinkage.
-
-- However, to fit these models, Molstad and Rothman focused on the fact that onnly a "characteristic" of a precision matrix is required to fit these models. "We propose a framework to shrink a user-specified characteristic of a precision matrix estimator."
-
-- For instance, LDA, linear regression, ...
-
-- Their approach/methodology was published in BLAH. Shrinking characteristic of precision matrix estimators.
-
-- BREAK
-
-- We wanted to explore the regression application that was mentioned but not pursued/investigated
-
-- This document will outline the research and work leading up to that
-
-- The document is outlined as follows...
-
-- We will begin chapter 2 with a brief introduction to precision matrix estimation. This will include mentions of estimation methods/approaches and we will spend a particular amount of time elaborating on one approach which is estimation via the ADMM algorithm. This dicussion will be useful when we circle back to SCPME, the regression application, and the augmented ADMM algorithm developed in BLAH.
-
-- Lastly, the document will end with two brief tutorials for the R packages ADMMsigma and SCPME. These packages, developed by myself, will be mentioned throughout the document and were instrumental in this pursued line of research and facilitated many simulations and research direction explored throughout. Both packages have since been published on CRAN
 
 
 ### Notation and Definitions
@@ -73,4 +34,4 @@ For strictly positive integers $n$ and $p$, we will denote $\mathbb{R}^{n \times
 
 Most matrices will take the form of either $\Sigma$, which should be taken to represent the population covariance matrix, or $\Omega$, which should be taken to represent the population *precision* matrix. Note that the precision matrix is simply the inverse of the covariance matrix ($\Omega \equiv \Sigma^{-1}$). We will sometimes add a subscript star if the object is oracle - or known- a priori ($\Omega_{*}$) and the population object's estimator that minimizes/maximizes a pre-specified objective function will have a hat attached to it ($\hat{\Omega}$).
 
-There will be significant matrix algebra notation throughout the document. The trace operator which sums the diagonal elements of a matrix will take the form $tr\left(\cdot\right)$ and the *exponential* trace operator will be denoted similarly as $etr\left(\cdot\right)$. The determinant of a matrix $\mathbf{A}$ will be denoted as $\left|\mathbf{A}\right|$ but may also take the form as simply $det\left(\mathbf{A}\right)$. The kronecker product of two matrices $\mathbf{A}$ and $\mathbf{B}$ will be denoted as $\mathbf{A} \otimes \mathbf{B}$. Lastly, the Frobenius norm which sums the square of all entries in a matrix will be denoted as $\left\|\mathbf{A}\right\|_{F}$ and we will define $\left\|\mathbf{A}\right\|_{1} := \sum_{i, j}\left|\mathbf{A}_{ij}\right|$ where the $i$-$j$th element in matrix $\mathbf{A}$ is denoted as $\left(\mathbf{A}\right)_{ij}$ or simply $\mathbf{A}_{ij}$.
+There will be significant matrix algebra notation throughout the document. The trace operator which sums the diagonal elements of a matrix will take the form $tr\left(\cdot\right)$ and the *exponential* trace operator will be denoted similarly as $etr\left(\cdot\right)$. The determinant of a matrix $\mathbf{A}$ will be denoted as $\left|\mathbf{A}\right|$ but may also take the form as simply $det\left(\mathbf{A}\right)$. The kronecker product of two matrices $\mathbf{A}$ and $\mathbf{B}$ will be denoted as $\mathbf{A} \otimes \mathbf{B}$ and the element-wise product will be denoted as $\mathbf{A} \circ \mathbf{B}$. Lastly, the Frobenius norm which sums the square of all entries in a matrix will be denoted as $\left\|\mathbf{A}\right\|_{F}$ and we will define $\left\|\mathbf{A}\right\|_{1} := \sum_{i, j}\left|\mathbf{A}_{ij}\right|$ where the $i$-$j$th element in matrix $\mathbf{A}$ is denoted as $\left(\mathbf{A}\right)_{ij}$ or simply $\mathbf{A}_{ij}$.

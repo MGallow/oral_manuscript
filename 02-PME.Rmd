@@ -1,28 +1,16 @@
 
 # Precision Matrix Estimation
 
-
-### Literature Review?
-
-- Articles that review covariance and precision matrix estimation in high dimensional settings are @pourahmadi2013high and @fan2016overview.
-
-- The person who initially proposed the lasso-penalized gaussian likelihood precision matrix estimation is @yuan2007model.
-
-- Other authors who have proposed methods with non-lasso penalizations are (Frobenius norms) @witten2009covariance, @rothman2014existence, (non-convex penalties) @lam2009sparsistency, and @fan2009network.
-
-- Standard alternating direction method of multipliers approaches are found in @boyd11distributed.
-
-- ADMM with modification based on majorize-minimize principle is found in @lange2016mm.
-
-- Quadratic equation with ridge is solve in closed form using a similar approach to @witten2009covariance; @price2015ridge.
-
-- L1-penalized gaussian likelihood precision matrix estimator (@yuan2007model; @rothman2008sparse; @friedman2008sparse).
-
 ## Background
 
-Consider the case where we observe $n$ independent, identically distributed copies of the random variable ($X_{i}$) where $X_{i} \in \mathbb{R}^{p}$ is normally distributed with some mean, $\mu$, and some variance, $\Omega^{-1}$. That is, $X_{i} \sim N_{p}\left( \mu, \Omega^{-1} \right)$.
+The foundation of much of the precision matrix estimation literature is the gaussian negative log-likelihood. We consider the case where we observe $n$ independent, identically distributed (iid) copies of the random variable ($X_{i}$) where $X_{i} \in \mathbb{R}^{p}$ is normally distributed with some mean, $\mu$, and some variance, $\Omega^{-1}$. That is, $X_{i}$ follows a $p$-dimensional normal distribution $X_{i} \sim N_{p}\left( \mu, \Omega^{-1} \right)$. Note that this formulation implies that $\mu \in \mathbb{R}^{p}$, $\Omega^{-1} \in \mathbb{S}_{+}^{p}$, and the probability of observing a single $X_{i}$ is
 
-Because we assume independence, we know that the probability of observing these specific observations $X_{1}, ..., X_{n}$ is equal to
+\begin{equation} 
+  f\left(X_{i}; \mu, \Omega^{-1}\right) = (2\pi)^{-p/2}\left| \Omega \right|^{1/2}\exp\left[ -\frac{1}{2}\left( X_{i} - \mu \right)'\Omega\left( X_{i} - \mu \right) \right] 
+(\#eq:normallikone)\notag
+\end{equation} 
+
+Furthermore, because we assume pairwise independence between each observation, we know that for a sample of size $n$, the probability of observing all $X_{1}, ..., X_{n}$ is equal to
 
 \begin{equation} 
 \begin{split}
@@ -32,48 +20,77 @@ Because we assume independence, we know that the probability of observing these 
 (\#eq:normallik)\notag
 \end{equation} 
 
-where $\mbox{etr}\left( \cdot \right)$ denotes the exponential trace operator. It follows that the log-likelihood for $\mu$ and $\Omega$ is equal to the following:
+where $\mbox{etr}\left( \cdot \right)$ denotes the exponential trace operator. Therefore, the gaussian log-likelihood for $\mu$ and $\Omega$ can be written as
 
 \begin{equation}
   l(\mu, \Omega | X) = const. + \frac{n}{2}\log\left| \Omega \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \mu \right)\left(X_{i} - \mu \right)'\Omega \right]
 (\#eq:normalloglik)\notag
 \end{equation}
 
-If we are interested in estimating $\mu$, it is relatively straight forward to show that the maximum likelihood estimator (MLE) for $\mu$ is $\hat{\mu}^{MLE} = \sum_{i = 1}^{n}X_{i}/n$ which we typically denote as $\bar{X}$. However, in addition to $\mu$, many applications require the estimation of $\Sigma$ as well. We can also find a maximum likelihood estimator:
+It is relatively straight forward to show that the maximum likelihood estimator (MLE) for $\mu$ is $\hat{\mu}^{MLE} = \sum_{i = 1}^{n}X_{i}/n \equiv \bar{X}$, so that the partially maximized gaussian log-likelihood for $\Omega$ can be written as
 
 \begin{equation}
 \begin{split}
-\hat{\Omega}^{mle} &= \arg\max_{\Omega \in S_{+}^{p}}\left\{ const. + \frac{n}{2}\log\left| \Omega \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \mu \right)\left(X_{i} - \mu \right)'\Omega \right] \right\} \\
-  &= \left[ \frac{1}{n}\sum_{i = 1}^{n}\left(X_{i} - \bar{X} \right)\left(X_{i} - \bar{X} \right)' \right]^{-1}
+  l(\Omega | X) &= \frac{n}{2}\log\left| \Omega \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \bar{X} \right)\left(X_{i} - \bar{X} \right)'\Omega \right] \\
+  &= \frac{n}{2}\log\left| \Omega \right| - \frac{n}{2}tr\left( S\Omega \right)
+(\#eq:partialmaxloglik)\notag
+\end{split}
+\end{equation}
+
+where $S = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(X_{i} - \bar{X}\right)'/n$ is the usual sample estimator for the covariance matrix.
+
+In addition to $\mu$, we could also find the maximum likelihood estimator for $\Omega$ and use that as our estimator. By setting the gradient of the partially maximized log-likelihood equal to zero, we find that
+
+\begin{equation}
+\begin{split}
+\hat{\Omega}^{MLE} &= \arg\max_{\Omega \in S_{+}^{p}}\left\{ \frac{n}{2}\log\left| \Omega \right| - \frac{n}{2}tr\left(S\Omega \right) \right\} \\
+  &= \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| \right\} \\
+  &= S^{-1}
 \end{split}
 (\#eq:omegamle)\notag
 \end{equation}
 
-By setting the gradient equal to zero and plugging in the MLE for $\mu$, we find that the MLE for $\Omega$ is the inverse our usual sample estimator for the covariance matrix, denoted here as $S^{-1}$. It turns out that we could have just as easily computed the maximum likelihood estimator for the precision matrix $\Omega \equiv \Sigma^{-1}$ and taken its inverse:
+so that the MLE for $\Omega$, when it exists, is $\hat{\Omega}^{MLE} = S^{-1} = \left[\sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(X_{i} - \bar{X}\right)'/n \right]$. The reality, however, is that this object does *not* always exist. In settings where the number of observations is exceeded by the number of features in a sample, the sample covariance matrix, $S$, is rank deficient and no longer invertible.
 
-\begin{equation}
-\hat{\Omega}^{mle} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| \right\}
-(\#eq:omegamlesimple)
-\end{equation}
-
-so that $\hat{\Omega}^{MLE} = S^{-1}$. Beyond the formatting convenience, computing estimates for $\Omega$ as opposed to $\Sigma$ often poses less computational challenges -- and accordingly, the literature has placed more emphasis on efficiently solving for $\Omega$ instead of $\Sigma$^[Notice that here we are *minimizing* the negative log-likelihood as opposed to maximizing the log-likelihood. Both procedures will result in the same estimate.].
-
-As in regression settings, we can construct a *penalized* log-likelihood estimator by adding a penalty term, $P\left(\Omega\right)$, to the log-likelihood so that
+For this reason, many papers in the last decade have proposed shrinkage estimators of the precision matrix similar to the shrinkage estimators in regression settings. That is, instead of minimizing solely the negative log-likelihood function, authors have proposed minimizing the gaussian log-likelihood *plus* a penalty - often a function of the precision matrix. These methods effectively force the eigen values of the precision matrix, $\Omega$, to be strictly greater than zero.
 
 \begin{equation}
 \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + P\left( \Omega \right) \right\}
 (\#eq:omegapen)
 \end{equation}
 
-$P\left( \Omega \right)$ is often of the form $P\left(\Omega \right) = \lambda\|\Omega \|_{F}^{2}/2$ or $P\left(\Omega \right) = \|\Omega\|_{1}$ where $\lambda > 0$, $\left\|\cdot \right\|_{F}^{2}$ is the Frobenius norm and we define $\left\|A \right\|_{1} = \sum_{i, j} \left| A_{ij} \right|$. These penalties are the ridge and lasso, respectively.
+This penalty, which we will denote as $P\left(\Omega\right)$, is typically a variation of the ridge penalty $P\left(\Omega \right) = \lambda\|\Omega \|_{F}^{2}/2$ or the lasso penalty $P\left(\Omega \right) = \lambda\left\|\Omega\right\|_{1}$. The authors, @yuan2007model, were the ones who initially proposed precision matrix estimation by the lasso-penalized gaussian likelihood which they originally defined as
+
+\begin{equation}
+\hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\sum_{i \neq j}\left|\Omega_{ij}\right| \right\}
+(\#eq:omegapenlasso)
+\end{equation}
+
+so as not to penalize the diagonal elements of the precision matrix estimate. Other papers published on the lasso-penalized gaussian likelihood precision matrix estimator include @rothman2008sparse and @friedman2008sparse and many efficient algorithms have been proposed to solve for $\hat{\Omega}$ in this setting. However, the most popular method is still the graphical lasso algorithm (sometimes referred to as glasso) introduced by @friedman2008sparse. Their method utilizes an iterative block-wise coordinate descent algorithm that builds upon the coordinate descent algorithm use in lasso regression.
+
+Other papers published that propose methods with non-lasso penalizations like the Frobenius norms include @rothman2014existence, @witten2009covariance, and @price2015ridge. In fact, the latter two papers show that the estimation procedure can be solved in closed-form. Non-convex penalties were considered in @lam2009sparsistency and @fan2009network.
+
+The penalty we will explore here and in the next section is one that is a convex combination of the lasso and the ridge penalties:
+
+\begin{equation}
+P\left( \Omega \right) = \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right]
+(\#eq:penelastic)\notag
+\end{equation}
+
+where $0 \leq \alpha \leq 1$ is an additional tuning parameter (similar to $\lambda$). Clearly, when $\alpha = 0$ this penalty reduces to a ridge penalty and when $\alpha = 1$ it reduces to a lasso penalty. This penalty, know as the *elastic-net* penalty, was explored by Hui Zou and Trevor Hastie [@zou2005regularization] in the context of regression and is the penalty used in the popular penalized regression package `glmnet`. However, no published work has explored the elastic-net penalty in the context of precision matrix estimation. This penalty allows for increased flexibility and we will show how to solve the following optimization problem in the next section using the ADMM algorithm.
+
+\begin{equation}
+\hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right] \right\}
+(\#eq:optimelastic)
+\end{equation}
 
 
 
-## ADMM algorithm
+## ADMM Algorithm
 
-Many efficient methods have been proposed to solve for $\hat{\Omega}$ when $\alpha = 1$. The most popular method is the graphical lasso algorithm (glasso) introduced by @friedman2008sparse. However, no methods (to the best of my knowledge) have estimated $\Omega$ when $\alpha \in (0, 1)$. We will use the alternating direction method of multipliers (ADMM) algorithm to do so.
+ADMM stands for the alternating direction method of multipliers and this algorithm was largely popularized by Stephen Boyd and his fellow authors in the book *Distributed Optimization and Statistical Learning via the Alternating Direction Method of Multipliers* [@boyd2011distributed]. As the authors state in the text, the "ADMM is an algorithm that is intended to blend the decomposability of dual ascent with the superior convergence properties of the method of multipliers."
 
-As the authors state in @boyd2011distributed, the "ADMM is an algorithm that is intended to blend the decomposability of dual ascent with the superior convergence properties of the method of multipliers." For our purposes, we will only focus on the ADMM algorithm but it is encouraged to read the original text from Boyd and others for a complete introduction to the other two methods.
+The ADMM algorithm - thanks to it's flexibility - is particularly well-suited to solve penalized-likelihood optimization problems that arise naturally in several statistics and machine learning applications. 
 
 In general, suppose we want to solve an optimization problem of the following form:
 
@@ -127,25 +144,6 @@ L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[
 \end{equation}
 
 
-\vspace{3cm}
-
-In the `ADMMsigma` package, we instead take
-
-\begin{equation}
-P\left( \Omega \right) = \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right]
-(\#eq:penelastic)\notag
-\end{equation}
-
-so that solving the full penalized log-likelihood for $\Omega$ results in solving
-
-\begin{equation}
-\hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right] \right\}
-(\#eq:optimelastic)
-\end{equation}
-
-where $0 \leq \alpha \leq 1$. This penalty, know as the *elastic-net* penalty, was explored by Hui Zou and Trevor Hastie [@zou2005regularization] and is identical to the penalty used in the popular penalized regression package `glmnet`. Clearly, when $\alpha = 0$ the elastic-net reduces to a ridge-type penalty and when $\alpha = 1$ it reduces to a lasso-type penalty. Having this flexibility and generalization allows us to perform cross validation across proposed $\alpha$ values in addition to proposed $\lambda$ values.
-
-
 The ADMM algorithm is now the following:
 
 \begin{align}
@@ -186,7 +184,7 @@ Z_{ij}^{k + 1} &= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{sign}\left(\rho\Omeg
 
 where $\mbox{soft}(a, b) = \mbox{sign}(a)(\left| a \right| - b)_{+}$.
 
-
+@witten2009covariance; @price2015ridge
 
 ### Scaled-Form ADMM
 

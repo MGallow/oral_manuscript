@@ -132,7 +132,7 @@ where soft is the soft-thresholding function.
 
 
 
-### Proof of BLAHHHH
+### Explanation of majorizing function \@ref(eq:approx) {#taylorsexp}
 
 To see why this particular function was used, consider the Taylor's expansion of $\rho\left\|A\Omega B - Z^{k} - C\right\|_{F}^{2}/2$:
 

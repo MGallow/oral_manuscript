@@ -3,6 +3,8 @@
 
 Talk about regression problem...
 
+3. Discuss linear regression application.... where $\beta = \Omega_{*}\Sigma_{*XY}$. Like @witten2009covariance, this approach estimates the regression coefficients "using shrinkage estimators of the marginal precision matrix for the predictors".
+
 
 ## Simulations
 
