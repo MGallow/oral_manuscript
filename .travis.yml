@@ -19,7 +19,7 @@ cache:
 install:
   - Rscript -e 'install.packages("devtools")'
   - Rscript -e 'update.packages(ask = FALSE)'
-  - Rscript -e 'devtools::install(pkg = ".", dependencies = TRUE)'
+#  - Rscript -e 'devtools::install(pkg = ".", dependencies = TRUE)'
 
 # render both output forms of the book
 script:

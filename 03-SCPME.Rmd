@@ -1,9 +1,9 @@
 
 # SCPME
 
-In their 2017 paper, titled *Shrinking Characteristics of Precision Matrix Estimators*, Aaron Molstad, Ph.D. and Professor Adam Rothman outline a framework to estimate *characteristics* of precision matrices. This concept, inspired by others like @cai2011direct, @fan2012road, and @mai2012direct, exploits the fact that in many predictive models, estimation of the precision matrix is only necessary through its product with another feature such as a mean vector.
+In their 2017 paper, titled *Shrinking Characteristics of Precision Matrix Estimators*, Aaron Molstad, Ph.D. and Professor Adam Rothman outline a framework to estimate *characteristics* of precision matrices. This concept, inspired by others like @cai2011direct, @fan2012road, and @mai2012direct, exploits the fact that in many predictive models estimation of the precision matrix is only necessary through its product with another feature, such as a mean vector.
 
-The example they offer in @molstad2017shrinking is in the context of Fisher's linear discriminant analysis model. If a response vector $Y$ is categorical such that $Y$ can take values in $\left\{1, ..., J\right\}$, then the linear discrimnant analysis model assumes that the design matrix $X$, conditional on the response vector $Y$, is normally distributed:
+The example they offer in @molstad2017shrinking is in the context of Fisher's linear discriminant analysis model. If a response vector $Y$ is categorical such that $Y$ can take values in $\left\{1, ..., J\right\}$, then the linear discrimnant analysis model assumes that the design matrix $X$ conditional on the response vector $Y$ is normally distributed:
 
 \begin{equation}
 X | Y = j \sim N_{p}\left(\mu_{j}, \Omega^{-1}\right)
@@ -19,7 +19,7 @@ P\left(\Omega\right) = \lambda\left\| A\Omega B - C \right\|_{1}
 (\#eq:pen2)
 \end{equation}
 
-where $A \in \mathbb{R}^{m \times p}, B \in \mathbb{R}^{p \times q}, \mbox{ and } C \in \mathbb{R}^{m \times q}$ are matrices that are assumed to be known and specified so that solving the full penalized gaussian log-likelihood for $\Omega$ results in solving
+where $A \in \mathbb{R}^{m \times p}, B \in \mathbb{R}^{p \times q}, \mbox{ and } C \in \mathbb{R}^{m \times q}$ are matrices that are assumed to be known and specified so that solving the full penalized gaussian negative log-likelihood for $\Omega$ results in solving
 
 \begin{equation}
 \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\left\| A\Omega B - C \right\|_{1} \right\}
@@ -40,7 +40,7 @@ Solving for $\hat{\Omega}$ in \@ref(eq:omegaloglik2) uses what we are going to c
   \Lambda^{k + 1} &= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right)
 \end{align}
 
-where $L$, still the *augmented lagrangian*, is defined as
+where $L$, the *augmented lagrangian*, is defined as
 
 \begin{equation}
 L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda^{T}\left(A\Omega B - Z - C\right)\right] + \frac{\rho}{2}\left\|A\Omega B - Z - C\right\|_{F}^{2}
@@ -49,7 +49,7 @@ L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[
 
 Similar to the previous chapter, $f\left(\Omega\right) = tr\left(S\Omega\right) - \log\left|\Omega\right|$ and $g\left(Z\right) = \lambda\left\|Z\right\|_{1}$. In fact, the details of the algorithm thus far are identical to the previous approach except that we are replacing $\Omega - Z$ with $A\Omega B - C - Z$ (or equivalently, $A\Omega B - Z - C$) in the augmented lagrangian and the dual update $\Lambda^{k + 1}$.
 
-Instead of solving the first step exactly as we did in the previous section, the authors propose an alternative, approximating objective function, which we will call $\tilde{L}$, that is based on the majorize-minimize principle^[Further explanation of the majorizing function \@ref(eq:approx) in section \@ref(taylorsexp)]. The purpose of this approximating function is the desire to solve this first step in closed-form. The ADMM algorithm with this modification based on majorize-minimize principle is also found in @lange2016mm but here the approximating function is defined as
+Instead of solving the first step exactly as we did in the previous section, the authors propose an alternative, approximating objective function, which we will denote as $\tilde{L}$, that is based on the majorize-minimize principle^[Further explanation of the majorizing function \@ref(eq:approx) in section \@ref(taylorsexp)]. The purpose of this approximating function is the desire to solve the first step of the algorithm in closed-form. The ADMM algorithm with this modification based on majorize-minimize principle is also found in @lange2016mm but here we define the approximating function as
 
 \begin{equation}
 \begin{split}
@@ -59,9 +59,7 @@ Instead of solving the first step exactly as we did in the previous section, the
 \end{split}
 \end{equation}
 
-where $Q = \tau I_{p} - \left(A^{T}A \otimes BB^{T}\right)$ and $\tau$ is chosen such that $Q$ is positive definite and thus $L_{\rho}\left(\cdot\right) \leq \tilde{L}\left(\cdot\right)$ for all $\Omega$ (therefore $\tilde{L}$ is a majorizing function^[Note that if $Q$ is positive definite, then $vec\left(\Omega - \Omega^{k} \right)^{T}\rho Q\left(\Omega - \Omega^{k} \right)/2 > 0$ since $\rho > 0$ and $vec\left(\Omega - \Omega^{k}\right)$ is always nonzero whenever $\Omega \neq \Omega^{k}$.]).
-
-The *augmented ADMM* algorithm developed by Molstad and Rothman, which now includes the majorize-minimize principle, consists of the following repeated iterations:
+where $Q = \tau I_{p} - \left(A^{T}A \otimes BB^{T}\right)$ and $\tau$ is chosen such that $Q$ is positive definite. Note that if $Q$ is positive definite, then $L_{\rho}\left(\cdot\right) \leq \tilde{L}\left(\cdot\right)$ for all $\Omega$ and $\tilde{L}$ is a majorizing function^[If $Q$ is positive definite, then $vec\left(\Omega - \Omega^{k} \right)^{T}\rho Q\left(\Omega - \Omega^{k} \right)/2 > 0$ since $\rho > 0$ and $vec\left(\Omega - \Omega^{k}\right)$ is always nonzero whenever $\Omega \neq \Omega^{k}$.]. The *augmented ADMM* algorithm developed by Molstad and Rothman, which now includes the majorize-minimize principle, consists of the following repeated iterations:
 
 \begin{equation}
 \begin{split}
@@ -121,7 +119,7 @@ Y^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)
 
 ### Stopping Criterion
 
-A possibe stopping criterion for this framework is one derived from similar optimality conditions used in the previous section \@ref(ADMMstop). The primal optimality condition here is that $A\Omega^{k + 1}B - Z^{k + 1} - C = 0$ and the two dual optimality conditions are $0 \in \partial f\left(\Omega^{k + 1}\right) + \left(B(\Lambda^{k + 1})^{T}A + A^{T}\Lambda^{k + 1}B^{T} \right)/2$ and $0 \in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}$. Similarly, we will define the left-hand side of the primal optimality condition as the primal residual $r^{k + 1} = A\Omega^{k + 1}B - Z^{k + 1} - C$ and the dual residual^[Proof of \@ref(eq:stopproof) in section \@ref(proofstopproof).] as
+A possibe stopping criterion for this framework is one derived from similar optimality conditions used in the previous chapter \@ref(ADMMstop). The primal optimality condition here is that $A\Omega^{k + 1}B - Z^{k + 1} - C = 0$ and the two dual optimality conditions are $0 \in \partial f\left(\Omega^{k + 1}\right) + \left(B(\Lambda^{k + 1})^{T}A + A^{T}\Lambda^{k + 1}B^{T} \right)/2$ and $0 \in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}$. Similarly, we will define the left-hand side of the primal optimality condition as the primal residual $r^{k + 1} = A\Omega^{k + 1}B - Z^{k + 1} - C$ and the dual residual^[Proof of \@ref(eq:stopproof) in section \@ref(proofstopproof).] as
 
 \begin{equation}
 s^{k + 1} = \frac{\rho}{2}\left( B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right)
@@ -142,7 +140,7 @@ For proper convergence, we will require that both residuals are approximately eq
 
 ## Regression Illustration
 
-One of the research directions mentioned in @molstad2017shrinking that was not further explored was the application of the SCPME framework to regression. Utilizing the fact that the population regression coefficient matrix $\beta \equiv \Omega_{x}\Sigma_{xy}$ for predictors, $X$, and the responses, $Y$, they point out that their framework could allow for the simultaneous estimation of $\beta$ and $\Omega_{x}$. For example, recall that the general optimization problem outlined in the SCPME framework is to estimate $\hat{\Omega}$ such that
+One of the research directions mentioned in @molstad2017shrinking that was not further explored was the application of the SCPME framework to regression. Utilizing the fact that the population regression coefficient matrix $\beta \equiv \Omega_{x}\Sigma_{xy}$ for predictors, $X$, and the responses, $Y$, they point out that their framework could allow for the simultaneous estimation of $\beta$ and $\Omega_{x}$. Like @witten2009covariance, this approach would estimate the forward regression coefficient matrix while using shrinkage estimators of the marginal precision matrix for the predictors. For example, recall that the general optimization problem outlined in the SCPME framework is to estimate $\hat{\Omega}$ such that
 
 \begin{equation}
   \hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \lambda\left\| A\Omega B - C \right\|_{1} \right\}
@@ -156,14 +154,14 @@ If the user specifies that $A = I_{p}, B = \Sigma_{xy}, C = 0, \mbox{ and } \Ome
 (\#eq:penloglik4)\notag
 \end{equation}
 
-Of course, in practice we do not know the true covariance matrix $\Sigma_{xy}$ but we might consider using the sample estimate $\hat{\Sigma}_{xy} = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(Y_{i} - \bar{Y}\right)^{T}/n$ and then using our estimator, $\hat{\Omega}_{x}$, to construct the forward regression coefficient matrix estimator $\hat{\beta} = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$. Like @witten2009covariance, this approach estimates the forward regression coefficient matrix while using shrinkage estimators of the marginal precision matrix for the predictors. Specifically, this optimization problem has the effect of deriving an estimate of $\Omega_{x} \mbox { and } \beta$ while assuming sparsity in the forward regression coefficient $\beta$.
-
-The penality outline in the SCPME framekwork is flexible that many novel estimators can be constructed. For instance, we might also consider taking $B = \left[ \Sigma_{xy}, I_{p} \right]$ so that the identity matrix is appended to the sample cross-covariance matrix of $X$ and $Y$. In this case, not only are we assuming that $\beta$ is sparse, but we are also assuming sparsity in $\Omega$.
+Specifically, this optimization problem has the effect of deriving an estimate of $\Omega_{x} \mbox { and } \beta$ while assuming sparsity in the forward regression coefficient $\beta$. Of course, in practice we do not know the true covariance matrix $\Sigma_{xy}$ but we might consider using the sample estimate $\hat{\Sigma}_{xy} = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(Y_{i} - \bar{Y}\right)^{T}/n$ and then use our estimator, $\hat{\Omega}_{x}$, to construct the forward regression coefficient matrix estimator $\hat{\beta} = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$. Estimators such as this are truly novel an can conveniently be estimated by the SCPME framework. Another such estimator that is a product of this framework is one where we leave $A \mbox{ and } C$ unchanged but take $B = \left[ \Sigma_{xy}, I_{p} \right]$ so that the identity matrix is appended to the sample cross-covariance matrix of $X$ and $Y$. In this case, not only are we assuming that $\beta$ is sparse, but we are also assuming sparsity in $\Omega$.
 
 \begin{equation}
 P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\left[\Sigma_{xy}, I_{p}\right] \right\|_{1} = \lambda\left\| \beta \right\|_{1} + \lambda\left\| \Omega \right\|_{1}
 (\#eq:pen4)\notag
 \end{equation}
+
+Like before, we would take our estimator, $\hat{\Omega}_{x}$, to construct the forward regression coefficient matrix estimator $\hat{\beta} = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$. The embedded assumptions here are that not all predictors are useful in predicting the response, $Y$, *and* a number of the predictors are conditionally independent of one another - assumptions that would be quite reasonable in practice.
 
 In the next section we offer a short simulation comparing these estimators to related and competing prediction methods.
 
