@@ -169,33 +169,35 @@ In the next section we offer a short simulation comparing these estimators to re
 
 ## Simulations
 
-In this simulation, we compare the performance of several competing prediction methods, including the so-called SCPME regression estimators discussed in the previous section, under various data realizations. In total, we consider the following estimators:
+In this simulation, we compare the performance of several competing regression prediction methods under various data realizations, including the so-called SCPME regression estimators discussed in the previous section. In total, we consider the following estimators:
 
- - `OLS` = ordinary least squares estimator. In *high* dimensional setting ($p >> n$), the Moore-Penrose estimator is used.
- 
+ - `OLS` = ordinary least squares estimatior. In high dimensional settings ($p >> n$), the Moore-Penrose estimator is used.
+
  - `ridge` = ridge regression estimator.
  
  - `lasso` = lasso regression estimator.
  
  - `oracleB` = oracle estimator for $\beta$.
  
- - `oracleO` = regression estimator with oracle $\Omega^{*}$ (let $\beta = \Omega^{*}\hat{\Sigma}_{xy}$).
+ - `oracleO` = regression estimator with oracle $\Omega_{x}^{*}$ (let $\beta = \Omega_{x}^{*}\hat{\Sigma}_{xy}$).
  
- - `oracleS` = regression estimator with oracle $\Sigma_{xy}^{*}$ (let $\beta = \hat{\Omega}\Sigma_{xy}^{*}$).
+ - `oracleS` = regression estimator with oracle $\Sigma_{xy}^{*}$ (let $\beta = \hat{\Omega}_{x}\Sigma_{xy}^{*}$).
  
- - `shrinkB` = SCPME regression estimator with penalty $\lambda\left\| \Omega\hat{\Sigma}_{xy} \right\|_{1}$.
+ - `shrinkB` = SCPME regression estimator with penalty $\lambda\left\| \Omega_{x}\hat{\Sigma}_{xy} \right\|_{1}$ so that $\beta = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$.
  
- - `shrinkBS` = SCPME regression estimator with oracle $\Sigma_{xy}^{*}$ so that the penalty is $\lambda\left\| \Omega\hat{\Sigma}_{xy}^{*} \right\|_{1}$.
+ - `shrinkBS` = SCPME regression estimator with oracle $\Sigma_{xy}^{*}$ so that the penalty is $\lambda\left\| \Omega_{x}\Sigma_{xy}^{*} \right\|_{1}$ and we let $\beta = \hat{\Omega}_{x}\Sigma_{xy}^{*}$.
  
- - `shrinkBO` = SCPME regression estimator with penalty $\lambda\left\| \Omega[\Sigma_{xy}, I_{p}] \right\|_{1}$.
+ - `shrinkBO` = SCPME regression estimator with penalty $\lambda\left\| \Omega_{x}[\Sigma_{xy}, I_{p}] \right\|_{1}$ so that $\beta = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$.
  
- - `glasso` = graphical lasso estimator.
+ - `glasso` = graphical lasso estimator with penalty $\lambda\left\| \Omega_{x} \right\|_{1}$ so that $\beta = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$.
  
-Each tuning parameter was selected to minimize the mean squared prediction error (MSPE) over 3-fold cross validation.
+For each estimator, if selection of a tuning parameter is required, then the tuning parameter was chosen so that the mean squared prediction error (MSPE) was minimized over 3-fold cross validation.
 
-For each data generation procedures, let $\mathbb{X} \in \mathbb{R}^{n \times p}$, $\mathbb{Y} \in \mathbb{R}^{n \times r}$, and $\beta \in \mathbb{R}^{p \times r}$ so that $\mathbb{Y} = \mathbb{X}\beta + \mathbb{E}$. Here we let the script notation denote the fact that the columns have been centered so as to remove the intercept in our prediction models. The regression coefficient matrix $\beta$ is constructed so that $\beta = \mathbb{B} \circ \mathbb{V}$ where $vec\left( \mathbb{B} \right) \sim N_{pr}\left( 0, I_{p} \otimes I_{r}/\sqrt{p} \right)$ and $\mathbb{V} \in \mathbb{R}^{p \times r}$ is a matrix containing $p$ times $r$ random bernoulli draws with 50\% probability being equal to one. The residual covariance matrix $\Sigma_{y | x}$ is constructed so that $\left( \Sigma_{xx} \right)_{ij} = 0.7^{\left| i - j \right|}$ and $\left( \Sigma_{y | x} \right)_{ij} = 0.7^{\left| i - j \right|}$, respectively. This ensures that its corresponding precision matrix will be tridiagonal and sparse. Then for 100 independent, identically distributed samples, we have that $X_{i} \sim N_{p}\left( 0, \Sigma_{xx} \right)$ and $E_{i} \sim N_{r}\left( 0, \Sigma_{y | x} \right)$. An additional 1000 samples will be generated for the testing set and the methods were evaluated on both model error and mean squared prediction error. Each data generating procedure for each $p$ in $(10, 50, 100, 150)$ was replicated a total of 20 times.
+The data generating procedures for the simulations are as follows. The oracle regression coefficient matrix $\beta^{*}$ was constructed so that $\beta^{*} = \mathbb{B} \circ \mathbb{V}$ where $vec\left( \mathbb{B} \right) \sim N_{pr}\left( 0, I_{p} \otimes I_{r}/\sqrt{p} \right)$ and $\mathbb{V} \in \mathbb{R}^{p \times r}$ is a matrix containing $p$ times $r$ random bernoulli draws with 50\% probability being equal to one. The covariance matrices $\Sigma_{y | x}$ and $\Sigma_{x}$ were constructed so that $\left( \Sigma_{y | x} \right)_{ij} = 0.7^{\left| i - j \right|}$ and $\left( \Sigma_{x} \right)_{ij} = 0.7^{\left| i - j \right|}$, respectively. This ensures that their corresponding precision matrices will be tridiagonal and sparse. Then for 100 independent, identically distributed samples, we had $X_{i} \sim N_{p}\left( 0, \Sigma_{xx} \right)$ and $E_{i} \sim N_{r}\left( 0, \Sigma_{y | x} \right)$ so that $\mathbb{Y} = \mathbb{X}\beta + \mathbb{E}$ where $\mathbb{X} \in \mathbb{R}^{n \times p}$, $\mathbb{Y} \in \mathbb{R}^{n \times r}$ and the script notation denotes the fact that the columns have been centered so as to remove the intercept in our prediction models. An additional 1000 samples were generated similarly for the testing set and each prediction method was evaluated on both model error and mean squared prediction error.
 
-Note that we are now displaying model error (ME) as opposed to mean squared prediction error (MSPE). Also, `OLS` and `oracleS` will not be show in the high dimensional setting plots because of poor performance.
+Figure \@ref(fig:scpmesim2) displays the model error for each method by dimension of the design matrix. Here we took the sample size equal to $n = 100$ and the response matrix dimension $r = 10$ with each data generating procedure replicated a total of 20 times. Note `OLS` and `oracleS` are not shown due to extremely poor performance.
+
+We find that...
 
 In high dimensional settings, `shrinkBO` (penalty: $\lambda\left\| \Omega[\hat{\Sigma}_{xy}, I_{p}] \right\|_{1}$) and `shrinkB` (penalty: $\lambda\left\| \Omega\hat{\Sigma}_{xy} \right\|_{1}$) perform increasingly well relative (and superior) to the others when $p >> n$. It's not surprising that `shrinkBO` performs the best because the embedded assumptions most closely match the data generating model.
 
