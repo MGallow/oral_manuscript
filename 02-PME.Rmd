@@ -3,31 +3,31 @@
 
 ## Background
 
-The foundation of much of the precision matrix estimation literature is the gaussian negative log-likelihood. We consider the case where we observe $n$ independent, identically distributed (iid) copies of the random variable ($X_{i}$) where $X_{i} \in \mathbb{R}^{p}$ is normally distributed with some mean, $\mu$, and some variance, $\Omega^{-1}$. That is, $X_{i}$ follows a $p$-dimensional normal distribution $X_{i} \sim N_{p}\left( \mu, \Omega^{-1} \right)$. Note that this formulation implies that $\mu \in \mathbb{R}^{p}$, $\Omega^{-1} \in \mathbb{S}_{+}^{p}$, and the probability of observing a single $X_{i}$ is
+The foundation of much of the precision matrix estimation literature is the gaussian negative log-likelihood. Consider the case where we observe $n$ independent, identically distributed (iid) copies of the random variable $X$, where the $i$th observation $X_{i} \in \mathbb{R}^{p}$ is normally distributed with mean, $\mu$, and variance, $\Omega^{-1}$. That is, $X_{i}$ follows a $p$-dimensional normal distribution which is typically denoted as $X_{i} \sim N_{p}\left( \mu, \Omega^{-1} \right)$. By definition, this multivariate formulation implies the probability distribution function, $f$, is of the form
 
 \begin{equation} 
-  f\left(X_{i}; \mu, \Omega^{-1}\right) = (2\pi)^{-p/2}\left| \Omega \right|^{1/2}\exp\left[ -\frac{1}{2}\left( X_{i} - \mu \right)'\Omega\left( X_{i} - \mu \right) \right] 
+  f\left(X_{i}; \mu, \Omega\right) = (2\pi)^{-p/2}\left| \Omega \right|^{1/2}\exp\left[ -\frac{1}{2}\left( X_{i} - \mu \right)'\Omega\left( X_{i} - \mu \right) \right] 
 (\#eq:normallikone)\notag
 \end{equation} 
 
-Furthermore, because we assume pairwise independence between each observation, we know that for a sample of size $n$, the probability of observing all $X_{1}, ..., X_{n}$ is equal to
+Furthermore, because we assume that each observation is independent, the probability distribution function for all $n$ observations $X_{1}, ..., X_{n}$ is equal to
 
 \begin{equation} 
 \begin{split}
-  f(X_{1}, ..., X_{n}; \mu, \Omega^{-1}) &= \prod_{i = 1}^{n}(2\pi)^{-p/2}\left| \Omega \right|^{1/2}\exp\left[ -\frac{1}{2}\left( X_{i} - \mu \right)'\Omega\left( X_{i} - \mu \right) \right] \\
+  f\left(X_{1}, ..., X_{n}; \mu, \Omega\right) &= \prod_{i = 1}^{n}(2\pi)^{-p/2}\left| \Omega \right|^{1/2}\exp\left[ -\frac{1}{2}\left( X_{i} - \mu \right)'\Omega\left( X_{i} - \mu \right) \right] \\
   &= (2\pi)^{-np/2}\left| \Omega \right|^{n/2}\mbox{etr}\left[ -\frac{1}{2}\sum_{i = 1}^{n}\left( X_{i} - \mu \right)\left( X_{i} - \mu \right)'\Omega \right]
 \end{split}
 (\#eq:normallik)\notag
 \end{equation} 
 
-where $\mbox{etr}\left( \cdot \right)$ denotes the exponential trace operator. Therefore, the gaussian log-likelihood for $\mu$ and $\Omega$ can be written as
+Therefore, the gaussian log-likelihood, $l$, for $\mu$ and $\Omega$ given $X = (X_{1}, .., X_{n})$ can be written as
 
 \begin{equation}
-  l(\mu, \Omega | X) = const. + \frac{n}{2}\log\left| \Omega \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \mu \right)\left(X_{i} - \mu \right)'\Omega \right]
+  l(\mu, \Omega | X) = constant + \frac{n}{2}\log\left| \Omega \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \mu \right)\left(X_{i} - \mu \right)'\Omega \right]
 (\#eq:normalloglik)\notag
 \end{equation}
 
-It is relatively straight forward to show that the maximum likelihood estimator (MLE) for $\mu$ is $\hat{\mu}^{MLE} = \sum_{i = 1}^{n}X_{i}/n \equiv \bar{X}$, so that the partially maximized gaussian log-likelihood for $\Omega$ can be written as
+The estimator for $\mu$ that maximizes the log-likelihood is $\hat{\mu}^{MLE} = \bar{X} \equiv \sum_{i = 1}^{n}X_{i}/n$, so that the partially maximized gaussian log-likelihood for $\Omega$ is
 
 \begin{equation}
 \begin{split}
@@ -37,9 +37,7 @@ It is relatively straight forward to show that the maximum likelihood estimator 
 \end{split}
 \end{equation}
 
-where $S = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(X_{i} - \bar{X}\right)'/n$ is the usual sample estimator for the covariance matrix.
-
-In addition to $\mu$, we could also find the maximum likelihood estimator for $\Omega$ and use that as our estimator. By setting the gradient of the partially maximized log-likelihood equal to zero, we find that
+where $S = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(X_{i} - \bar{X}\right)'/n$ is the usual sample estimator for the covariance matrix, $\Sigma$. In addition to $\mu$, we could also derive the maximum likelihood estimator for $\Omega$. By setting the gradient of the partially maximized log-likelihood equal to zero, we can show that
 
 \begin{equation}
 \begin{split}
@@ -50,34 +48,30 @@ In addition to $\mu$, we could also find the maximum likelihood estimator for $\
 (\#eq:omegamle)\notag
 \end{equation}
 
-so that the MLE for $\Omega$, when it exists, is $\hat{\Omega}^{MLE} = S^{-1} = \left[\sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(X_{i} - \bar{X}\right)'/n \right]$. The reality, however, is that this object does *not* always exist. In settings where the number of observations is exceeded by the number of features in a sample, the sample covariance matrix, $S$, is rank deficient and no longer invertible.
-
-For this reason, many papers in the last decade have proposed shrinkage estimators of the precision matrix similar to the shrinkage estimators in regression settings. That is, instead of minimizing solely the negative log-likelihood function, authors have proposed minimizing the gaussian log-likelihood *plus* a penalty - often a function of the precision matrix. These methods effectively force the eigen values of the precision matrix, $\Omega$, to be strictly greater than zero.
+so that the MLE for $\Omega$, when it exists, is $\hat{\Omega}^{MLE} = S^{-1} = \left[\sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(X_{i} - \bar{X}\right)'/n \right]^{-1}$. The reality, however, is that this object does *not* always exist. In settings where the number of observations is exceeded by the number of features in a sample, the sample covariance matrix is rank deficient and no longer invertible. For this reason, many papers in the last decade have proposed shrinkage estimators of the precision matrix similar to the shrinkage estimators in regression settings. That is, instead of minimizing solely the negative log-likelihood function, authors have proposed minimizing the gaussian log-likelihood *plus* a penalty term, $P$, which is often a function of the precision matrix.
 
 \begin{equation}
 \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + P\left( \Omega \right) \right\}
 (\#eq:omegapen)
 \end{equation}
 
-This penalty, which we will denote as $P\left(\Omega\right)$, is typically a variation of the ridge penalty $P\left(\Omega \right) = \lambda\|\Omega \|_{F}^{2}/2$ or the lasso penalty $P\left(\Omega \right) = \lambda\left\|\Omega\right\|_{1}$. The authors, @yuan2007model, were the ones who initially proposed precision matrix estimation by the lasso-penalized gaussian likelihood which they originally defined as
+The penalties that have been proposed for precision matrix estimation are typically a variation of the ridge penalty $P\left(\Omega \right) = \lambda\|\Omega \|_{F}^{2}/2$ or the lasso penalty $P\left(\Omega \right) = \lambda\left\|\Omega\right\|_{1}$. The authors, @yuan2007model, initially proposed the lasso-penalized gaussian log-likelihood defined as
 
 \begin{equation}
 \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\sum_{i \neq j}\left|\Omega_{ij}\right| \right\}
 (\#eq:omegapenlasso)
 \end{equation}
 
-so as not to penalize the diagonal elements of the precision matrix estimate. Other papers published on the lasso-penalized gaussian likelihood precision matrix estimator include @rothman2008sparse and @friedman2008sparse and many efficient algorithms have been proposed to solve for $\hat{\Omega}$ in this setting. However, the most popular method is still the graphical lasso algorithm (sometimes referred to as glasso) introduced by @friedman2008sparse. Their method utilizes an iterative block-wise coordinate descent algorithm that builds upon the coordinate descent algorithm use in lasso regression.
+so as not to penalize the diagonal elements of the precision matrix estimate. Other papers published on the lasso-penalized gaussian likelihood precision matrix estimator include @rothman2008sparse and @friedman2008sparse. In addition, many efficient algorithms have been proposed to solve for $\hat{\Omega}$ in this setting but the most popular method is the graphical lasso algorithm (often referred to as glasso) introduced by @friedman2008sparse. Their method utilizes an iterative block-wise coordinate descent algorithm that builds upon the coordinate descent algorithm used in lasso-penalized regression.
 
-Other papers published that propose methods with non-lasso penalizations like the Frobenius norms include @rothman2014existence, @witten2009covariance, and @price2015ridge. In fact, the latter two papers show that the estimation procedure can be solved in closed-form. Non-convex penalties were considered in @lam2009sparsistency and @fan2009network.
-
-The penalty we will explore here and in the next section is one that is a convex combination of the lasso and the ridge penalties:
+Non-lasso, non-convex penalties were considered in @lam2009sparsistency and @fan2009network and other papers considered penalizations like the Frobenius norm (@rothman2014existence; @witten2009covariance; @price2015ridge). In fact, the latter two papers show that the resulting minimizer can be solved in closed-form - which will be discussed later in this manuscript. However, the penalty explored in the remainder of this chapter is not a lasso penality nor a ridge penalty but, in fact, a convex combination of the two known as the *elastic-net* penalty:
 
 \begin{equation}
-P\left( \Omega \right) = \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right]
+P\left( \Omega \right) = \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right\|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right]
 (\#eq:penelastic)\notag
 \end{equation}
 
-where $0 \leq \alpha \leq 1$ is an additional tuning parameter (similar to $\lambda$). Clearly, when $\alpha = 0$ this penalty reduces to a ridge penalty and when $\alpha = 1$ it reduces to a lasso penalty. This penalty, know as the *elastic-net* penalty, was explored by Hui Zou and Trevor Hastie [@zou2005regularization] in the context of regression and is the penalty used in the popular penalized regression package `glmnet`. However, no published work has explored the elastic-net penalty in the context of precision matrix estimation. This penalty allows for increased flexibility and we will show how to solve the following optimization problem in the next section using the ADMM algorithm.
+with tuning parameter $0 \leq \alpha \leq 1$. Clearly, when $\alpha = 0$ this penalty reduces to a ridge penalty and when $\alpha = 1$ it reduces to a lasso penalty. Originally proposed in @zou2005regularization in the context of regression, this penalty has since been popularized and is used in the penalized regression R package `glmnet`. This penalty allows for additional flexibility but, despite this, no published work (to our knowledge) has explored the elastic-net penalty in the context of precision matrix estimation. We will show how to solve the following optimization problem in the next section using the ADMM algorithm.
 
 \begin{equation}
 \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right] \right\}
@@ -88,11 +82,9 @@ where $0 \leq \alpha \leq 1$ is an additional tuning parameter (similar to $\lam
 
 ## ADMM Algorithm
 
-ADMM stands for the alternating direction method of multipliers and this algorithm was largely popularized by Stephen Boyd and his fellow authors in the book *Distributed Optimization and Statistical Learning via the Alternating Direction Method of Multipliers* [@boyd2011distributed]. As the authors state in the text, the "ADMM is an algorithm that is intended to blend the decomposability of dual ascent with the superior convergence properties of the method of multipliers."
+ADMM stands for alternating direction method of multipliers. The algorithm was largely popularized by Stephen Boyd and his fellow authors in the book *Distributed Optimization and Statistical Learning via the Alternating Direction Method of Multipliers* [@boyd2011distributed]. As the authors state in the text, the "ADMM is an algorithm that is intended to blend the decomposability of dual ascent with the superior convergence properties of the method of multipliers." By closely following Boyd's descriptions and guidance in the published text, we will show in this section that the ADMM algorithm is particularly well-suited to solve the penalized log-likelihood optimization problem we are interested in here.
 
-The ADMM algorithm - thanks to it's flexibility - is particularly well-suited to solve penalized-likelihood optimization problems that arise naturally in several statistics and machine learning applications. 
-
-In general, suppose we want to solve an optimization problem of the following form:
+In general, suppose that we want to solve an optimization problem of the form
 
 \begin{equation}
 \begin{split}
@@ -102,23 +94,14 @@ In general, suppose we want to solve an optimization problem of the following fo
 (\#eq:boyd)\notag
 \end{equation}
 
-where $x \in \mathbb{R}^{n}, z \in \mathbb{R}^{m}, A \in \mathbb{R}^{p \times n}, B \in \mathbb{R}^{p \times m}$, $c \in \mathbb{R}^{p}$, and $f$ and $g$ are assumed to be convex functions (following @boyd2011distributed, the estimation procedure will be introduced in vector form though we could just as easily take $x$ and $z$ to be matrices). In addition to penalized precision matrix estimation, optimization problems like this arise naturally in several statistics and machine learning applications -- particularly regularization methods. For instance, we could take $f$ to be the squared error loss, $g$ to be the $l_{2}$-norm, $c$ to be equal to zero and $A$ and $B$ to be identity matrices to solve the ridge regression optimization problem. In all cases, our goal is to find $x^{*} \in \mathbb{R}^{n}$ and $z^{*} \in \mathbb{R}^{m}$ that achieves the infimum $p^{*}$:
-
-\begin{equation}
-p^{*} = inf\left\{ f(x) + g(z) | Ax + Bz = c \right\}
-(\#eq:infimum)\notag
-\end{equation}
-
-To do so, the ADMM algorithm uses the *augmented lagrangian*
+where we can assume here that $x \in \mathbb{R}^{n}, z \in \mathbb{R}^{m}, A \in \mathbb{R}^{p \times n}, B \in \mathbb{R}^{p \times m}$, $c \in \mathbb{R}^{p}$, and $f$ and $g$ are convex functions. In order to find the pair $(x^{*}, z^{*})$ that achieves the infimum, the ADMM algorithm uses an *augmented lagrangian*, $L$, which @boyd2011distributed define as
 
 \begin{equation}
 L_{\rho}(x, z, y) = f(x) + g(z) + y'(Ax + Bz - c) + \frac{\rho}{2}\left\| Ax + Bz - c \right\|_{2}^{2}
 (\#eq:auglagrange)\notag
 \end{equation}
 
-where $y \in \mathbb{R}^{p}$ is the lagrange multiplier and $\rho > 0$ is a scalar. Clearly any minimizer, $p^{*}$, under the augmented lagrangian is equivalent to that of the lagrangian since any feasible point $(x, z)$ satisfies the constraint $\rho\left\| Ax + Bz - c \right\|_{2}^{2}/2 = 0$.
-
-The algorithm consists of the following repeated iterations:
+In this formulation, $y \in \mathbb{R}^{p}$ is called the lagrange multiplier and $\rho > 0$ is some scalar that acts as the step size for the algorithm. Note that any infimum under the augmented lagrangian is equivalent to the infimum of the traditional lagrangian since any feasible point $(x, z)$ must satisfy the constraint $\rho\left\| Ax + Bz - c \right\|_{2}^{2}/2 = 0$. @boyd2011distributed show that the infimum will be approached under the following repeated iterations:
 
 \begin{equation}
 \begin{split}
@@ -129,34 +112,30 @@ The algorithm consists of the following repeated iterations:
 (\#eq:admmalgo)\notag
 \end{equation}
 
-In the context of precision matrix estimation, we can let $f$ be equal to the non-penalized likelihood, $g$ be equal to $P\left( \Omega \right)$, and use the constraint $\Omega$ equal to some $Z$ so that the lagrangian is
-
-\begin{equation}
-L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda\left(\Omega - Z\right)\right]
-(\#eq:lagrange2)\notag
-\end{equation}
-
-and the augmented lagrangian is
+where the superscript, $k$, denotes the number of iterations. Conveniently, this general algorithm can be coerced into a format useful in precision matrix estimation. Suppose we let $f$ be equal to the non-penalized log-likelihood, $g$ equal to the elastic-net penalty, $P\left( \Omega \right)$, and we use the constraint that $\Omega$ must be equal to $Z$, then the augmented lagrangian in the context of precision matrix estimation is of the form
 
 \begin{equation}
 L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda\left(\Omega - Z\right)\right] + \frac{\rho}{2}\left\|\Omega - Z\right\|_{F}^{2}
 (\#eq:auglagrange2)\notag
 \end{equation}
 
+where $\Lambda$ is taking the role of $y$ and the ADMM algorithm now consists of the repeated iterations
 
-The ADMM algorithm is now the following:
-
-\begin{align}
+\begin{equation}
+\begin{split}
   \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[\Lambda^{k}\left(\Omega - Z^{k}\right)\right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} \right\} \\
   Z^{k + 1} &= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\} \\
   \Lambda^{k + 1} &= \Lambda^{k} + \rho\left( \Omega^{k + 1} - Z^{k + 1} \right)
-\end{align}
+(\#eq:ADMMorig)
+\end{split}
+\end{equation}
+
+It turns out that each step in this algorithm can be solved in closed-form. The full details of each can be found in the appendix \@ref(proofomegaalgo) but the following theorem provides the simplified steps in the algorithm.
 
 
+```{theorem, name = "ADMM Algorithm for Elastic-Net Penalized Precision Matrix Estimation"}
 
-### Algorithm
-
-Set $k = 0$ and initialize $Z^{0}, \Lambda^{0}$, and $\rho$. Repeat steps 1-3 until convergence:
+Define the soft-thresholding function as $\mbox{soft}(a, b) = \mbox{sign}(a)(\left| a \right| - b)_{+}$. Set $k = 0$ and initialize $Z^{0}, \Lambda^{0}$, and $\rho$. Repeat steps 1-3 until convergence:
 
 1. Decompose $S + \Lambda^{k} - \rho Z^{k} = VQV'$ via spectral decomposition^[Proof of \@ref(eq:omegaalgo) in section \@ref(proofomegaalgo).]. Then
 
@@ -182,13 +161,16 @@ Z_{ij}^{k + 1} &= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{sign}\left(\rho\Omeg
 (\#eq:lamalgo)\notag
 \end{equation}
 
-where $\mbox{soft}(a, b) = \mbox{sign}(a)(\left| a \right| - b)_{+}$.
 
-@witten2009covariance; @price2015ridge
+```
+
+
 
 ### Scaled-Form ADMM
 
-There is another popular, alternate form of the ADMM algorithm used by scaling the dual variable ($\Lambda^{k}$). Let us define $R^{k} = \Omega - Z^{k}$ and $U^{k} = \Lambda^{k}/\rho$.
+Another popular, alternative form of the ADMM algorithm can be used when scaling the dual variable ($\Lambda^{k}$). We derive this scaled-form in the context of precision matrix estimation here.
+
+Define $R^{k} = \Omega - Z^{k}$ and $U^{k} = \Lambda^{k}/\rho$ then
 
 \begin{equation}
 \begin{split}
@@ -201,69 +183,26 @@ There is another popular, alternate form of the ADMM algorithm used by scaling t
 
 Therefore, a scaled-form can now be written as
 
-\begin{align}
+\begin{equation}
+\begin{split}
   \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{R}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\rho}{2}\left\| \Omega - Z^{k} + U^{k} \right\|_{F}^{2} \right\} \\
   Z^{k + 1} &= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z + U^{k} \right\|_{F}^{2} \right\} \\
   U^{k + 1} &= U^{k} + \Omega^{k + 1} - Z^{k + 1}
-\end{align}
-
-And more generally (in vector form),
-
-\begin{align}
-  x^{k + 1} &= \arg\min_{x}\left\{ f(x) + \frac{\rho}{2}\left\| Ax + Bz^{k} - c + u^{k} \right\|_{2}^{2} \right\} \\
-  z^{k + 1} &= \arg\min_{z}\left\{ g(z) + \frac{\rho}{2}\left\| Ax^{k + 1} + Bz - c + u^{k} \right\|_{2}^{2} \right\} \\
-  u^{k + 1} &= u^{k} + Ax^{k + 1} + Bz^{k + 1} - c
-\end{align}
-
-Note that there are limitations to using this method. Because the dual variable is scaled by $\rho$ (the step size), this form limits one to using a constant step size without making further adjustments to $U^{k}$. It has been shown in the literature that a dynamic step size (like the one used in `ADMMsigma`) can significantly reduce the number of iterations required for convergence.
-
-
-
-### Stopping Criterion
-
-In discussing the optimality conditions and stopping criterion, we will follow the steps outlined in @boyd2011distributed and cater them to precision matrix estimation.
-
-Below we have three optimality conditions:
-
-1. Primal:
-
-\begin{equation}
-\Omega^{k + 1} - Z^{k + 1} = 0
-(\#eq:admmprimal)\notag
-\end{equation}
-
-2. Dual:
-
-\begin{equation}
-\begin{split}
-  0 &\in \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k + 1} \\
-  0 &\in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}
-(\#eq:admmdual)\notag
+(\#eq:ADMMscaled)
 \end{split}
 \end{equation}
 
-The first dual optimality condition is a result of taking the sub-differential of the lagrangian (non-augmented) with respect to $\Omega^{k + 1}$ (note that we must honor the symmetric constraint of $\Omega^{k + 1}$) and the second is a result of taking the sub-differential of the lagrangian with respect to $Z^{k + 1}$ (no symmetric constraint).
+Note that there are limitations to using this method. Because the dual variable is scaled by $\rho$ (the step size), this form limits one to using a constant step size for all $k$ steps if no further adjustments are made to $U^{k}$.
 
-We will define the left-hand side of the first condition as the primal residual $r^{k + 1} = \Omega^{k + 1} - Z^{k + 1}$. At convergence, optimality conditions require that $r^{k + 1} \approx 0$. The second residual we will define is the dual residual $s^{k + 1} = \rho\left( Z^{k + 1} - Z^{k} \right)$. This residual is derived from the following:
 
-Because $\Omega^{k + 1}$ is the minimizer of the augmented lagragian^[Proof of \@ref(eq:dualresidual) in section \@ref(proofdualresidual).], this implies that $0 \in \partial L_{p}\left( \Omega, Z^{k}, \Lambda^{k} \right)$ which further implies that
 
-\begin{equation}
-0 \in \rho\left( Z^{k + 1} - Z^{k} \right)
-(\#eq:dualresidual)
-\end{equation}
+### Stopping Criterion {#ADMMstop}
 
-Like the primal residual, at convergence optimality conditions require that $s^{k + 1} \approx 0$. Note that the second dual optimality condition is always satisfied^[Proof of \@ref(eq:dualopt) in section \@ref(proofdualopt).]:
+There are three optimality conditions for the ADMM algorithm that we can use to inform the convergence and stopping criterion. These general conditions were outlined in @boyd2011distributed but here we cater them to precision matrix estimation. The first condition is the primal optimality condition $\Omega^{k + 1} - Z^{k + 1} = 0$ and the other two conditions are the dual conditions $0 \in \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k + 1}$ and $0 \in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}$. The first dual optimality condition is a result of taking the sub-differential of the lagrangian (non-augmented) with respect to $\Omega^{k + 1}$ and the second is a result of taking the sub-differential of the lagrangian with respect to $Z^{k + 1}$. Note that in the first condition we must honor the symmetric constraint in $\Omega$ but the second condition does not require it.
 
-\begin{equation}
-\begin{split}
-  0 \in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1} \\
-(\#eq:dualopt)
-\end{split}
-\end{equation}
+If we define the left-hand side of the primal optimality condition as the *primal residual* $r^{k + 1} = \Omega^{k + 1} - Z^{k + 1}$, then at convergence we must require that $r^{k + 1} \approx 0$. Likewise, if we define the *dual residual* $s^{k + 1} = \rho\left( Z^{k + 1} - Z^{k} \right)$, we must also require that $s^{k + 1} \approx 0$ for proper convergence. This dual residual is the direct result of the fact that $\Omega^{k + 1}$ is the minimizer of the augmented lagragian^[Proof in section \@ref(proofdualresidual).] so that $0 \in \partial L_{p}\left( \Omega, Z^{k}, \Lambda^{k} \right)$ and consequently $0 \in \rho\left( Z^{k + 1} - Z^{k} \right)$^[Note that the second dual optimality condition $0 \in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}$ is always satisfied. More details can be found in section \@ref(proofdualopt).].
 
-One possible stopping criterion is to set $\epsilon^{rel} = \epsilon^{abs} = 10^{-3}$ and stop the algorithm when $\epsilon^{pri} \leq \left\| r^{k + 1} \right\|_{F}$ and $\epsilon^{dual} \leq \left\| s^{k + 1} \right\|_{F}$ where
-
+Combining these three optimality conditions, Boyd suggests a stopping criterion similar to $\epsilon^{pri} \leq \left\| r^{k + 1} \right\|_{F}$ and $\epsilon^{dual} \leq \left\| s^{k + 1} \right\|_{F}$ where $\epsilon^{rel} = \epsilon^{abs} = 10^{-3}$ and 
 \begin{equation}
 \begin{split}
   \epsilon^{pri} &= p\epsilon^{abs} + \epsilon^{rel}\max\left\{ \left\| \Omega^{k + 1} \right\|_{F}, \left\| Z^{k + 1} \right\|_{F} \right\} \\
@@ -274,94 +213,26 @@ One possible stopping criterion is to set $\epsilon^{rel} = \epsilon^{abs} = 10^
 
 
 
-
-
 ## Simulations
 
-In the simulations below, we generate data from a number of different oracle precision matrices with various structures. For each data-generating procedure, the `ADMMsigma()` function was run using 5-fold cross validation. After 20 replications, the cross validation errors were totalled and the optimal tuning parameters were selected (results below the top figure). These results are compared with the Kullback Leibler (KL) losses between the estimates and the oracle precision matrix (bottom figure).
+As a proof-of-concept that the elastic-net penalty in the context of precision matrix estimation can provide useful results and that the ADMM algorithm used in this process works, the section offers a short simulation. For the simulation, we generated data from multiple, unique precision matrices with various oracle structures. For each data-generating procedure, the algorithm was run with a 5-fold cross validation. After 20 replications, the cross validation errors were totalled and the optimal tuning parameters were selected (results are in the top half of the figures). These results were then compared with the Kullback Leibler (KL) losses between the estimated matrices and the oracle matrices (results are in the bottom half of the figures).
 
-We can see below that our cross validation procedure consistently chooses tuning parameters that are close to the optimal parameters with respsect to the oracle.
+The first figure shows the results when the data was generated from a multivariate normal distribution with mean equal to zero and a tri-diagonal oracle precision matrix. This oracle matrix was first generated as $\left(S_{ij}\right) = 0.7^{\left|i - j \right|}$ for $i,j = 1,..., p$ and then inverted. The results show that because the oracle precision matrix is sparse, the algorithm correctly chooses a sparse solution with $\alpha = 1$ - indicating a lasso penalty.
 
-HOW DID WE GENERATE THE DATA?
+The second figure shows the results when the data was generated from a multivariate normal distribution with mean equal to zero and a *dense* oracle precision matrix. Here, we randomly generated an orthogonal basis, set all eigen values equal to 1000, and then combined the matrices using QR decomposition. Interestingly, we find that the optimal $\alpha$ in this case is 0.6 which closely matches the optimal result based on the KL loss. This shows that there are cases where an elastic-net penalty can provide useful results and that using only a lasso penalty may unnecessarily restrict our penalized estimation.
 
+\vspace{1cm}
 
-### Plots
+<!-- #### Compound Symmetric: P = 100, N = 50 -->
 
-#### Compound Symmetric: P = 100, N = 50
+<!-- ```{r, message = FALSE, echo = TRUE, eval = FALSE} -->
 
-```{r, message = FALSE, echo = TRUE, eval = FALSE}
-
-# oracle precision matrix
-Omega = matrix(0.9, ncol = 100, nrow = 100)
-diag(Omega = 1)
-
-# generate covariance matrix
-S = qr.solve(Omega)
-
-# generate data
-Z = matrix(rnorm(100*50), nrow = 50, ncol = 100)
-out = eigen(S, symmetric = TRUE)
-S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
-X = Z %*% S.sqrt
-
-```
-<br>\vspace{0.5cm}
-
-<!-- <center> -->
-<!-- ![Figure caption here.](images/compound_N50_P100.png){ -->
-<!-- width=90% } -->
-<!-- </center> -->
-
-```{r admmsim1, eval = T, echo = F, fig.cap = "Figure caption here."}
-
-knitr::include_graphics("images/compound_N50_P100.png")
-
-```
-
-#### Compound Symmetric: P = 10, N = 1000
-
-```{r, message = FALSE, echo = TRUE, eval = FALSE}
-
-# oracle precision matrix
-Omega = matrix(0.9, ncol = 10, nrow = 10)
-diag(Omega = 1)
-
-# generate covariance matrix
-S = qr.solve(Omega)
-
-# generate data
-Z = matrix(rnorm(10*1000), nrow = 1000, ncol = 10)
-out = eigen(S, symmetric = TRUE)
-S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
-X = Z %*% S.sqrt
-
-```
-<br>\vspace{0.5cm}
-
-<!-- <center> -->
-<!-- ![Figure caption here.](images/compound_N1000_P10.png){ -->
-<!-- width=90% } -->
-<!-- </center> -->
-
-```{r admmsim2, eval = T, echo = F, fig.cap = "Figure caption here."}
-
-knitr::include_graphics("images/compound_N1000_P10.png")
-
-```
-
-
-<!-- #### Dense: P = 100, N = 50 -->
-
-<!-- ```{r, message = FALSE, echo = TRUE, eval = FALSE, tidy = FALSE} -->
-
-<!-- # generate eigen values -->
-<!-- eigen = c(rep(1000, 5, rep(1, 100 - 5))) -->
-
-<!-- # randomly generate orthogonal basis (via QR) -->
-<!-- Q = matrix(rnorm(100*100), nrow = 100, ncol = 100) %>% qr %>% qr.Q -->
+<!-- # oracle precision matrix -->
+<!-- Omega = matrix(0.9, ncol = 100, nrow = 100) -->
+<!-- diag(Omega = 1) -->
 
 <!-- # generate covariance matrix -->
-<!-- S = Q %*% diag(eigen) %*% t(Q) -->
+<!-- S = qr.solve(Omega) -->
 
 <!-- # generate data -->
 <!-- Z = matrix(rnorm(100*50), nrow = 50, ncol = 100) -->
@@ -372,15 +243,35 @@ knitr::include_graphics("images/compound_N1000_P10.png")
 <!-- ``` -->
 <!-- <br>\vspace{0.5cm} -->
 
-<!-- <!-- <center> --> -->
-<!-- <!-- ![Figure caption here.](images/repsKLdenseQR_N50_P100.png){ --> -->
-<!-- <!-- width=90% } --> -->
-<!-- <!-- </center> --> -->
-<!-- <!-- } --> -->
+<!-- ```{r admmsim1, eval = T, echo = F, fig.cap = "Figure caption here."} -->
 
-<!-- ```{r admmsim3, eval = T, echo = F, fig.cap = "Figure caption here."} -->
+<!-- knitr::include_graphics("images/compound_N50_P100.png") -->
 
-<!-- knitr::include_graphics("images/repsKLdenseQR_N50_P100.png") -->
+<!-- ``` -->
+
+<!-- #### Compound Symmetric: P = 10, N = 1000 -->
+
+<!-- ```{r, message = FALSE, echo = TRUE, eval = FALSE} -->
+
+<!-- # oracle precision matrix -->
+<!-- Omega = matrix(0.9, ncol = 10, nrow = 10) -->
+<!-- diag(Omega = 1) -->
+
+<!-- # generate covariance matrix -->
+<!-- S = qr.solve(Omega) -->
+
+<!-- # generate data -->
+<!-- Z = matrix(rnorm(10*1000), nrow = 1000, ncol = 10) -->
+<!-- out = eigen(S, symmetric = TRUE) -->
+<!-- S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors) -->
+<!-- X = Z %*% S.sqrt -->
+
+<!-- ``` -->
+<!-- <br>\vspace{0.5cm} -->
+
+<!-- ```{r admmsim2, eval = T, echo = F, fig.cap = "Figure caption here."} -->
+
+<!-- knitr::include_graphics("images/compound_N1000_P10.png") -->
 
 <!-- ``` -->
 
@@ -407,11 +298,6 @@ knitr::include_graphics("images/compound_N1000_P10.png")
 <!-- ``` -->
 <!-- <br>\vspace{0.5cm} -->
 
-<!-- <!-- <center> --> -->
-<!-- <!-- ![Figure caption here.](images/repsKLdense_N50_P10.png){ --> -->
-<!-- <!-- width=90% } --> -->
-<!-- <!-- </center> --> -->
-
 <!-- ```{r admmsim4, eval = T, echo = F, fig.cap = "Figure caption here."} -->
 
 <!-- knitr::include_graphics("images/repsKLdense_N50_P10.png") -->
@@ -419,35 +305,71 @@ knitr::include_graphics("images/compound_N1000_P10.png")
 <!-- ``` -->
 
 
-#### Tridiagonal: P = 100, N = 50
 
-```{r, message = FALSE, echo = TRUE, eval = FALSE, tidy = FALSE}
+<!-- #### Tridiagonal: P = 100, N = 50 -->
 
-# generate covariance matrix
-# (can confirm inverse is tri-diagonal)
-S = matrix(0, nrow = 100, ncol = 100)
-for (i in 1:100){
-  for (j in 1:100){
-    S[i, j] = 0.7^abs(i - j)
-  }
-}
+<!-- ```{r, message = FALSE, echo = TRUE, eval = FALSE, tidy = FALSE} -->
 
-# generate data
-Z = matrix(rnorm(10*50), nrow = 50, ncol = 10)
-out = eigen(S, symmetric = TRUE)
-S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors)
-X = Z %*% S.sqrt
+<!-- # generate covariance matrix -->
+<!-- # (can confirm inverse is tri-diagonal) -->
+<!-- S = matrix(0, nrow = 100, ncol = 100) -->
+<!-- for (i in 1:100){ -->
+<!--    for (j in 1:100){ -->
+<!--      S[i, j] = 0.7^abs(i - j) -->
+<!--  } -->
+<!-- } -->
 
-```
-<br>\vspace{0.5cm}
+<!-- # generate data -->
+<!-- Z = matrix(rnorm(10*50), nrow = 50, ncol = 10) -->
+<!-- out = eigen(S, symmetric = TRUE) -->
+<!-- S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors) -->
+<!-- X = Z %*% S.sqrt -->
+
+<!-- ``` -->
+<!-- <br>\vspace{0.5cm} -->
 
 <!-- <center> -->
 <!-- ![Figure caption here.](images/repsKLtridiag_N50_P100.png){ -->
 <!-- width=90% } -->
 <!-- </center> -->
 
-```{r admmsim5, eval = T, echo = F, fig.cap = "Figure caption here."}
+```{r admmsim5, eval = T, echo = F, fig.cap = "The oracle precision matrices were tri-diagonal with dimension p = 100 and the data was generated with a sample size of n = 50. The cross validation errors are in the top figure and the KL losses between the estimated matrices and the oracle matrices are shown in the bottom figure. The optimal tuning parameter pair for each heatmap was found to be log10(lam) = -0.9 and alpha = 1. Note that brighter areas signify smaller losses."}
 
 knitr::include_graphics("images/repsKLtridiag_N50_P100.png")
+
+```
+
+
+<!-- #### Dense: P = 100, N = 50 -->
+
+<!-- ```{r, message = FALSE, echo = TRUE, eval = FALSE, tidy = FALSE} -->
+
+<!-- # generate eigen values -->
+<!-- eigen = c(rep(1000, 5, rep(1, 100 - 5))) -->
+
+<!-- # randomly generate orthogonal basis (via QR) -->
+<!-- Q = matrix(rnorm(100*100), nrow = 100, ncol = 100) %>% qr %>% qr.Q -->
+
+<!-- # generate covariance matrix -->
+<!-- S = Q %*% diag(eigen) %*% t(Q) -->
+
+<!-- # generate data -->
+<!-- Z = matrix(rnorm(100*50), nrow = 50, ncol = 100) -->
+<!-- out = eigen(S, symmetric = TRUE) -->
+<!-- S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors) -->
+<!-- X = Z %*% S.sqrt -->
+
+<!-- ``` -->
+<!-- <br>\vspace{0.5cm} -->
+
+<!-- <center> -->
+<!-- <!-- ![Figure caption here.](images/repsKLdenseQR_N50_P100.png){ -->
+<!-- width=90% } -->
+<!-- </center> -->
+<!-- } -->
+
+```{r admmsim3, eval = T, echo = F, fig.cap = "The oracle precision matrices were dense with dimension p = 100 and the data was generated with a sample size of n = 50. The cross validation errors are in the top figure and the KL losses between the estimated matrices and the oracle matrices are shown in the bottom figure. The optimal tuning parameter pair for the cross validation errors was found to be log10(lam) = -0.4 and alpha = 0.6 and log10(lam) = -0.5 and alpha = 0.7 for the KL losses. Note that brighter areas signify smaller losses."}
+
+knitr::include_graphics("images/repsKLdenseQR_N50_P100.png")
 
 ```

@@ -31,7 +31,7 @@ description: "Matt Galloway's Master's thesis."
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE, tidy = TRUE, out.width = "90%", fig.align = "center", out.extra = "")
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, tidy = TRUE, out.width = "85%", fig.align = "center", out.extra = "")
 
 ```
 

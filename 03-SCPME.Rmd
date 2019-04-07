@@ -1,31 +1,38 @@
 
 # SCPME
 
-The penalty proposed by @molstad2017shrinking is one of the following form:
+In their 2017 paper, titled *Shrinking Characteristics of Precision Matrix Estimators*, Aaron Molstad, Ph.D. and Professor Adam Rothman outline a framework to estimate *characteristics* of precision matrices. This concept, inspired by others like @cai2011direct, @fan2012road, and @mai2012direct, exploits the fact that in many predictive models, estimation of the precision matrix is only necessary through its product with another feature such as a mean vector.
+
+The example they offer in @molstad2017shrinking is in the context of Fisher's linear discriminant analysis model. If a response vector $Y$ is categorical such that $Y$ can take values in $\left\{1, ..., J\right\}$, then the linear discrimnant analysis model assumes that the design matrix $X$, conditional on the response vector $Y$, is normally distributed:
+
+\begin{equation}
+X | Y = j \sim N_{p}\left(\mu_{j}, \Omega^{-1}\right)
+(\#eq:lda)
+\end{equation}
+
+for each $j = 1, ..., J$. We can see from this formulation that clearly an estimation of both $\mu$ and $\Omega$ are required for this model. However, they note that if prediction is the primary concern, then for a given observation $X_{i}$ only the *characteristic* $\Omega\left(\mu_{l} - \mu_{m}\right)$ is needed to discern between response categories $l$ and $m$. In other words, prediction only requires the characteristic $\Omega\left(\mu_{l} - \mu_{m}\right)$ for each $l, m \in \left\{1, ..., J\right\}$ and does *not* require estimation of the full precision matrix $\Omega$. @cai2011direct were among the first authors to propose estimating this characteristic directly but the interesting facet that distinguishes Molstad and Rothman's approach is that their framework simultaneously fits the model in \@ref(eq:lda) and performs variable selection.
+
+The general framework has applications outside of linear discriminant analysis and we will be exploring a regression application in later sections, but first we will outline their approach. The penalty proposed by @molstad2017shrinking is of the form
 
 \begin{equation}
 P\left(\Omega\right) = \lambda\left\| A\Omega B - C \right\|_{1}
 (\#eq:pen2)
 \end{equation}
 
-where $A \in \mathbb{R}^{m \times p}, B \in \mathbb{R}^{p \times q}, \mbox{ and } C \in \mathbb{R}^{m \times q}$ are matrices assumed to be known and specified by the user. Solving the full penalized log-likelihood for $\Omega$ results in solving
+where $A \in \mathbb{R}^{m \times p}, B \in \mathbb{R}^{p \times q}, \mbox{ and } C \in \mathbb{R}^{m \times q}$ are matrices that are assumed to be known and specified so that solving the full penalized gaussian log-likelihood for $\Omega$ results in solving
 
 \begin{equation}
 \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\left\| A\Omega B - C \right\|_{1} \right\}
 (\#eq:omegaloglik2)
 \end{equation}
 
-- A similar estimator was proposed by @dalal2017sparse when $C = 0$.
-
-This form of penalty is particularly useful because matrices $A, B, \mbox{ and } C$ can be constructed so that we penalize the sum, absolute value of a *characteristic* of the precision matrix $\Omega$. This type of penalty leads to many new, interesting, and novel estimators for $\Omega$. An example of one such estimator (suppose we observe $n$ samples of $Y_{i} \in \mathbb{R}^{r}$) would be one where we set $A = I_{p}, B = \Sigma_{xy}, \mbox{ and } C = 0$ where $\Sigma_{xy}$ is the covariance matrix of $X$ and $Y$. This penalty has the effect of assuming sparsity in the forward regression coefficient $\beta \equiv \Omega\Sigma_{xy}$. Of course, in practice we do not know the true covariance matrix $\Sigma_{xy}$ but we might consider using the sample estimate $\hat{\Sigma}_{xy} = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(Y_{i} - \bar{Y}\right)^{T}/n$
-
-We will explore how to solve for $\hat{\Omega}$ in the next section.
+A similar estimator was proposed by @dalal2017sparse when $C = 0$ but here we do not require it. This form of penalty is particularly useful because it's extremely general. Note that by letting matrices $A = I_{p}, B = I_{p}, \mbox{ and } C = 0$, this penalty reduces to a lasso penalty - but clearly this form allows for much more creative penalties and $A, B, \mbox{ and } C$ can be constructed so that we penalize the sum, absolute value of *many* characteristics of the precision matrix $\Omega$. We will explore how to solve for $\hat{\Omega}$ in the next section.
 
 
 
 ## Augmented ADMM Algorithm
 
-Within the context of @molstad2017shrinking, this algorithm would consist of iterating over the following three steps:
+Solving for $\hat{\Omega}$ in \@ref(eq:omegaloglik2) uses what we are going to call an *augmented ADMM* algorithm. Molstad and Rothman do not offer a name for this specific algorithm but it leverages the majorize-minimize principle in one of the steps in the algorithm - augmenting the ADMM algorithm discussed in the previous chapter. Within the context of the proposed penalty, the traditional ADMM algorithm for precision matrix estimation would consist of iterating over the following three steps:
 
 \begin{align}
   \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}L_{\rho}(\Omega, Z^{k}, \Lambda^{k}) \\
@@ -33,16 +40,16 @@ Within the context of @molstad2017shrinking, this algorithm would consist of ite
   \Lambda^{k + 1} &= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right)
 \end{align}
 
-where $L_{p}(\cdot)$ is the *augmented lagrangian* defined as
+where $L$, still the *augmented lagrangian*, is defined as
 
 \begin{equation}
 L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda^{T}\left(A\Omega B - Z - C\right)\right] + \frac{\rho}{2}\left\|A\Omega B - Z - C\right\|_{F}^{2}
 (\#eq:auglagrange3)
 \end{equation}
 
-with $f\left(\Omega\right) = tr\left(S\Omega\right) - \log\left|\Omega\right|$ and $g\left(Z\right) = \lambda\left\|Z\right\|_{1}$. However, instead of solving the first step exactly, the authors propose an alternative, approximating objective function ($\tilde{L}$) based on the majorize-minimize principle -- the purpose of which is to find a solution that can be solved in closed form. The ADMM algorithm with modification based on majorize-minimize principle is also found in @lange2016mm.
+Similar to the previous chapter, $f\left(\Omega\right) = tr\left(S\Omega\right) - \log\left|\Omega\right|$ and $g\left(Z\right) = \lambda\left\|Z\right\|_{1}$. In fact, the details of the algorithm thus far are identical to the previous approach except that we are replacing $\Omega - Z$ with $A\Omega B - C - Z$ (or equivalently, $A\Omega B - Z - C$) in the augmented lagrangian and the dual update $\Lambda^{k + 1}$.
 
-The approximating function is defined as
+Instead of solving the first step exactly as we did in the previous section, the authors propose an alternative, approximating objective function, which we will call $\tilde{L}$, that is based on the majorize-minimize principle^[Further explanation of the majorizing function \@ref(eq:approx) in section \@ref(taylorsexp)]. The purpose of this approximating function is the desire to solve this first step in closed-form. The ADMM algorithm with this modification based on majorize-minimize principle is also found in @lange2016mm but here the approximating function is defined as
 
 \begin{equation}
 \begin{split}
@@ -52,16 +59,9 @@ The approximating function is defined as
 \end{split}
 \end{equation}
 
-where $Q = \tau I_{p} - \left(A^{T}A \otimes BB^{T}\right)$, $\otimes$ is the Kronecker product, and $\tau$ is chosen such that $Q$ is positive definite. Note that if $Q$ is positive definite (p.d.), then
+where $Q = \tau I_{p} - \left(A^{T}A \otimes BB^{T}\right)$ and $\tau$ is chosen such that $Q$ is positive definite and thus $L_{\rho}\left(\cdot\right) \leq \tilde{L}\left(\cdot\right)$ for all $\Omega$ (therefore $\tilde{L}$ is a majorizing function^[Note that if $Q$ is positive definite, then $vec\left(\Omega - \Omega^{k} \right)^{T}\rho Q\left(\Omega - \Omega^{k} \right)/2 > 0$ since $\rho > 0$ and $vec\left(\Omega - \Omega^{k}\right)$ is always nonzero whenever $\Omega \neq \Omega^{k}$.]).
 
-\begin{equation}
-\frac{\rho}{2}vec\left(\Omega - \Omega^{k} \right)^{T}Q\left(\Omega - \Omega^{k} \right) > 0
-(\#eq:pd)\notag
-\end{equation}
-
-since $\rho > 0$ and $vec\left(\Omega - \Omega^{k}\right)$ is always nonzero whenever $\Omega \neq \Omega^{k}$. Thus $L_{\rho}\left(\cdot\right) \leq \tilde{L}\left(\cdot\right)$ for all $\Omega$ and $\tilde{L}$ is a majorizing function^[Further explanation of majorizing function \@ref(eq:approx) in section \@ref(taylorsexp)].
-
-The *augmented ADMM* algorithm is the following:
+The *augmented ADMM* algorithm developed by Molstad and Rothman, which now includes the majorize-minimize principle, consists of the following repeated iterations:
 
 \begin{equation}
 \begin{split}
@@ -72,11 +72,12 @@ The *augmented ADMM* algorithm is the following:
 \end{split}
 \end{equation}
 
+where $G^{k} = \rho A^{T}\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}Y^{k} \right)B^{T}$. Each step in this algorithm can now conveniently be solved in closed-form and the full details of each can be found in the appendix \@ref(proofOmegak). The following theorem provides the simplified steps in the algorithm.
 
 
-### Algorithm
+```{theorem, name = "Augmented ADMM Algorithm for Shrinking Characteristics of Precision Matrix Estimators."}
 
-Set $k = 0$ and repeat steps 1-6 until convergence.
+Define the soft-thresholding function as $\mbox{soft}(a, b) = \mbox{sign}(a)(\left| a \right| - b)_{+}$. Set $k = 0$ and repeat steps 1-6 until convergence.
 
 1. Compute $G^{k}$.
 
@@ -115,52 +116,19 @@ Y^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)
 
 6. Replace $k$ with $k + 1$.
 
-The soft-thresholding function is defined as $\mbox{soft}(a, b) = \mbox{sign}(a)(\left| a \right| - b)_{+}$.
-
+```
 
 
 ### Stopping Criterion
 
-In discussing the optimality conditions and stopping criterion, we will follow the steps outlined in @boyd2011distributed and cater them to the SCPME method.
-
-Below we have three optimality conditions:
-
-1. Primal:
-
-\begin{equation}
-A\Omega^{k + 1}B - Z^{k + 1} - C = 0
-(\#eq:scpmeprimal)\notag
-\end{equation}
-
-2. Dual:
-
-\begin{equation}
-\begin{split}
-  0 &\in \partial f\left(\Omega^{k + 1}\right) + \frac{1}{2}\left(B(\Lambda^{k + 1})^{T}A + A^{T}\Lambda^{k + 1}B^{T} \right) \\
-  0 &\in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}
-(\#eq:scpmedual)\notag
-\end{split}
-\end{equation}
-
-The first dual optimality condition is a result of taking the sub-differential of the lagrangian (non-augmented) with respect to $\Omega^{k + 1}$ (note that we must honor the symmetric constraint of $\Omega^{k + 1}$) and the second is a result of taking the sub-differential of the lagrangian with respect to $Z^{k + 1}$ (no symmetric constraint).
-
-We will define the left-hand side of the primal optimality condition as the primal residual $r^{k + 1} = A\Omega^{k + 1}B - Z^{k + 1} - C$. At convergence, the optimality conditions require that $r^{k + 1} \approx 0$. The second residual we will define is the dual residual^[Proof of \@ref(eq:stopproof) in section \@ref(proofstopproof).]:
+A possibe stopping criterion for this framework is one derived from similar optimality conditions used in the previous section \@ref(ADMMstop). The primal optimality condition here is that $A\Omega^{k + 1}B - Z^{k + 1} - C = 0$ and the two dual optimality conditions are $0 \in \partial f\left(\Omega^{k + 1}\right) + \left(B(\Lambda^{k + 1})^{T}A + A^{T}\Lambda^{k + 1}B^{T} \right)/2$ and $0 \in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}$. Similarly, we will define the left-hand side of the primal optimality condition as the primal residual $r^{k + 1} = A\Omega^{k + 1}B - Z^{k + 1} - C$ and the dual residual^[Proof of \@ref(eq:stopproof) in section \@ref(proofstopproof).] as
 
 \begin{equation}
 s^{k + 1} = \frac{\rho}{2}\left( B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right)
 (\#eq:stopproof)\notag
 \end{equation}
 
-Like the primal residual, at convergence the optimality conditions require that $s^{k + 1} \approx 0$. Note that the second dual optimality condition is always satisfied^[Proof of \@ref(eq:dualopt2) in section \@ref(proofdualopt2)].
-
-\begin{equation}
-\begin{split}
-  0 &\in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}
-(\#eq:dualopt2)\notag
-\end{split}
-\end{equation}
-
-One possible stopping criterion is to set $\epsilon^{rel} = \epsilon^{abs} = 10^{-3}$ and stop the algorithm when $\epsilon^{pri} \leq \left\| r^{k + 1} \right\|_{F}$ and $\epsilon^{dual} \leq \left\| s^{k + 1} \right\|_{F}$ where
+For proper convergence, we will require that both residuals are approximately equal to zero. Similar to the stopping criterion discussed previously, one possibility is to set $\epsilon^{rel} = \epsilon^{abs} = 10^{-3}$ and stop the algorithm when $\epsilon^{pri} \leq \left\| r^{k + 1} \right\|_{F}$ and $\epsilon^{dual} \leq \left\| s^{k + 1} \right\|_{F}$ where
 
 \begin{equation}
 \begin{split}
@@ -172,3 +140,325 @@ One possible stopping criterion is to set $\epsilon^{rel} = \epsilon^{abs} = 10^
 
 
 
+## Regression Illustration
+
+One of the research directions mentioned in @molstad2017shrinking that was not further explored was the application of the SCPME framework to regression. Utilizing the fact that the population regression coefficient matrix $\beta \equiv \Omega_{x}\Sigma_{xy}$ for predictors, $X$, and the responses, $Y$, they point out that their framework could allow for the simultaneous estimation of $\beta$ and $\Omega_{x}$. For example, recall that the general optimization problem outlined in the SCPME framework is to estimate $\hat{\Omega}$ such that
+
+\begin{equation}
+  \hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \lambda\left\| A\Omega B - C \right\|_{1} \right\}
+(\#eq:penloglik3)\notag
+\end{equation}
+
+If the user specifies that $A = I_{p}, B = \Sigma_{xy}, C = 0, \mbox{ and } \Omega_{x}$ is the precision matrix for the predictors, then the optimization problem of interest is now
+
+\begin{equation}
+  \hat{\Omega}_{x} = \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ tr(S_{x}\Omega_{x}) - \log\left| \Omega_{x} \right| + \lambda\left\| \Omega_{x} \Sigma_{xy} \right\|_{1} \right\} \\
+(\#eq:penloglik4)\notag
+\end{equation}
+
+Of course, in practice we do not know the true covariance matrix $\Sigma_{xy}$ but we might consider using the sample estimate $\hat{\Sigma}_{xy} = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(Y_{i} - \bar{Y}\right)^{T}/n$ and then using our estimator, $\hat{\Omega}_{x}$, to construct the forward regression coefficient matrix estimator $\hat{\beta} = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$. Like @witten2009covariance, this approach estimates the forward regression coefficient matrix while using shrinkage estimators of the marginal precision matrix for the predictors. Specifically, this optimization problem has the effect of deriving an estimate of $\Omega_{x} \mbox { and } \beta$ while assuming sparsity in the forward regression coefficient $\beta$.
+
+The penality outline in the SCPME framekwork is flexible that many novel estimators can be constructed. For instance, we might also consider taking $B = \left[ \Sigma_{xy}, I_{p} \right]$ so that the identity matrix is appended to the sample cross-covariance matrix of $X$ and $Y$. In this case, not only are we assuming that $\beta$ is sparse, but we are also assuming sparsity in $\Omega$.
+
+\begin{equation}
+P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\left[\Sigma_{xy}, I_{p}\right] \right\|_{1} = \lambda\left\| \beta \right\|_{1} + \lambda\left\| \Omega \right\|_{1}
+(\#eq:pen4)\notag
+\end{equation}
+
+In the next section we offer a short simulation comparing these estimators to related and competing prediction methods.
+
+
+
+## Simulations
+
+In this simulation, we compare the performance of several competing prediction methods, including the so-called SCPME regression estimators discussed in the previous section, under various data realizations. In total, we consider the following estimators:
+
+ - `OLS` = ordinary least squares estimator. In *high* dimensional setting ($p >> n$), the Moore-Penrose estimator is used.
+ 
+ - `ridge` = ridge regression estimator.
+ 
+ - `lasso` = lasso regression estimator.
+ 
+ - `oracleB` = oracle estimator for $\beta$.
+ 
+ - `oracleO` = regression estimator with oracle $\Omega^{*}$ (let $\beta = \Omega^{*}\hat{\Sigma}_{xy}$).
+ 
+ - `oracleS` = regression estimator with oracle $\Sigma_{xy}^{*}$ (let $\beta = \hat{\Omega}\Sigma_{xy}^{*}$).
+ 
+ - `shrinkB` = SCPME regression estimator with penalty $\lambda\left\| \Omega\hat{\Sigma}_{xy} \right\|_{1}$.
+ 
+ - `shrinkBS` = SCPME regression estimator with oracle $\Sigma_{xy}^{*}$ so that the penalty is $\lambda\left\| \Omega\hat{\Sigma}_{xy}^{*} \right\|_{1}$.
+ 
+ - `shrinkBO` = SCPME regression estimator with penalty $\lambda\left\| \Omega[\Sigma_{xy}, I_{p}] \right\|_{1}$.
+ 
+ - `glasso` = graphical lasso estimator.
+ 
+Each tuning parameter was selected to minimize the mean squared prediction error (MSPE) over 3-fold cross validation.
+
+For each data generation procedures, let $\mathbb{X} \in \mathbb{R}^{n \times p}$, $\mathbb{Y} \in \mathbb{R}^{n \times r}$, and $\beta \in \mathbb{R}^{p \times r}$ so that $\mathbb{Y} = \mathbb{X}\beta + \mathbb{E}$. Here we let the script notation denote the fact that the columns have been centered so as to remove the intercept in our prediction models. The regression coefficient matrix $\beta$ is constructed so that $\beta = \mathbb{B} \circ \mathbb{V}$ where $vec\left( \mathbb{B} \right) \sim N_{pr}\left( 0, I_{p} \otimes I_{r}/\sqrt{p} \right)$ and $\mathbb{V} \in \mathbb{R}^{p \times r}$ is a matrix containing $p$ times $r$ random bernoulli draws with 50\% probability being equal to one. The residual covariance matrix $\Sigma_{y | x}$ is constructed so that $\left( \Sigma_{xx} \right)_{ij} = 0.7^{\left| i - j \right|}$ and $\left( \Sigma_{y | x} \right)_{ij} = 0.7^{\left| i - j \right|}$, respectively. This ensures that its corresponding precision matrix will be tridiagonal and sparse. Then for 100 independent, identically distributed samples, we have that $X_{i} \sim N_{p}\left( 0, \Sigma_{xx} \right)$ and $E_{i} \sim N_{r}\left( 0, \Sigma_{y | x} \right)$. An additional 1000 samples will be generated for the testing set and the methods were evaluated on both model error and mean squared prediction error. Each data generating procedure for each $p$ in $(10, 50, 100, 150)$ was replicated a total of 20 times.
+
+Note that we are now displaying model error (ME) as opposed to mean squared prediction error (MSPE). Also, `OLS` and `oracleS` will not be show in the high dimensional setting plots because of poor performance.
+
+In high dimensional settings, `shrinkBO` (penalty: $\lambda\left\| \Omega[\hat{\Sigma}_{xy}, I_{p}] \right\|_{1}$) and `shrinkB` (penalty: $\lambda\left\| \Omega\hat{\Sigma}_{xy} \right\|_{1}$) perform increasingly well relative (and superior) to the others when $p >> n$. It's not surprising that `shrinkBO` performs the best because the embedded assumptions most closely match the data generating model.
+
+In the high dimension setting, the oracle estimators `oracleO` (penalty: $\lambda\left\| \Omega^{*}\hat{\Sigma}_{xy} \right\|_{1}$) and `oracleS` (penalty: $\lambda\left\| \hat{\Omega}\Sigma_{xy}^{*} \right\|_{1}$) performed worse or comparable to OLS. The poor performance of `oracleS` is likely due to the fact that the sample estimate of $\Omega$ is not identifiable when $p > n$.
+
+When $n > p$ we see that `shrinkB` performs terribly. Interestingly, `shrinkBO` is still one of the better performing estimators -- though worse than both `lasso` and `ridge`.
+
+It is interesting that `oracleO` performed worse than `oracleS` in the final table. It appears that estimating the covariance matrix $\Sigma_{xy}$ well is *more* important than estimating $\Omega$ well.
+
+
+<!-- <br>\vspace{0.5cm} -->
+<!-- ```{r scpmesim1, eval = T, echo = F, fig.cap = "ME by P and R (N = 100, spase = 0.5, sigma = tridiag. High dimension."} -->
+
+<!-- # load data -->
+<!-- load("images/sim6.Rdata") -->
+
+<!-- # set P to numeric  -->
+<!-- sim6$P %<>% as.character %>% as.numeric -->
+
+<!-- # ME by P and R (N = 100, sparse = 0.5, sigma = "tridiag") -->
+<!-- sim6 %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", !model %in% c("OLS", "oracleS"), metric == "ME") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + facet_wrap(~ R, scales = "free") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P and R (N = 100, sparse = 0.5, sigma = tridiag)") -->
+
+<!-- ``` -->
+<!-- <br>\vspace{0.5cm} -->
+
+\vspace{0.5cm}
+```{r scpmesim2, eval = T, echo = F, fig.cap = "ME by P (N = 100, R = 10, sparse = 0.5, sigma = tridiag). The oracle precision matrices were tri-diagonal with variable dimension (p) and the data was generated with sample size n = 100 and response vector dimension r = 10. The model errors (ME) for each estimator are plotted. shrinkBO and shrinkB were the two best-performing estimators closely follow by the ridge and lasso regression estimators."}
+
+# load  data
+load("images/sim6.Rdata")
+
+# set P to numeric
+sim6$P %<>% as.character %>% as.numeric
+
+# ME by P (N = 100, R = 10, sparse = 0.5, sigma = "tridiag")
+sim6 %>% filter(N == 100, R == 10, sparse == 0.5, sigma == "tridiag", !model %in% c("OLS", "oracleS")) %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("Model Error by Dimension")
+
+```
+\vspace{0.5cm}
+
+
+\vspace{0.5cm}
+```{r, eval = T, echo = F, fig.cap = "ME by P (N = 100, R = 10, sparse = 0.5, sigma = tridiag)"}
+
+# ME table (N = 100, sparse = 0.5, sigma = "tridiag", P = 150, R = 10)
+sim6 %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", P == 150, R == 10) %>% group_by(model) %>% summarise(mean = mean(Error), sd = sd(Error)) %>% arrange(mean) %>% pander(caption = "ME by P (N = 100, R = 10, sparse = 0.5, sigma = tridiag)")
+
+```
+\vspace{0.5cm}
+
+<!-- <br>\vspace{0.5cm} -->
+<!-- ```{r scpmesim4, eval = T, echo = F, fig.cap = "ME by P and R (N = 1000, spase = 0.5, sigma = tridiag. Low dimension."} -->
+
+<!-- # ME by P and R (N = 1000, sparse = 0.5, sigma = "tridiag") -->
+<!-- sim6 %>% filter(N == 1000, sparse == 0.5, model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + facet_wrap(~ R, scales = "free") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P and R (N = 1000, sparse = 0.5, sigma = tridiag)") -->
+
+<!-- ``` -->
+<!-- <br>\vspace{0.5cm} -->
+
+<!-- \vspace{0.5cm} -->
+<!-- ```{r scpmesim5, eval = T, echo = F, fig.cap = "ME by P (N = 1000, R = 5, spase = 0.5, sigma = tridiag. Low dimension."} -->
+
+<!-- # ME by P (N = 1000, R = 5, sparse = 0.5, sigma = "tridiag") -->
+<!-- sim6 %>% filter(N == 1000, R == 5, sparse == 0.5, model != "OLS") %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("ME by P (N = 1000, R = 5, sparse = 0.5, sigma = tridiag)") -->
+
+<!-- ``` -->
+<!-- \vspace{0.5cm} -->
+
+
+<!-- \vspace{0.5cm} -->
+<!-- ```{r scpmesim6, eval = T, echo = F, fig.cap = "ME by P (N = 1000, R = 5, sparse = 0.5, sigma = tridiag)."} -->
+
+<!-- # ME table (N = 1000, sparse = 0.5, sigma = "tridiag", P = 150, R = 5) -->
+<!-- sim6 %>% filter(N == 1000, sparse == 0.5, sigma == "tridiag", P == 150, R == 5) %>% group_by(model) %>% summarise(mean = mean(Error), sd = sd(Error)) %>% arrange(mean) %>% pander(caption = "ME by P (N = 1000, R = 5, sparse = 0.5, sigma = tridiag).") -->
+
+<!-- ``` -->
+<!-- \vspace{0.5cm} -->
+
+
+### Regression Simulations with Covariance Shrinkage
+
+Here we compare the `shrinkB` and the `shrinkBO` estimators.
+
+(same data generation except the parameters are different this time...)
+
+We consider the response dimension as 10.
+ 
+For each of the estimators, $\Sigma_{xy}$ is estimated by the sample covariance matrix $\hat{\Sigma}_{xy}$ times some constant factor $k \in (0.1, 0.2, ..., 0.9, 1)$. We are shrinking $\hat{\Sigma}_{xy}$ by a constant to determine if there are any benefits to doing so.
+
+In the high dimensional settings, it does appear that shrinking the sample covariance matrix $\hat{\Sigma}_{xy}$ by a constant factor helps in reducing MSPE. This is indicated by the fact that the optimal `const` hovers around 0.5 for each of the estimators `shrinkB` and `shrinkBO`.
+
+In the low dimension settings, it appears that shrinking the covariance matrix is not beneficial.
+
+The type of oracle precision matrix (tridiagonal or compound symmetric) does not appear to be too influential with regards to the affect of shrinking the covariance matrix.
+
+The larger the dimension of $Y$, the more beneficial shrinkage will likely be (not that surprising)
+
+
+
+
+```{r, eval = T, echo = F}
+
+# load  data
+load("images/sigma.Rdata")
+
+# design color palette
+bluetowhite <- c("#000E29", "white")
+
+# change to numeric
+sigma$lam %<>% as.character %>% as.numeric
+sigma$const %<>% as.character %>% as.numeric
+
+```
+
+\vspace{0.5cm}
+```{r scpmesim7, eval = T, echo = F, fig.cap = "The oracle precision matrices were tri-diagonal with dimension p = 200 and the data was generated with a sample size n = 100 and response vector dimension r = 10. The cross validation MSPE are plotted for each lambda and constant tuning parameter pair. The optimal tuning parameter pair was found to be log10(lam) = -1 and const = 0.6. Note that brighter areas signify smaller losses."}
+
+# shrinkB MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "tridiag")
+d = sigma %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "tridiag", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkB Covariance Shrinkage", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+\vspace{0.5cm}
+
+<!-- <br>\vspace{1cm} -->
+
+<!-- ```{r scpmesim8, eval = T, echo = F, fig.cap = "Figure caption here."} -->
+
+<!-- # shrinkB MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "compound") -->
+<!-- d = sigma %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "compound", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean))) -->
+
+<!-- min = d[d$mean == min(d$mean),] -->
+
+<!-- d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkB MSPE (N = 100, P = 200, R = 10, sigma = compound)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = "")) -->
+
+<!-- ``` -->
+
+<!-- ##### `shrinkBO` -->
+
+<!-- <br>\vspace{1cm} -->
+
+\vspace{0.5cm}
+```{r scpmesim9, eval = T, echo = F, fig.cap = "The oracle precision matrices were tri-diagonal with dimension p = 200 and the data was generated with a sample size n = 100 and response vector dimension r = 10. The cross validation MSPE are plotted for each lambda and constant tuning parameter pair. The optimal tuning parameter pair was found to be log10(lam) = -0.5 and const = 0.3. Note that brighter areas signify smaller losses."}
+
+# shrinkBO MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "tridiag")
+d = sigma %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "tridiag", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
+
+min = d[d$mean == min(d$mean),]
+
+d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkBO Covariance Shrinkage", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = ""))
+
+```
+\vspace{0.5cm}
+
+
+<!-- <br>\vspace{1cm} -->
+
+<!-- ```{r scpmesim10, eval = T, echo = F, fig.cap = "Figure caption here."} -->
+
+<!-- # shrinkBO MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "compound") -->
+<!-- d = sigma %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "compound", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean))) -->
+
+<!-- min = d[d$mean == min(d$mean),] -->
+
+<!-- d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkBO MSPE (N = 100, P = 200, R = 10, sigma = compound)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = "")) -->
+
+<!-- ``` -->
+
+<!-- <br>\vspace{1cm} -->
+
+<!-- #### Low Dimension -->
+
+<!-- ##### `shrinkB` -->
+
+<!-- <br>\vspace{1cm} -->
+
+<!-- ```{r scpmesim11, eval = T, echo = F, fig.cap = "shrinkB MSPE (N = 1000, P = 50, R = 1, sigma = tridiag). Low dimension."} -->
+
+<!-- # shrinkB MSPE by lam and const (N = 1000, P = 50, R = 1, sigma = "tridiag") -->
+<!-- d = sigma %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "tridiag", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean))) -->
+
+<!-- min = d[d$mean == min(d$mean),] -->
+
+<!-- d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkB MSPE (N = 1000, P = 50, R = 1, sigma = tridiag)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = "")) -->
+
+<!-- ``` -->
+
+<!-- <br>\vspace{1cm} -->
+
+<!-- ```{r scpmesim12, eval = T, echo = F, fig.cap = "Figure caption here."} -->
+
+<!-- # shrinkB MSPE by lam and const (N = 1000, P = 50, R = 1, sigma = "compound") -->
+<!-- d = sigma %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "compound", model == "shrinkB") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean))) -->
+
+<!-- min = d[d$mean == min(d$mean),] -->
+
+<!-- d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkB MSPE (N = 1000, P = 50, R = 1, sigma = compound)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = "")) -->
+
+<!-- ``` -->
+
+<!-- #### `shrinkBO` -->
+
+<!-- <br>\vspace{1cm} -->
+
+<!-- ```{r scpmesim13, eval = T, echo = F, fig.cap = "shrinkBO MSPE (N = 1000, P = 50, R = 1, sigma = tridiag). Low dimension."} -->
+
+<!-- # shrinkBO MSPE by lam and const (N = 1000, P = 10, R = 1, sigma = "tridiag") -->
+<!-- d = sigma %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "tridiag", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean))) -->
+
+<!-- min = d[d$mean == min(d$mean),] -->
+
+<!-- d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkBO MSPE (N = 1000, P = 50, R = 1, sigma = tridiag)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = "")) -->
+
+<!-- ``` -->
+
+<!-- <br>\vspace{1cm} -->
+
+<!-- ```{r scpmesim14, eval = T, echo = F, fig.cap = "Figure caption here."} -->
+
+<!-- # shrinkBO MSPE by lam and const (N = 1000, P = 50, R = 1, sigma = "compound") -->
+<!-- d = sigma %>% filter(N == 1000, P == 50, R == 1, sparse == 0.5, sigma == "compound", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean))) -->
+
+<!-- min = d[d$mean == min(d$mean),] -->
+
+<!-- d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_fill_gradientn(colours = colorRampPalette(bluetowhite)(2), guide = "none") + theme_minimal() + labs(title = "shrinkBO MSPE (N = 1000, P = 50, R = 1, sigma = compound)", caption = paste("**Optimal: log10(lam) = ", round(log10(min$lam), 3), ", const = ", round(min$const, 3), sep = "")) -->
+
+<!-- ``` -->
+
+<!-- <br>\vspace{1cm} -->
+
+
+
+## Discussion
+
+The last estimator in the previous section reveals an interesting connection to the joint log-likelihood of $X$ and $Y$ (under a few assumptions) when we consider its analogous *ridge* version - the *ridge SCPME estimator*:
+
+\begin{equation}
+\hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega \Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
+(\#eq:penregression)\notag
+\end{equation}
+
+To see this, let us suppose that we have $n$ independent copies of the random pair $(Y_{i}, X_{i})$ and we assume a linear relationship of the following form:
+
+\begin{equation}
+Y_{i} = \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right) + E_{i}
+(\#eq:linregression)\notag
+\end{equation}
+
+where $E_{i} \sim N_{r}\left( 0, \Omega_{y | x}^{-1} \right)$ and $X_{i} \sim N_{p}\left( \mu_{x}, \Omega^{-1} \right)$. These two assumptions imply that the conditional distribution of $Y_{i}|X_{i}$ is of the form
+
+\begin{equation}
+Y_{i} | X_{i} \sim N_{r}\left( \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right), \Omega_{y | x}^{-1} \right)
+(\#eq:linnormal)\notag
+\end{equation}
+
+We can use this conditional distribution along with the marginal distribution of $X$ to derive the joint likelihood of $X$ and $Y$. Similar to before, we will take $\Omega_{y | x} \equiv \Sigma_{y | x}^{-1}, \Omega \equiv \Sigma_{xx}^{-1}, \mbox{ and } \beta \equiv \Omega\Sigma_{xy}$ for convenience. We will also let $f$ denote the probability distribution function for each respective variable.
+
+(Talk about regression estimator minimizing frobenius norm of predictions)
+
+
+(REMEMBER INFORMATION IN APPENDIX)

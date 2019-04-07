@@ -3,14 +3,16 @@
 
 # Appendix
 
-## Proofs
-
 ### Proof of \@ref(eq:omegaalgo) {#proofomegaalgo}
+
+@witten2009covariance and @price2015ridge showed that the following optimization problem can be solved in closed-form. We outline their steps below.
 
 \begin{equation}
 \Omega^{k + 1} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[\Lambda^{k}\left(\Omega - Z^{k}\right)\right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} \right\}
 (\#eq:appendixomegaloglik)\notag
 \end{equation}
+
+First start by taking the gradient with respect to $\Omega$:
 
 \begin{equation}
 \begin{split}
@@ -20,7 +22,7 @@
 \end{split}
 \end{equation}
 
-Note that because all of the variables are symmetric, we can ignore the symmetric constraint when deriving the gradient. First set the gradient equal to zero and decompose $\Omega^{k + 1} = VDV^{T}$ where $D$ is a diagonal matrix with diagonal elements equal to the eigen values of $\Omega^{k + 1}$ and $V$ is the matrix with corresponding eigen vectors as columns:
+Note that because all of the variables are symmetric, we can ignore the symmetric constraint when deriving the gradient. Next set the gradient equal to zero and decompose $\Omega^{k + 1} = VDV^{T}$ using spectral decomposition so that $D$ is a diagonal matrix with diagonal elements equal to the eigen values of $\Omega^{k + 1}$ and $V$ is the matrix with corresponding eigen vectors as columns so that
 
 \begin{equation}
 S + \Lambda^{k} - \rho Z^{k} = (\Omega^{k + 1})^{-1} - \rho \Omega^{k + 1} = VD^{-1}V^{T} - \rho VDV^{T} =  V\left(D^{-1} - \rho D\right)V^{T}\notag
@@ -46,17 +48,20 @@ In summary, if we decompose $S + \Lambda^{k} - \rho Z^{k} = VQV^{T}$ then
 
 \begin{equation}
 \Omega^{k + 1} = \frac{1}{2\rho}V\left[ -Q + (Q^{2} + 4\rho I_{p})^{1/2}\right] V^{T}
-(\#eq:appendixomegaproof)\notag
+(\#eq:appendixomegaproof)
 \end{equation}
 
 
 ### Proof of \@ref(eq:ZZalgo) {#proofZZalgo}
+
+Solve the optimization problem
 
 \begin{equation}
 Z^{k + 1} = \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\}
 (\#eq:appendixZZloglik)\notag
 \end{equation}
 
+Start by taking the subgradient with respect to $Z$:
 
 \begin{equation}
 \begin{split}
@@ -67,7 +72,7 @@ Z^{k + 1} = \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alph
 \end{split}
 \end{equation}
 
-where sign is the elementwise sign operator. By setting the gradient/sub-differential equal to zero, we arrive at the following equivalence:
+where sign is the elementwise sign operator. By setting the gradient/sub-differential equal to zero, we have that
 
 \begin{equation}
 Z_{ij}^{k + 1} = \frac{1}{\lambda(1 - \alpha) + \rho}\left( \rho \Omega_{ij}^{k + 1} + \Lambda_{ij}^{k} - \mbox{sign}(Z_{ij}^{k + 1})\lambda\alpha \right)
@@ -103,7 +108,9 @@ where soft is the soft-thresholding function.
 
 
 
-### Proof of \@ref(eq:dualresidual) {#proofdualresidual}
+### Proof of the dual residual {#proofdualresidual}
+
+Here we want to show that $0 \in \rho\left(Z^{k + 1} - Z^{k}\right)$ which is a direct result of the fact that $\Omega^{k + 1}$ is the minimizer of the augmented lagrangian and $0 \in f\left(\Omega^{k + 1}\right) + \Lambda^{k + 1}$.
 
 \begin{equation}
 \begin{split}
@@ -119,7 +126,9 @@ where soft is the soft-thresholding function.
 
 
 
-### Proof of \@ref(eq:dualopt) {#proofdualopt}
+### Proof of second dual optimality condition {#proofdualopt}
+
+Here we use the primal optimality condition $\Omega^{k + 1} - Z^{k + 1} = 0$ to show that the second dual optimality condition $0 \in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}$ is always satisfied.
 
 \begin{equation}
 \begin{split}
@@ -145,7 +154,7 @@ To see why this particular function was used, consider the Taylor's expansion of
 \end{split}
 \end{equation}
 
-**Note:**
+Note that the gradient and hessian, respectively, are
 
 \begin{equation}
   \nabla_{\Omega}\left\{ \frac{\rho}{2}\left\|A\Omega B - Z - C\right\|_{F}^{2} \right\} = \rho BB^{T}\Omega A^{T}A - \rho BZ^{T}A - \rho BC^{T}A
@@ -171,22 +180,22 @@ This implies that
 \end{split}
 \end{equation}
 
-Let us now plug in this equality into our optimization problem in step one:
+Let us now plug in this equality into our optimization problem that includes the augmented lagrangian:
 
 \begin{equation}
 \begin{split}
-  \Omega^{k + 1} &:= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\tilde{L}_{\rho}(\Omega, Z^{k}, \Lambda^{k}) \\
+  \hat{Omega}^{k + 1} &:= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\tilde{L}_{\rho}(\Omega, Z^{k}, \Lambda^{k}) \\
   &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{\begin{matrix}
- tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \end{matrix}\right. \\
-  &+ \left.\begin{matrix} \frac{\rho}{2}vec\left(\Omega - \Omega^{k}\right)^{T}Q\left(\Omega - \Omega^{k}\right) \end{matrix}\right\} \\
+ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \rho\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2}/2 \end{matrix}\right. \\
+  &+ \left.\begin{matrix} vec\left(\Omega - \Omega^{k}\right)^{T}\rho Q\left(\Omega - \Omega^{k}\right)/2 \end{matrix}\right\} \\
   &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{\begin{matrix}
- tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2} \end{matrix}\right. \\
-  &+ \left.\begin{matrix} \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} + \rho tr\left[\left(\Omega - \Omega^{k}\right)\left(BB^{T}\Omega^{k}A^{T}A - B(Z^{k})^{T}A - BC^{T}A \right)\right] \end{matrix}\right\} \\
+ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \rho\left\|A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2}/2 \end{matrix}\right. \\
+  &+ \left.\begin{matrix} \rho\tau\left\|\Omega - \Omega^{k}\right\|_{F}^{2}/2 + tr\left[\rho\left(\Omega - \Omega^{k}\right)\left(BB^{T}\Omega^{k}A^{T}A - B(Z^{k})^{T}A - BC^{T}A \right)\right] \end{matrix}\right\} \\
   &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{\begin{matrix}
  tr\left[\left(S + \rho A^{T}(A\Omega^{k}B - Z^{k} - C + \Lambda^{k}/\rho)B^{T} \right)\Omega\right] \end{matrix}\right. \\
-  &- \left.\begin{matrix} \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \end{matrix}\right\} \\
+  &- \left.\begin{matrix} \log\left|\Omega\right| + \rho\tau\left\|\Omega - \Omega^{k}\right\|_{F}^{2}/2 \end{matrix}\right\} \\
   &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{
- tr\left[\left(S + G^{k} \right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\} \\
+ tr\left[\left(S + G^{k} \right)\Omega\right] - \log\left|\Omega\right| + \rho\tau\left\|\Omega - \Omega^{k}\right\|_{F}^{2}/2 \right\} \\
 (\#eq:omegaapprox)\notag
 \end{split}
 \end{equation}
@@ -196,10 +205,14 @@ where $G^{k} = \rho A^{T}(A\Omega^{k}B - Z^{k} - C + \Lambda^{k}/\rho)B^{T}$.
 
 ### Proof of \@ref(eq:Omegak) {#proofOmegak}
 
+We show that the following optimization problem can be solved in closed-form similar to \@ref(eq:appendixomegaproof).
+
 \begin{equation}
 \Omega^{k + 1} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{tr\left[\left(S + G^{k}\right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\}
 (\#eq:appendixomegaloglik2)\notag
 \end{equation}
+
+First start by taking the gradient with respect to $\Omega$:
 
 \begin{equation}
 \begin{split}
@@ -216,7 +229,7 @@ Note that we need to honor the symmetric constraint given by $\Omega$. By settin
 S + \frac{1}{2}\left(G^{k} + (G^{k})^{T}\right) - \rho\tau\Omega^{k} = (\Omega^{k + 1})^{-1} - \rho\tau\Omega^{k + 1} \notag
 \end{equation}
 
-We can then decompose $\Omega^{k + 1} = VDV^{T}$ where $D$ is a diagonal matrix with diagonal elements equal to the eigen values of $\Omega^{k + 1}$ and $V$ is the matrix with corresponding eigen vectors as columns.
+We can then decompose using spectral decomposition $\Omega^{k + 1} = VDV^{T}$ where $D$ is a diagonal matrix with diagonal elements equal to the eigen values of $\Omega^{k + 1}$ and $V$ is the matrix with corresponding eigen vectors as columns.
 
 \begin{equation}
 S + \frac{1}{2}\left(G^{k} + (G^{k})^{T}\right) - \rho\tau\Omega^{k} = VD^{-1}V^{T} - \rho\tau VDV^{T} = V\left(D^{-1} - \rho\tau D\right)V^{T} \notag
@@ -249,12 +262,14 @@ In summary, if we decompose $S + \left(G^{k} + (G^{k})^{T}\right)/2 - \rho\tau\O
 
 ### Proof of \@ref(eq:Zk) {#proofZk}
 
+Solve the optimization problem
 
 \begin{equation}
 Z^{k + 1} = \arg\min_{Z \in \mathbb{R}^{n \times r}}\left\{ \lambda\left\| Z \right\|_{1} + tr\left[(\Lambda^{k})^{T}\left(A\Omega^{k + 1}B - Z - C\right)\right] + \frac{\rho}{2}\left\| A\Omega^{k + 1}B - Z - C \right\|_{F}^{2} \right\}
 (\#eq:appendixZZloglik2)\notag
 \end{equation}
 
+Start by taking the subgradient with respect to $Z$:
 
 \begin{equation}
 \begin{split}
@@ -303,35 +318,22 @@ where soft is the soft-thresholding function.
 
 ### Proof of \@ref(eq:stopproof) {#proofstopproof}
 
-This residual is derived from the fact. Because $\Omega^{k + 1}$ is the argument that minimizes $L_{p}\left( \Omega, Z^{k}, \Lambda^{k} \right)$,
+Here we want to show that $0 \in \rho\left( B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right)/2$ which is a direct result of the fact that $0 \in \partial f\left(\Omega^{k + 1} \right) + \left(B(\Lambda^{k + 1})^{T}A + A^{T}\Lambda^{k + 1}B^{T} \right)/2$.
 
 \begin{equation}
 \begin{split}
-  0 &\in \partial \left\{ f\left(\Omega^{k + 1}\right) + tr\left[ \Lambda^{k}\left( A\Omega^{k + 1}B - Z^{k} - C \right) \right] + \frac{\rho}{2}\left\| A\Omega^{k + 1}B - Z^{k} - C \right\|_{F}^{2} \right\} \\
-  &= \partial f\left(\Omega^{k + 1} \right) + \frac{1}{2}\left(B(\Lambda^{k})^{T}A + A^{T}\Lambda^{k}B^{T} \right) + \frac{\rho}{2}\left( BB^{T}\Omega^{k + 1}A^{T}A + A^{T}A\Omega^{k + 1}BB^{T} \right) \\
-  &- \frac{\rho}{2}\left( A^{T}(Z^{k} + C)B^{T} + B(Z^{k} + C)^{T}A \right) \\
-  &= \partial f\left(\Omega^{k + 1} \right) + \frac{1}{2}\left(B(\Lambda^{k})^{T}A + A^{T}\Lambda^{k}B^{T} \right) \\
-  &+ \frac{\rho}{2}\left( B(B^{T}\Omega^{k + 1}A^{T} - (Z^{k})^{T} - C^{T})A + A^{T}(A\Omega^{k + 1}B - Z^{k} - C)B^{T} \right) \\
-  &= \partial f\left(\Omega^{k + 1} \right) + \frac{1}{2}\left( B(\Lambda^{k})^{T}A + A^{T}\Lambda^{k}B^{T} \right) + \frac{\rho}{2}\left(A^{T}(A\Omega^{k + 1}B - Z^{k + 1} + Z^{k + 1} - Z^{k} - C)B^{T} \right) \\
-  &+ \frac{\rho}{2}\left(B(B^{T}\Omega^{k + 1}A^{T} - (Z^{k + 1})^{T} + (Z^{k + 1})^{T} - (Z^{k})^{T} - C^{T})A \right) \\
-  &= \partial f\left(\Omega^{k + 1} \right) + \frac{1}{2}\left[ B\left((\Lambda^{k})^{T} + \rho(B^{T}\Omega^{k + 1}A^{T} - (Z^{k + 1})^{T} - C^{T}) \right)A \right] \\
-  &+ \frac{1}{2}\left[ A^{T}\left(\Lambda^{k} + \rho(A\Omega^{k + 1}B - Z^{k + 1} - c)B \right)B^{T} \right] + \frac{\rho}{2}\left(B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right) \\
-  &= \partial f\left(\Omega^{k + 1} \right) + \frac{1}{2}\left(B(\Lambda^{k + 1})^{T}A + A^{T}\Lambda^{k + 1}B^{T} \right) + \frac{\rho}{2}\left(B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right) \\
-  \Rightarrow 0 &\in \frac{\rho}{2}\left( B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right)
+  0 &\in \partial \left\{ f\left(\Omega^{k + 1}\right) + tr\left[ \Lambda^{k}\left( A\Omega^{k + 1}B - Z^{k} - C \right) \right] + \rho\left\| A\Omega^{k + 1}B - Z^{k} - C \right\|_{F}^{2}/2 \right\} \\
+  &= \partial f\left(\Omega^{k + 1} \right) + \left(B(\Lambda^{k})^{T}A + A^{T}\Lambda^{k}B^{T} \right)/2 + \rho\left( BB^{T}\Omega^{k + 1}A^{T}A + A^{T}A\Omega^{k + 1}BB^{T} \right)/2 \\
+  &- \rho\left( A^{T}(Z^{k} + C)B^{T} + B(Z^{k} + C)^{T}A \right)/2 \\
+  &= \partial f\left(\Omega^{k + 1} \right) + \left(B(\Lambda^{k})^{T}A + A^{T}\Lambda^{k}B^{T} \right)/2 \\
+  &+ \rho\left( B(B^{T}\Omega^{k + 1}A^{T} - (Z^{k})^{T} - C^{T})A + A^{T}(A\Omega^{k + 1}B - Z^{k} - C)B^{T} \right)/2 \\
+  &= \partial f\left(\Omega^{k + 1} \right) + \left( B(\Lambda^{k})^{T}A + A^{T}\Lambda^{k}B^{T} \right)/2 + \rho\left(A^{T}(A\Omega^{k + 1}B - Z^{k + 1} + Z^{k + 1} - Z^{k} - C)B^{T} \right)/2 \\
+  &+ \rho\left(B(B^{T}\Omega^{k + 1}A^{T} - (Z^{k + 1})^{T} + (Z^{k + 1})^{T} - (Z^{k})^{T} - C^{T})A \right)/2 \\
+  &= \partial f\left(\Omega^{k + 1} \right) + \left[ B\left((\Lambda^{k})^{T} + \rho(B^{T}\Omega^{k + 1}A^{T} - (Z^{k + 1})^{T} - C^{T}) \right)A \right]/2 \\
+  &+ \left[ A^{T}\left(\Lambda^{k} + \rho(A\Omega^{k + 1}B - Z^{k + 1} - c)B \right)B^{T} \right]/2 + \rho\left(B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right)/2 \\
+  &= \partial f\left(\Omega^{k + 1} \right) + \left(B(\Lambda^{k + 1})^{T}A + A^{T}\Lambda^{k + 1}B^{T} \right)/2 + \rho\left(B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right)/2 \\
+  \Rightarrow 0 &\in \rho\left( B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right)/2
 (\#eq:appendixstopproof)\notag
-\end{split}
-\end{equation}
-
-
-
-### Proof of \@ref(eq:dualopt2) {#proofdualopt2}
-
-\begin{equation}
-\begin{split}
-  0 &\in \partial \left\{ g\left(Z^{k + 1}\right) + tr\left[ \Lambda^{k}\left( A\Omega^{k + 1}B - Z^{k + 1} - C \right) \right] + \rho\left\| A\Omega^{k + 1}B - Z^{k + 1} - C \right\|_{F}^{2} \right\} \\
-  &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k} - \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right) \\
-  &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1} \\
-(\#eq:appendixdualopt2)\notag
 \end{split}
 \end{equation}
 
@@ -343,21 +345,18 @@ The last estimator in the previous section reveals an interesting connection to 
 
 \begin{equation}
 \hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega \Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
-(\#eq:penregression)\notag
 \end{equation}
 
 To see this, let us suppose that we have $n$ independent copies of the random pair $(Y_{i}, X_{i})$ and we assume a linear relationship of the following form:
 
 \begin{equation}
 Y_{i} = \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right) + E_{i}
-(\#eq:linregression)\notag
 \end{equation}
 
 where $E_{i} \sim N_{r}\left( 0, \Omega_{y | x}^{-1} \right)$ and $X_{i} \sim N_{p}\left( \mu_{x}, \Omega^{-1} \right)$. These two assumptions imply that the conditional distribution of $Y_{i}|X_{i}$ is of the form
 
 \begin{equation}
 Y_{i} | X_{i} \sim N_{r}\left( \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right), \Omega_{y | x}^{-1} \right)
-(\#eq:linnormal)\notag
 \end{equation}
 
 We can use this conditional distribution along with the marginal distribution of $X$ to derive the joint likelihood of $X$ and $Y$. Similar to before, we will take $\Omega_{y | x} \equiv \Sigma_{y | x}^{-1}, \Omega \equiv \Sigma_{xx}^{-1}, \mbox{ and } \beta \equiv \Omega\Sigma_{xy}$ for convenience. We will also let $f$ denote the probability distribution function for each respective variable.

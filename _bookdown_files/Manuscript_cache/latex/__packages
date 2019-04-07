@@ -1,4 +1,5 @@
 base
+statr
 Rcpp
 tidyverse
 ggplot2
@@ -10,6 +11,7 @@ dplyr
 stringr
 forcats
 devtools
+usethis
 logitr
 RcppProgress
 foreach
@@ -25,5 +27,3 @@ skimr
 readxl
 glue
 bindrcpp
-statr
-usethis
