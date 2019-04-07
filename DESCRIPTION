@@ -7,5 +7,6 @@ Imports: bookdown,
   microbenchmark,
   glasso,
   magrittr,
-  pander
+  pander,
+  tidyverse
 Remotes: MGallow/oral_manuscript
