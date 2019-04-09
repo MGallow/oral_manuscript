@@ -195,17 +195,11 @@ For each estimator, if selection of a tuning parameter is required, then the tun
 
 The data generating procedures for the simulations are as follows. The oracle regression coefficient matrix $\beta^{*}$ was constructed so that $\beta^{*} = \mathbb{B} \circ \mathbb{V}$ where $vec\left( \mathbb{B} \right) \sim N_{pr}\left( 0, I_{p} \otimes I_{r}/\sqrt{p} \right)$ and $\mathbb{V} \in \mathbb{R}^{p \times r}$ is a matrix containing $p$ times $r$ random bernoulli draws with 50\% probability being equal to one. The covariance matrices $\Sigma_{y | x}$ and $\Sigma_{x}$ were constructed so that $\left( \Sigma_{y | x} \right)_{ij} = 0.7^{\left| i - j \right|}$ and $\left( \Sigma_{x} \right)_{ij} = 0.7^{\left| i - j \right|}$, respectively. This ensures that their corresponding precision matrices will be tridiagonal and sparse. Then for 100 independent, identically distributed samples, we had $X_{i} \sim N_{p}\left( 0, \Sigma_{xx} \right)$ and $E_{i} \sim N_{r}\left( 0, \Sigma_{y | x} \right)$ so that $\mathbb{Y} = \mathbb{X}\beta + \mathbb{E}$ where $\mathbb{X} \in \mathbb{R}^{n \times p}$, $\mathbb{Y} \in \mathbb{R}^{n \times r}$ and the script notation denotes the fact that the columns have been centered so as to remove the intercept in our prediction models. An additional 1000 samples were generated similarly for the testing set and each prediction method was evaluated on both model error and mean squared prediction error.
 
-Figure \@ref(fig:scpmesim2) displays the model error for each method by dimension of the design matrix. Here we took the sample size equal to $n = 100$ and the response matrix dimension $r = 10$ with each data generating procedure replicated a total of 20 times. Note `OLS` and `oracleS` are not shown due to extremely poor performance.
-
-We find that...
-
-In high dimensional settings, `shrinkBO` (penalty: $\lambda\left\| \Omega[\hat{\Sigma}_{xy}, I_{p}] \right\|_{1}$) and `shrinkB` (penalty: $\lambda\left\| \Omega\hat{\Sigma}_{xy} \right\|_{1}$) perform increasingly well relative (and superior) to the others when $p >> n$. It's not surprising that `shrinkBO` performs the best because the embedded assumptions most closely match the data generating model.
+Figure \@ref(fig:scpmesim2) displays the model error for each method by dimension of the design matrix. Here we took the sample size equal to $n = 100$ and the response matrix dimension $r = 10$ with each data generating procedure replicated a total of 20 times. Note `OLS` and `oracleS` are not shown due to extremely poor performance. We find that in high dimensional settings, `shrinkBO` and `shrinkB` perform increasingly well relative to the others as the predictor dimension increases with `shrinkBO` performing the best. Interestingly, when $n > p$ is still one of the best-performing estimators - though worse than both `lasso` and `ridge` - but the performance of `shrinkB` decreases drastically (plot not shown).
 
 In the high dimension setting, the oracle estimators `oracleO` (penalty: $\lambda\left\| \Omega^{*}\hat{\Sigma}_{xy} \right\|_{1}$) and `oracleS` (penalty: $\lambda\left\| \hat{\Omega}\Sigma_{xy}^{*} \right\|_{1}$) performed worse or comparable to OLS. The poor performance of `oracleS` is likely due to the fact that the sample estimate of $\Omega$ is not identifiable when $p > n$.
 
-When $n > p$ we see that `shrinkB` performs terribly. Interestingly, `shrinkBO` is still one of the better performing estimators -- though worse than both `lasso` and `ridge`.
-
-It is interesting that `oracleO` performed worse than `oracleS` in the final table. It appears that estimating the covariance matrix $\Sigma_{xy}$ well is *more* important than estimating $\Omega$ well.
+The table below shows the average model error for each estimator when $n = 100$, $p = 150$, and $r = 10$.
 
 
 <!-- <br>\vspace{0.5cm} -->
@@ -236,14 +230,12 @@ sim6$P %<>% as.character %>% as.numeric
 sim6 %>% filter(N == 100, R == 10, sparse == 0.5, sigma == "tridiag", !model %in% c("OLS", "oracleS")) %>% group_by(N, P, R, sparse, sigma, model) %>% summarise(mean = mean(Error)) %>% ggplot(aes(P, mean, color = model, linetype = model)) + geom_line() + scale_colour_discrete("") + scale_linetype_manual("", values = rep(c(5,6), 5)) + theme_minimal() + theme(legend.position = "bottom") + xlab("P") + labs(color = "Model") + scale_x_continuous(breaks = c(10, 50, 100, 150)) + ylab("ME") + ggtitle("Model Error by Dimension")
 
 ```
-\vspace{0.5cm}
 
-
-\vspace{0.5cm}
+\newpage
 ```{r, eval = T, echo = F, fig.cap = "ME by P (N = 100, R = 10, sparse = 0.5, sigma = tridiag)"}
 
 # ME table (N = 100, sparse = 0.5, sigma = "tridiag", P = 150, R = 10)
-sim6 %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", P == 150, R == 10) %>% group_by(model) %>% summarise(mean = mean(Error), sd = sd(Error)) %>% arrange(mean) %>% pander(caption = "ME by P (N = 100, R = 10, sparse = 0.5, sigma = tridiag)")
+sim6 %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", P == 150, R == 10) %>% group_by(model) %>% summarise(error = mean(Error), sd = sd(Error)) %>% arrange(error) %>% pander(caption = "ME by P (N = 100, R = 10, sparse = 0.5, sigma = tridiag)")
 
 ```
 \vspace{0.5cm}
@@ -279,23 +271,11 @@ sim6 %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", P == 150, R == 10) 
 
 ### Regression Simulations with Covariance Shrinkage
 
-Here we compare the `shrinkB` and the `shrinkBO` estimators.
+This final simulation was run and explored due to the fact each of the SCPME regression estimators require an estimation of the cross-covariance matrix. In the previous simulations, we used the maximum likelihood estimator. However, because the data-generating procedures construct settings that are inherently sparse, we were interested to determine if additional shrinkage of the *cross-covariance* matrix would also prove beneficial. For instance, in a number of settings, we were finding that the estimator `oracleO` ($\beta = \Omega_{x}^{*}\hat{\Sigma}_{xy}$) was performing worse than `oracleS` ($\beta = \hat{\Omega}_{x}\Sigma_{xy}^{*}$) which perhaps suggests that estimating the covariance matrix $\Sigma_{xy}$ well is *more* important than estimating $\Omega$ well. This simulation explores that theory a bit further.
 
-(same data generation except the parameters are different this time...)
+The data-generating procedure for this simulation is similar to previous one but here we take $n = 100$, $p = 200$, $r = 10$, *and* we additionally multiple the cross-covariance sample estimator by a factor of $k$ where $k \in (0.1, 0.2, ..., 0.9, 1)$. Figure \@ref(fig:scpmesim7) plots the MSPE for `shrinkB` for each tuning parameter, $\lambda$, and constant, $k$, pair. Figure \@ref(fig:scpmesim9) plots the MSPE similarly for `shrinkBO`.
 
-We consider the response dimension as 10.
- 
-For each of the estimators, $\Sigma_{xy}$ is estimated by the sample covariance matrix $\hat{\Sigma}_{xy}$ times some constant factor $k \in (0.1, 0.2, ..., 0.9, 1)$. We are shrinking $\hat{\Sigma}_{xy}$ by a constant to determine if there are any benefits to doing so.
-
-In the high dimensional settings, it does appear that shrinking the sample covariance matrix $\hat{\Sigma}_{xy}$ by a constant factor helps in reducing MSPE. This is indicated by the fact that the optimal `const` hovers around 0.5 for each of the estimators `shrinkB` and `shrinkBO`.
-
-In the low dimension settings, it appears that shrinking the covariance matrix is not beneficial.
-
-The type of oracle precision matrix (tridiagonal or compound symmetric) does not appear to be too influential with regards to the affect of shrinking the covariance matrix.
-
-The larger the dimension of $Y$, the more beneficial shrinkage will likely be (not that surprising)
-
-
+Interestingly, we find that in this high dimension setting, it does appear that shrinking the sample covariance matrix by a constant factor helps the overall prediction performance of the SCPME estimators. This is indicated by the fact that the optimal constant, $k$, hovers between 0.3 and 0.6 for each of the estimators. We also performed a simulation in low dimensions (not shown) but we did not see the same benefit.
 
 
 ```{r, eval = T, echo = F}
@@ -431,7 +411,7 @@ d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_
 
 <!-- <br>\vspace{1cm} -->
 
-
+\newpage
 
 ## Discussion
 
