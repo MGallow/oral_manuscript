@@ -27,7 +27,7 @@ Therefore, the gaussian log-likelihood, $l$, for $\mu$ and $\Omega$ given $X = (
 (\#eq:normalloglik)\notag
 \end{equation}
 
-The estimator for $\mu$ that maximizes the log-likelihood is $\hat{\mu}^{MLE} = \bar{X} \equiv \sum_{i = 1}^{n}X_{i}/n$, so that the partially maximized gaussian log-likelihood for $\Omega$ is
+The estimator for $\mu$ that maximizes the log-likelihood is $\hat{\mu}^{mle} = \bar{X} \equiv \sum_{i = 1}^{n}X_{i}/n$, so that the partially maximized gaussian log-likelihood function for $\Omega$ is
 
 \begin{equation}
 \begin{split}
@@ -37,41 +37,41 @@ The estimator for $\mu$ that maximizes the log-likelihood is $\hat{\mu}^{MLE} = 
 \end{split}
 \end{equation}
 
-where $S = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(X_{i} - \bar{X}\right)'/n$ is the usual sample estimator for the covariance matrix, $\Sigma$. In addition to $\mu$, we could also derive the maximum likelihood estimator for $\Omega$. By setting the gradient of the partially maximized log-likelihood equal to zero, we can show that
+where $S = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(X_{i} - \bar{X}\right)'/n$ is the usual sample estimator for the population covariance matrix, $\Sigma$. In addition to $\mu$, one could also derive the maximum likelihood estimator for $\Omega$. By setting the gradient of the partially maximized log-likelihood equal to zero, one could show that
 
 \begin{equation}
 \begin{split}
-\hat{\Omega}^{MLE} &= \arg\max_{\Omega \in S_{+}^{p}}\left\{ \frac{n}{2}\log\left| \Omega \right| - \frac{n}{2}tr\left(S\Omega \right) \right\} \\
+\hat{\Omega}^{mle} &= \arg\max_{\Omega \in S_{+}^{p}}\left\{ \frac{n}{2}\log\left| \Omega \right| - \frac{n}{2}tr\left(S\Omega \right) \right\} \\
   &= \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| \right\} \\
   &= S^{-1}
 \end{split}
 (\#eq:omegamle)\notag
 \end{equation}
 
-so that the MLE for $\Omega$, when it exists, is $\hat{\Omega}^{MLE} = S^{-1} = \left[\sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(X_{i} - \bar{X}\right)'/n \right]^{-1}$. The reality, however, is that this object does *not* always exist. In settings where the number of observations is exceeded by the number of features in a sample, the sample covariance matrix is rank deficient and no longer invertible. For this reason, many papers in the last decade have proposed shrinkage estimators of the precision matrix similar to the shrinkage estimators in regression settings. That is, instead of minimizing solely the negative log-likelihood function, authors have proposed minimizing the gaussian log-likelihood *plus* a penalty term, $P$, which is often a function of the precision matrix.
+so that the MLE for $\Omega$, when it exists, is $\hat{\Omega}^{mle} = S^{-1} = \left[\sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(X_{i} - \bar{X}\right)'/n \right]^{-1}$. The reality, however, is that this object does *not* always exist. In settings where the number of observations is exceeded by the number of features in a sample, the sample covariance matrix is rank deficient and no longer invertible. For this reason, many papers in the last decade have proposed *shrinkage estimators* of the population precision matrix similar to the shrinkage estimators in regression settings. That is, instead of minimizing solely the negative log-likelihood function, researchers have proposed minimizing the gaussian log-likelihood *plus* a penalty term, $P$, where $P$ is often a function of the precision matrix.
 
 \begin{equation}
 \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + P\left( \Omega \right) \right\}
 (\#eq:omegapen)
 \end{equation}
 
-The penalties that have been proposed for precision matrix estimation are typically a variation of the ridge penalty $P\left(\Omega \right) = \lambda\|\Omega \|_{F}^{2}/2$ or the lasso penalty $P\left(\Omega \right) = \lambda\left\|\Omega\right\|_{1}$. The authors, @yuan2007model, initially proposed the lasso-penalized gaussian log-likelihood defined as
+The penalties that have been proposed for precision matrix estimation are typically a variation of the ridge penalty $P\left(\Omega \right) = \lambda\|\Omega \|_{F}^{2}/2$ or the lasso penalty $P\left(\Omega \right) = \lambda\left\|\Omega\right\|_{1}$ (here $\lambda$ is a tuning parameter). The authors, @yuan2007model, initially proposed the lasso-penalized gaussian log-likelihood defined as
 
 \begin{equation}
 \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\sum_{i \neq j}\left|\Omega_{ij}\right| \right\}
 (\#eq:omegapenlasso)
 \end{equation}
 
-so as not to penalize the diagonal elements of the precision matrix estimate. Other papers published on the lasso-penalized gaussian likelihood precision matrix estimator include @rothman2008sparse and @friedman2008sparse. In addition, many efficient algorithms have been proposed to solve for $\hat{\Omega}$ in this setting but the most popular method is the graphical lasso algorithm (often referred to as glasso) introduced by @friedman2008sparse. Their method utilizes an iterative block-wise coordinate descent algorithm that builds upon the coordinate descent algorithm used in lasso-penalized regression.
+so as not to penalize the diagonal elements of the precision matrix estimate. Other papers published on the lasso-penalized gaussian likelihood precision matrix estimator include @rothman2008sparse and @friedman2008sparse. In addition, many efficient algorithms have been proposed to solve for $\hat{\Omega}$, however, the most popular method is the graphical lasso algorithm (glasso) introduced by @friedman2008sparse. Their method utilizes an iterative block-wise coordinate descent algorithm that builds upon the coordinate descent algorithm used in lasso-penalized regression.
 
-Non-lasso, non-convex penalties were considered in @lam2009sparsistency and @fan2009network and other papers considered penalizations like the Frobenius norm (@rothman2014existence; @witten2009covariance; @price2015ridge). In fact, the latter two papers show that the resulting minimizer can be solved in closed-form - which will be discussed later in this manuscript. However, the penalty explored in the remainder of this chapter is not a lasso penality nor a ridge penalty but, in fact, a convex combination of the two known as the *elastic-net* penalty:
+Non-lasso, non-convex penalties were considered in @lam2009sparsistency and @fan2009network and other papers considered penalizations like the Frobenius norm (@rothman2014existence; @witten2009covariance; @price2015ridge). In fact, the latter two papers show that the resulting minimizer can be solved in closed-form - which will be discussed later in this manuscript. However, the penalty explored through the remainder of this chapter is not a lasso penality nor a ridge penalty but, in fact, a convex combination of the two known as the *elastic-net* penalty:
 
 \begin{equation}
 P\left( \Omega \right) = \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right\|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right]
 (\#eq:penelastic)\notag
 \end{equation}
 
-with tuning parameter $0 \leq \alpha \leq 1$. Clearly, when $\alpha = 0$ this penalty reduces to a ridge penalty and when $\alpha = 1$ it reduces to a lasso penalty. Originally proposed in @zou2005regularization in the context of regression, this penalty has since been popularized and is used in the penalized regression R package `glmnet`. This penalty allows for additional flexibility but, despite this, no published work (to our knowledge) has explored the elastic-net penalty in the context of precision matrix estimation. We will show how to solve the following optimization problem in the next section using the ADMM algorithm.
+with additional tuning parameter $0 \leq \alpha \leq 1$. Clearly, when $\alpha = 0$ this penalty reduces to a ridge penalty and when $\alpha = 1$ it reduces to a lasso penalty. Originally proposed in @zou2005regularization in the context of regression, this penalty has since been popularized and is used in the penalized regression R package `glmnet`. This penalty allows for additional flexibility but, despite this, no published work to our knowledge has explored the elastic-net penalty in the context of precision matrix estimation. We will show how to solve the following optimization problem in the next section using the ADMM algorithm.
 
 \begin{equation}
 \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right] \right\}
@@ -84,7 +84,7 @@ with tuning parameter $0 \leq \alpha \leq 1$. Clearly, when $\alpha = 0$ this pe
 
 ADMM stands for alternating direction method of multipliers. The algorithm was largely popularized by Stephen Boyd and his fellow authors in the book *Distributed Optimization and Statistical Learning via the Alternating Direction Method of Multipliers* [@boyd2011distributed]. As the authors state in the text, the "ADMM is an algorithm that is intended to blend the decomposability of dual ascent with the superior convergence properties of the method of multipliers." By closely following Boyd's descriptions and guidance in the published text, we will show in this section that the ADMM algorithm is particularly well-suited to solve the penalized log-likelihood optimization problem we are interested in here.
 
-In general, suppose that we want to solve an optimization problem of the form
+In general, the ADMM algorithm supposes that we want to solve an optimization problem of the form
 
 \begin{equation}
 \begin{split}
@@ -101,7 +101,7 @@ L_{\rho}(x, z, y) = f(x) + g(z) + y'(Ax + Bz - c) + \frac{\rho}{2}\left\| Ax + B
 (\#eq:auglagrange)\notag
 \end{equation}
 
-In this formulation, $y \in \mathbb{R}^{p}$ is called the lagrange multiplier and $\rho > 0$ is some scalar that acts as the step size for the algorithm. Note that any infimum under the augmented lagrangian is equivalent to the infimum of the traditional lagrangian since any feasible point $(x, z)$ must satisfy the constraint $\rho\left\| Ax + Bz - c \right\|_{2}^{2}/2 = 0$. @boyd2011distributed show that the infimum will be approached under the following repeated iterations:
+In this formulation, $y \in \mathbb{R}^{p}$ is called the lagrange multiplier and $\rho > 0$ is some scalar that acts as the step size for the algorithm. Note that any infimum under the augmented lagrangian is equivalent to the infimum of the traditional lagrangian since any feasible point $(x, z)$ must satisfy the constraint $\rho\left\| Ax + Bz - c \right\|_{2}^{2}/2 = 0$. @boyd2011distributed show that using the ADMM algorithm the infimum will be approached under the following repeated iterations:
 
 \begin{equation}
 \begin{split}
@@ -112,14 +112,14 @@ In this formulation, $y \in \mathbb{R}^{p}$ is called the lagrange multiplier an
 (\#eq:admmalgo)\notag
 \end{equation}
 
-where the superscript, $k$, denotes the number of iterations. Conveniently, this general algorithm can be coerced into a format useful in precision matrix estimation. Suppose we let $f$ be equal to the non-penalized log-likelihood, $g$ equal to the elastic-net penalty, $P\left( \Omega \right)$, and we use the constraint that $\Omega$ must be equal to $Z$, then the augmented lagrangian in the context of precision matrix estimation is of the form
+where the superscript, $k$, denotes the number of iterations. Conveniently, this general algorithm can be coerced into a format useful in precision matrix estimation. Suppose we let $f$ be equal to the non-penalized gaussian log-likelihood, $g$ equal to the elastic-net penalty, $P\left( \Omega \right)$, and we use the constraint that $\Omega \in \mathbb{S}_{+}^{p}$ must be equal to some matrix $Z \in \mathbb{R}^{p \times p}$, then the augmented lagrangian in the context of precision matrix estimation is of the form
 
 \begin{equation}
 L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda\left(\Omega - Z\right)\right] + \frac{\rho}{2}\left\|\Omega - Z\right\|_{F}^{2}
 (\#eq:auglagrange2)\notag
 \end{equation}
 
-where $\Lambda$ is taking the role of $y$ and the ADMM algorithm now consists of the repeated iterations
+where $\Lambda$ takes the role of $y$ as the lagrange multiplier. The ADMM algorithm now consists of the following repeated iterations:
 
 \begin{equation}
 \begin{split}
@@ -130,12 +130,12 @@ where $\Lambda$ is taking the role of $y$ and the ADMM algorithm now consists of
 \end{split}
 \end{equation}
 
-It turns out that each step in this algorithm can be solved in closed-form. The full details of each can be found in the appendix \@ref(proofomegaalgo) but the following theorem provides the simplified steps in the algorithm.
+Furthermore, it turns out that each step in this algorithm can be solved efficiently in closed-form. The full details of each can be found in the appendix \@ref(proofomegaalgo) but the following theorem provides the simplified steps in the algorithm.
 
 
 ```{theorem, name = "ADMM Algorithm for Elastic-Net Penalized Precision Matrix Estimation"}
 
-Define the soft-thresholding function as $\mbox{soft}(a, b) = \mbox{sign}(a)(\left| a \right| - b)_{+}$. Set $k = 0$ and initialize $Z^{0}, \Lambda^{0}$, and $\rho$. Repeat steps 1-3 until convergence:
+Define the soft-thresholding function as $\mbox{soft}(a, b) = \mbox{sign}(a)(\left| a \right| - b)_{+}$ and $S$ as the sample covariance matrix. Set $k = 0$ and initialize $Z^{0}, \Lambda^{0}$, and $\rho$. Repeat steps 1-3 until convergence:
 
 1. Decompose $S + \Lambda^{k} - \rho Z^{k} = VQV'$ via spectral decomposition^[Proof of \@ref(eq:omegaalgo) in section \@ref(proofomegaalgo).]. Then
 
@@ -168,7 +168,7 @@ Z_{ij}^{k + 1} &= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{sign}\left(\rho\Omeg
 
 ### Scaled-Form ADMM
 
-Another popular, alternative form of the ADMM algorithm can be used when scaling the dual variable ($\Lambda^{k}$). We derive this scaled-form in the context of precision matrix estimation here.
+Another popular, alternative form of the ADMM algorithm can be used when scaling the dual variable ($\Lambda^{k}$) which we will briefly mention in the context of precision matrix estimation here.
 
 Define $R^{k} = \Omega - Z^{k}$ and $U^{k} = \Lambda^{k}/\rho$ then
 
@@ -181,11 +181,11 @@ Define $R^{k} = \Omega - Z^{k}$ and $U^{k} = \Lambda^{k}/\rho$ then
 \end{split}
 \end{equation}
 
-Therefore, a scaled-form can now be written as
+Therefore, a scaled-form ADMM algorithm can now be written as
 
 \begin{equation}
 \begin{split}
-  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{R}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\rho}{2}\left\| \Omega - Z^{k} + U^{k} \right\|_{F}^{2} \right\} \\
+  \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\rho}{2}\left\| \Omega - Z^{k} + U^{k} \right\|_{F}^{2} \right\} \\
   Z^{k + 1} &= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z + U^{k} \right\|_{F}^{2} \right\} \\
   U^{k + 1} &= U^{k} + \Omega^{k + 1} - Z^{k + 1}
 (\#eq:ADMMscaled)
@@ -215,11 +215,11 @@ Combining these three optimality conditions, Boyd suggests a stopping criterion 
 
 ## Simulations
 
-As a proof-of-concept that the elastic-net penalty in the context of precision matrix estimation can provide useful results and that the ADMM algorithm used in this process works, the section offers a short simulation. For the simulation, we generated data from multiple, unique precision matrices with various oracle structures. For each data-generating procedure, the algorithm was run with a 5-fold cross validation. After 20 replications, the cross validation errors were totalled and the optimal tuning parameters were selected (results are in the top half of the figures). These results were then compared with the Kullback Leibler (KL) losses between the estimated matrices and the oracle matrices (results are in the bottom half of the figures).
+As a proof-of-concept that the elastic-net penalty in the context of precision matrix estimation can provide useful results and that the ADMM algorithm used in this process works, this section offers a short simulation. For the simulation, we generated data from multiple, unique precision matrices with various oracle structures. For each data-generating procedure, the algorithm was run with a 5-fold cross validation to tune parameters $\lambda$ and $\alpha$. After 20 replications, the cross validation errors were totalled and the optimal tuning parameters were selected (results are in the top half of the figures). These results were then compared with the Kullback Leibler (KL) losses between the estimated matrices and the oracle matrices (results are in the bottom half of the figures).
 
 The first figure shows the results when the data was generated from a multivariate normal distribution with mean equal to zero and a tri-diagonal oracle precision matrix. This oracle matrix was first generated as $\left(S_{ij}\right) = 0.7^{\left|i - j \right|}$ for $i,j = 1,..., p$ and then inverted. The results show that because the oracle precision matrix is sparse, the algorithm correctly chooses a sparse solution with $\alpha = 1$ - indicating a lasso penalty.
 
-The second figure shows the results when the data was generated from a multivariate normal distribution with mean equal to zero and a *dense* oracle precision matrix. Here, we randomly generated an orthogonal basis, set all eigen values equal to 1000, and then combined the matrices using QR decomposition. Interestingly, we find that the optimal $\alpha$ in this case is 0.6 which closely matches the optimal result based on the KL loss. This shows that there are cases where an elastic-net penalty can provide useful results and that using only a lasso penalty may unnecessarily restrict our penalized estimation.
+The second figure shows the results when the data was generated from a multivariate normal distribution with mean equal to zero and a *dense* oracle precision matrix (non-sparse). Here, we randomly generated an orthogonal basis, set all eigen values equal to 1000, and then combined the matrices using QR decomposition. Interestingly, we find that the optimal $\alpha$ in this case is 0.6 which closely matches the optimal result based on the KL loss. This shows that there are cases where an elastic-net penalty can provide useful results and that using only a lasso penalty may unnecessarily restrict our penalized estimation.
 
 \vspace{1cm}
 
