@@ -1,16 +1,14 @@
 
 # SCPME
 
-In their 2017 paper, titled *Shrinking Characteristics of Precision Matrix Estimators*, Aaron Molstad, Ph.D. and Professor Adam Rothman outline a framework to estimate *characteristics* of precision matrices. This concept, inspired by others like @cai2011direct, @fan2012road, and @mai2012direct, exploits the fact that in many predictive models estimation of the precision matrix is only necessary through its product with another feature, such as a mean vector.
-
-The example they offer in @molstad2017shrinking is in the context of Fisher's linear discriminant analysis model. If a response vector $Y$ is categorical such that $Y$ can take values in $\left\{1, ..., J\right\}$, then the linear discrimnant analysis model assumes that the design matrix $X$ conditional on the response vector $Y$ is normally distributed:
+In their 2017 paper, titled *Shrinking Characteristics of Precision Matrix Estimators*, Aaron Molstad, Ph.D. and Professor Adam Rothman outline a framework to estimate *characteristics* of precision matrices. This concept, inspired by others like @cai2011direct, @fan2012road, and @mai2012direct, exploits the fact that in many predictive models estimation of the precision matrix is only necessary through its product with another feature, such as a mean vector. The example they offer in @molstad2017shrinking is in the context of Fisher's linear discriminant analysis model. If a response vector $Y$ is categorical such that $Y$ can take values in $\left\{1, ..., J\right\}$, then the linear discrimnant analysis model assumes that the design matrix $X$ conditional on the response vector $Y$ is normally distributed:
 
 \begin{equation}
 X | Y = j \sim N_{p}\left(\mu_{j}, \Omega^{-1}\right)
 (\#eq:lda)
 \end{equation}
 
-for each $j = 1, ..., J$. We can see from this formulation that clearly an estimation of both $\mu$ and $\Omega$ are required for this model. However, they note that if prediction is the primary concern, then for a given observation $X_{i}$ only the *characteristic* $\Omega\left(\mu_{l} - \mu_{m}\right)$ is needed to discern between response categories $l$ and $m$. In other words, prediction only requires the characteristic $\Omega\left(\mu_{l} - \mu_{m}\right)$ for each $l, m \in \left\{1, ..., J\right\}$ and does *not* require estimation of the full precision matrix $\Omega$. @cai2011direct were among the first authors to propose estimating this characteristic directly but the interesting facet that distinguishes Molstad and Rothman's approach is that their framework simultaneously fits the model in \@ref(eq:lda) and performs variable selection.
+for each $j = 1, ..., J$. One can see from this formulation that clearly an estimation of both $\mu$ and $\Omega$ are required for this model. However, they note that if prediction is the primary concern, then for a given observation $X_{i}$ only the *characteristic* $\Omega\left(\mu_{l} - \mu_{m}\right)$ is needed to discern between response categories $l$ and $m$. In other words, prediction only requires the characteristic $\Omega\left(\mu_{l} - \mu_{m}\right)$ for each $l, m \in \left\{1, ..., J\right\}$ and does *not* require estimation of the full precision matrix $\Omega$. @cai2011direct were among the first authors to propose estimating this characteristic directly but the interesting facet that distinguishes Molstad and Rothman's approach is that their framework simultaneously fits the model in \@ref(eq:lda) and performs variable selection.
 
 The general framework has applications outside of linear discriminant analysis and we will be exploring a regression application in later sections, but first we will outline their approach. The penalty proposed by @molstad2017shrinking is of the form
 
@@ -26,13 +24,13 @@ where $A \in \mathbb{R}^{m \times p}, B \in \mathbb{R}^{p \times q}, \mbox{ and 
 (\#eq:omegaloglik2)
 \end{equation}
 
-A similar estimator was proposed by @dalal2017sparse when $C = 0$ but here we do not require it. This form of penalty is particularly useful because it's extremely general. Note that by letting matrices $A = I_{p}, B = I_{p}, \mbox{ and } C = 0$, this penalty reduces to a lasso penalty - but clearly this form allows for much more creative penalties and $A, B, \mbox{ and } C$ can be constructed so that we penalize the sum, absolute value of *many* characteristics of the precision matrix $\Omega$. We will explore how to solve for $\hat{\Omega}$ in the next section.
+A similar estimator was proposed by @dalal2017sparse when $C = 0$ but here we do not require it. This form of penalty is particularly useful because it is extremely general. Note that by letting matrices $A = I_{p}, B = I_{p}, \mbox{ and } C = 0$, this penalty reduces to a lasso penalty - but clearly this form allows for much more creative penalties and $A, B, \mbox{ and } C$ can be constructed so that we penalize the sum, absolute value of *many* characteristics of the precision matrix $\Omega$. We will explore how to solve for $\hat{\Omega}$ in \@ref(eq:omegaloglik2) in the next section.
 
 
 
 ## Augmented ADMM Algorithm
 
-Solving for $\hat{\Omega}$ in \@ref(eq:omegaloglik2) uses what we are going to call an *augmented ADMM* algorithm. Molstad and Rothman do not offer a name for this specific algorithm but it leverages the majorize-minimize principle in one of the steps in the algorithm - augmenting the ADMM algorithm discussed in the previous chapter. Within the context of the proposed penalty, the traditional ADMM algorithm for precision matrix estimation would consist of iterating over the following three steps:
+Solving for $\hat{\Omega}$ in \@ref(eq:omegaloglik2) uses what we are going to call an *augmented ADMM algorithm*. Molstad and Rothman do not offer a name for this specific algorithm but it leverages the majorize-minimize principle in one of the steps in the algorithm - augmenting the original ADMM algorithm discussed in the previous chapter. Within the context of the proposed penalty, the original ADMM algorithm for precision matrix estimation would consist of iterating over the following three steps:
 
 \begin{align}
   \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}L_{\rho}(\Omega, Z^{k}, \Lambda^{k}) \\
@@ -40,20 +38,20 @@ Solving for $\hat{\Omega}$ in \@ref(eq:omegaloglik2) uses what we are going to c
   \Lambda^{k + 1} &= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right)
 \end{align}
 
-where $L$, the *augmented lagrangian*, is defined as
+where $L$, the augmented lagrangian, is defined as
 
 \begin{equation}
 L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda^{T}\left(A\Omega B - Z - C\right)\right] + \frac{\rho}{2}\left\|A\Omega B - Z - C\right\|_{F}^{2}
 (\#eq:auglagrange3)
 \end{equation}
 
-Similar to the previous chapter, $f\left(\Omega\right) = tr\left(S\Omega\right) - \log\left|\Omega\right|$ and $g\left(Z\right) = \lambda\left\|Z\right\|_{1}$. In fact, the details of the algorithm thus far are identical to the previous approach except that we are replacing $\Omega - Z$ with $A\Omega B - C - Z$ (or equivalently, $A\Omega B - Z - C$) in the augmented lagrangian and the dual update $\Lambda^{k + 1}$.
+Similar to the previous chapter, $f\left(\Omega\right) = tr\left(S\Omega\right) - \log\left|\Omega\right|$ and $g\left(Z\right) = \lambda\left\|Z\right\|_{1}$. In fact, the details of the algorithm thus far are identical to the previous approach except that we are replacing $\Omega - Z$ with $A\Omega B - Z - C$ in the augmented lagrangian and the dual update $\Lambda^{k + 1}$.
 
-Instead of solving the first step exactly as we did in the previous section, the authors propose an alternative, approximating objective function, which we will denote as $\tilde{L}$, that is based on the majorize-minimize principle^[Further explanation of the majorizing function \@ref(eq:approx) in section \@ref(taylorsexp)]. The purpose of this approximating function is the desire to solve the first step of the algorithm in closed-form. The ADMM algorithm with this modification based on majorize-minimize principle is also found in @lange2016mm but here we define the approximating function as
+Instead of solving the first step directly, the authors propose an alternative, approximating objective function, which we will denote as $\tilde{L}$, that is based on the majorize-minimize principle^[Further explanation of the majorizing function \@ref(eq:approx) in section \@ref(taylorsexp)]. The purpose of this approximating function is the desire to solve the first step of the algorithm in closed-form. The ADMM algorithm with this modification based on majorize-minimize principle is also found in @lange2016mm but here we define the approximating function as
 
 \begin{equation}
 \begin{split}
-  \tilde{L}_{\rho}\left(\Omega, Z^{k}, \Lambda^{k}\right) = f\left(\Omega\right) &+ tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \\
+  \tilde{L}_{\rho}\left(\Omega, Z^{k}, \Lambda^{k}\right) = f\left(\Omega\right) &+ g\left(Z^{k}\right) + tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \\
   &+ \frac{\rho}{2}vec\left(\Omega - \Omega^{k}\right)^{T}Q\left(\Omega - \Omega^{k}\right)
 (\#eq:approx)
 \end{split}
@@ -70,17 +68,17 @@ where $Q = \tau I_{p} - \left(A^{T}A \otimes BB^{T}\right)$ and $\tau$ is chosen
 \end{split}
 \end{equation}
 
-where $G^{k} = \rho A^{T}\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}Y^{k} \right)B^{T}$. Each step in this algorithm can now conveniently be solved in closed-form and the full details of each can be found in the appendix \@ref(proofOmegak). The following theorem provides the simplified steps in the algorithm.
+where $G^{k} = \rho A^{T}\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}\Lambda^{k} \right)B^{T}$. Each step in this algorithm can now conveniently be solved in closed-form and the full details of each can be found in the appendix \@ref(proofOmegak). The following theorem provides the simplified steps in the algorithm.
 
 
 ```{theorem, name = "Augmented ADMM Algorithm for Shrinking Characteristics of Precision Matrix Estimators."}
 
-Define the soft-thresholding function as $\mbox{soft}(a, b) = \mbox{sign}(a)(\left| a \right| - b)_{+}$. Set $k = 0$ and repeat steps 1-6 until convergence.
+Define the soft-thresholding function as $\mbox{soft}(a, b) = \mbox{sign}(a)(\left| a \right| - b)_{+}$ and $S$ as the sample covariance matrix. Set $k = 0$ and initialize $Z^{0}, \Lambda^{0}, \Omega^{0}$, and $\rho$ and repeat steps 1-5 until convergence.
 
 1. Compute $G^{k}$.
 
 \begin{equation}
-G^{k} = \rho A^{T}\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}Y^{k} \right)B^{T}
+G^{k} = \rho A^{T}\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}\Lambda^{k} \right)B^{T}
 (\#eq:Gk)\notag
 \end{equation}
 
@@ -98,28 +96,26 @@ S + \left( G^{k} + (G^{k})^{T} \right)/2 - \rho\tau\Omega^{k} = VQV^{T}
 (\#eq:Omegak)
 \end{equation}
 
-4. Update $Z^{k + 1}$.^[Proof of \@ref(eq:Zk) in section \@ref(proofZk)]
+4. Update $Z^{k + 1}$ with element-wise soft-thresholding for the resulting matrix.^[Proof of \@ref(eq:Zk) in section \@ref(proofZk)]
 
 \begin{equation}
-Z^{k + 1} = \mbox{soft}\left( A\Omega^{k + 1}B - C + \rho^{-1}Y^{k}, \rho^{-1}\lambda \right)
+Z^{k + 1} = \mbox{soft}\left( A\Omega^{k + 1}B - C + \rho^{-1}\Lambda^{k}, \rho^{-1}\lambda \right)
 (\#eq:Zk)
 \end{equation}
 
-5. Update $Y^{k + 1}$.
+5. Update $\Lambda^{k + 1}$.
 
 \begin{equation}
-Y^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)
+\Lambda^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)
 (\#eq:Yk)\notag
 \end{equation}
-
-6. Replace $k$ with $k + 1$.
 
 ```
 
 
 ### Stopping Criterion
 
-A possibe stopping criterion for this framework is one derived from similar optimality conditions used in the previous chapter \@ref(ADMMstop). The primal optimality condition here is that $A\Omega^{k + 1}B - Z^{k + 1} - C = 0$ and the two dual optimality conditions are $0 \in \partial f\left(\Omega^{k + 1}\right) + \left(B(\Lambda^{k + 1})^{T}A + A^{T}\Lambda^{k + 1}B^{T} \right)/2$ and $0 \in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}$. Similarly, we will define the left-hand side of the primal optimality condition as the primal residual $r^{k + 1} = A\Omega^{k + 1}B - Z^{k + 1} - C$ and the dual residual^[Proof of \@ref(eq:stopproof) in section \@ref(proofstopproof).] as
+A possibe stopping criterion for this framework is one derived from similar optimality conditions used in the previous chapter in section \@ref(ADMMstop). The primal optimality condition here is that $A\Omega^{k + 1}B - Z^{k + 1} - C = 0$ and the two dual optimality conditions are $0 \in \partial f\left(\Omega^{k + 1}\right) + \left(B(\Lambda^{k + 1})^{T}A + A^{T}\Lambda^{k + 1}B^{T} \right)/2$ and $0 \in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}$. Similarly, we will define the left-hand side of the primal optimality condition as the primal residual $r^{k + 1} = A\Omega^{k + 1}B - Z^{k + 1} - C$ and the dual residual^[Proof of \@ref(eq:stopproof) in section \@ref(proofstopproof).] as
 
 \begin{equation}
 s^{k + 1} = \frac{\rho}{2}\left( B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right)
@@ -140,7 +136,7 @@ For proper convergence, we will require that both residuals are approximately eq
 
 ## Regression Illustration
 
-One of the research directions mentioned in @molstad2017shrinking that was not further explored was the application of the SCPME framework to regression. Utilizing the fact that the population regression coefficient matrix $\beta \equiv \Omega_{x}\Sigma_{xy}$ for predictors, $X$, and the responses, $Y$, they point out that their framework could allow for the simultaneous estimation of $\beta$ and $\Omega_{x}$. Like @witten2009covariance, this approach would estimate the forward regression coefficient matrix while using shrinkage estimators of the marginal precision matrix for the predictors. For example, recall that the general optimization problem outlined in the SCPME framework is to estimate $\hat{\Omega}$ such that
+One of the research directions mentioned in @molstad2017shrinking that was not further explored was the application of the SCPME framework to regression. Utilizing the fact that the population regression coefficient matrix $\beta \equiv \Omega_{x}\Sigma_{xy}$ for predictors, $X$, and the responses, $Y$, they point out that their framework could allow for the simultaneous estimation of $\beta$ and $\Omega_{x}$. Like @witten2009covariance, this approach would estimate the forward regression coefficient matrix while using shrinkage estimators for the marginal population precision matrix for the predictors. For example, recall that the general optimization problem outlined in the SCPME framework is to estimate $\hat{\Omega}$ such that
 
 \begin{equation}
   \hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \lambda\left\| A\Omega B - C \right\|_{1} \right\}
@@ -154,24 +150,22 @@ If the user specifies that $A = I_{p}, B = \Sigma_{xy}, C = 0, \mbox{ and } \Ome
 (\#eq:penloglik4)\notag
 \end{equation}
 
-Specifically, this optimization problem has the effect of deriving an estimate of $\Omega_{x} \mbox { and } \beta$ while assuming sparsity in the forward regression coefficient $\beta$. Of course, in practice we do not know the true covariance matrix $\Sigma_{xy}$ but we might consider using the sample estimate $\hat{\Sigma}_{xy} = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(Y_{i} - \bar{Y}\right)^{T}/n$ and then use our estimator, $\hat{\Omega}_{x}$, to construct the forward regression coefficient matrix estimator $\hat{\beta} = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$. Estimators such as this are truly novel an can conveniently be estimated by the SCPME framework. Another such estimator that is a product of this framework is one where we leave $A \mbox{ and } C$ unchanged but take $B = \left[ \Sigma_{xy}, I_{p} \right]$ so that the identity matrix is appended to the sample cross-covariance matrix of $X$ and $Y$. In this case, not only are we assuming that $\beta$ is sparse, but we are also assuming sparsity in $\Omega$.
+Specifically, this optimization problem has the effect of deriving an estimate of $\Omega_{x}$ while assuming sparsity in the forward regression coefficient $\beta$. Of course, in practice we do not know the true covariance matrix $\Sigma_{xy}$ but we might consider using the sample estimate $\hat{\Sigma}_{xy} = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(Y_{i} - \bar{Y}\right)^{T}/n$ in place of $\Sigma_{xy}$. We could then use our estimator, $\hat{\Omega}_{x}$, to construct the estimated forward regression coefficient matrix $\hat{\beta} = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$. Estimators such as these are truly novel an can conveniently be estimated by the SCPME framework. Another such estimator that is a product of this new framework is one where we construct $A \mbox{ and } C$ similarly but take $B = \left[ \Sigma_{xy}, I_{p} \right]$ so that the identity matrix is appended to the cross-covariance matrix of $X$ and $Y$. In this case, not only are we assuming that $\beta$ is sparse, but we are also assuming sparsity in $\Omega$.
 
 \begin{equation}
 P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\left[\Sigma_{xy}, I_{p}\right] \right\|_{1} = \lambda\left\| \beta \right\|_{1} + \lambda\left\| \Omega \right\|_{1}
 (\#eq:pen4)\notag
 \end{equation}
 
-Like before, we would take our estimator, $\hat{\Omega}_{x}$, to construct the forward regression coefficient matrix estimator $\hat{\beta} = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$. The embedded assumptions here are that not all predictors are useful in predicting the response, $Y$, *and* a number of the predictors are conditionally independent of one another - assumptions that would be quite reasonable in practice.
-
-In the next section we offer a short simulation comparing these estimators to related and competing prediction methods.
+Like before, we could use $\hat{\Sigma}_{xy}$ as a replacement and take our resulting estimator, $\hat{\Omega}_{x}$, to construct the estimated forward regression coefficient matrix $\hat{\beta} = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$. The embedded assumptions here are that not all predictors in $X$ are useful in predicting the response, $Y$, *and* that a number of the predictors are conditionally independent of one another. These are assumptions that are quite reasonable in practice and in the next section we offer a short simulation comparing these new estimators to related and competing prediction methods.
 
 
 
 ## Simulations
 
-In this simulation, we compare the performance of several competing regression prediction methods under various data realizations, including the so-called SCPME regression estimators discussed in the previous section. In total, we consider the following estimators:
+In this simulation, we compare, under various data realizations, the performance of several competing regression prediction methods including the new so-called SCPME regression estimators discussed in the previous section. In total, we consider the following:
 
- - `OLS` = ordinary least squares estimatior. In high dimensional settings ($p >> n$), the Moore-Penrose estimator is used.
+ - `OLS` = ordinary least squares estimatior. In high dimensional settings ($p >> n$), the Moore-Penrose estimator is used as a replacement.
 
  - `ridge` = ridge regression estimator.
  
@@ -181,25 +175,25 @@ In this simulation, we compare the performance of several competing regression p
  
  - `oracleO` = regression estimator with oracle $\Omega_{x}^{*}$ (let $\beta = \Omega_{x}^{*}\hat{\Sigma}_{xy}$).
  
- - `oracleS` = regression estimator with oracle $\Sigma_{xy}^{*}$ (let $\beta = \hat{\Omega}_{x}\Sigma_{xy}^{*}$).
+ - `oracleS` = regression estimator with oracle $\Sigma_{xy}^{*}$ (let $\beta = \hat{\Omega}_{x}\Sigma_{xy}^{*}$) and $\Omega_{x}$ is estimated using an elastic-net penalty.
  
  - `shrinkB` = SCPME regression estimator with penalty $\lambda\left\| \Omega_{x}\hat{\Sigma}_{xy} \right\|_{1}$ so that $\beta = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$.
  
  - `shrinkBS` = SCPME regression estimator with oracle $\Sigma_{xy}^{*}$ so that the penalty is $\lambda\left\| \Omega_{x}\Sigma_{xy}^{*} \right\|_{1}$ and we let $\beta = \hat{\Omega}_{x}\Sigma_{xy}^{*}$.
  
- - `shrinkBO` = SCPME regression estimator with penalty $\lambda\left\| \Omega_{x}[\Sigma_{xy}, I_{p}] \right\|_{1}$ so that $\beta = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$.
+ - `shrinkBO` = SCPME regression estimator with penalty $\lambda\left\| \Omega_{x}[\hat{\Sigma}_{xy}, I_{p}] \right\|_{1}$ so that $\beta = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$.
  
  - `glasso` = graphical lasso estimator with penalty $\lambda\left\| \Omega_{x} \right\|_{1}$ so that $\beta = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$.
  
-For each estimator, if selection of a tuning parameter is required, then the tuning parameter was chosen so that the mean squared prediction error (MSPE) was minimized over 3-fold cross validation.
+For each estimator, if selection of a tuning parameter is required, the tuning parameter was chosen so that the mean squared prediction error (MSPE) was minimized over 3-fold cross validation.
 
-The data generating procedures for the simulations are as follows. The oracle regression coefficient matrix $\beta^{*}$ was constructed so that $\beta^{*} = \mathbb{B} \circ \mathbb{V}$ where $vec\left( \mathbb{B} \right) \sim N_{pr}\left( 0, I_{p} \otimes I_{r}/\sqrt{p} \right)$ and $\mathbb{V} \in \mathbb{R}^{p \times r}$ is a matrix containing $p$ times $r$ random bernoulli draws with 50\% probability being equal to one. The covariance matrices $\Sigma_{y | x}$ and $\Sigma_{x}$ were constructed so that $\left( \Sigma_{y | x} \right)_{ij} = 0.7^{\left| i - j \right|}$ and $\left( \Sigma_{x} \right)_{ij} = 0.7^{\left| i - j \right|}$, respectively. This ensures that their corresponding precision matrices will be tridiagonal and sparse. Then for 100 independent, identically distributed samples, we had $X_{i} \sim N_{p}\left( 0, \Sigma_{xx} \right)$ and $E_{i} \sim N_{r}\left( 0, \Sigma_{y | x} \right)$ so that $\mathbb{Y} = \mathbb{X}\beta + \mathbb{E}$ where $\mathbb{X} \in \mathbb{R}^{n \times p}$, $\mathbb{Y} \in \mathbb{R}^{n \times r}$ and the script notation denotes the fact that the columns have been centered so as to remove the intercept in our prediction models. An additional 1000 samples were generated similarly for the testing set and each prediction method was evaluated on both model error and mean squared prediction error.
+The data generating procedure for the simulations is the following. The oracle regression coefficient matrix $\beta^{*}$ was constructed so that $\beta^{*} = \mathbb{B} \circ \mathbb{V}$ where $vec\left( \mathbb{B} \right) \sim N_{pr}\left( 0, I_{p} \otimes I_{r}/\sqrt{p} \right)$ and $\mathbb{V} \in \mathbb{R}^{p \times r}$ is a matrix containing $p$ times $r$ random bernoulli draws with 50\% probability being equal to one. The covariance matrices $\Sigma_{y | x}$ and $\Sigma_{x}$ were constructed so that $\left( \Sigma_{y | x} \right)_{ij} = 0.7^{\left| i - j \right|}$ and $\left( \Sigma_{x} \right)_{ij} = 0.7^{\left| i - j \right|}$, respectively. This ensures that their corresponding precision matrices will be tridiagonal and sparse. Then for 100 independent, identically distributed samples, we had $X_{i} \sim N_{p}\left( 0, \Sigma_{x} \right)$ and $E_{i} \sim N_{r}\left( 0, \Sigma_{y | x} \right)$ so that $\mathbb{Y} = \mathbb{X}\beta + \mathbb{E}$ where $\mathbb{X} \in \mathbb{R}^{n \times p}$ and $\mathbb{Y} \in \mathbb{R}^{n \times r}$ are the matrices with stacked rows $X_{i}$ and $E_{i}$, respectively, for $i = 1, ..., n$ and the script notation denotes the fact that the columns have been centered so as to remove the intercept in our prediction models. A sample of an additional 1000 observations was generated similarly for the testing set. Each prediction method was evaluated on both model error and mean squared prediction error.
 
-Figure \@ref(fig:scpmesim2) displays the model error for each method by dimension of the design matrix. Here we took the sample size equal to $n = 100$ and the response matrix dimension $r = 10$ with each data generating procedure replicated a total of 20 times. Note `OLS` and `oracleS` are not shown due to extremely poor performance. We find that in high dimensional settings, `shrinkBO` and `shrinkB` perform increasingly well relative to the others as the predictor dimension increases with `shrinkBO` performing the best. Interestingly, when $n > p$ is still one of the best-performing estimators - though worse than both `lasso` and `ridge` - but the performance of `shrinkB` decreases drastically (plot not shown).
+Figure \@ref(fig:scpmesim2) displays the model error for each method by dimension of the design matrix. Here we took the sample size equal to $n = 100$ and the response matrix dimension $r = 10$ with each data generating procedure replicated a total of 20 times. Note `OLS` and `oracleS` are not shown due to extremely poor performance. We find that in high dimensional settings, `shrinkBO` and `shrinkB` perform increasingly well relative to the others as the predictor dimension increases. `shrinkBO` performed the best. Interestingly, when $n > p$ `shrinkBO` is still one of the best-performing estimators - though worse than both `lasso` and `ridge` - but the performance of `shrinkB` decreases drastically (plot not shown).
 
-In the high dimension setting, the oracle estimators `oracleO` (penalty: $\lambda\left\| \Omega^{*}\hat{\Sigma}_{xy} \right\|_{1}$) and `oracleS` (penalty: $\lambda\left\| \hat{\Omega}\Sigma_{xy}^{*} \right\|_{1}$) performed worse or comparable to OLS. The poor performance of `oracleS` is likely due to the fact that the sample estimate of $\Omega$ is not identifiable when $p > n$.
+In the high dimension setting, the oracle estimators `oracleO` and `oracleS` performed worse or comparable to the `OLS` estimator. The poor performance of `oracleS` is likely due to the fact that the sample estimate of $\Omega_{x}$ is not identifiable when $p > n$.
 
-The table below shows the average model error for each estimator when $n = 100$, $p = 150$, and $r = 10$.
+The following table shows the average model error for each estimator when $n = 100$, $p = 150$, and $r = 10$.
 
 
 <!-- <br>\vspace{0.5cm} -->
@@ -218,7 +212,7 @@ The table below shows the average model error for each estimator when $n = 100$,
 <!-- <br>\vspace{0.5cm} -->
 
 \vspace{0.5cm}
-```{r scpmesim2, eval = T, echo = F, fig.cap = "ME by P (N = 100, R = 10, sparse = 0.5, sigma = tridiag). The oracle precision matrices were tri-diagonal with variable dimension (p) and the data was generated with sample size n = 100 and response vector dimension r = 10. The model errors (ME) for each estimator are plotted. shrinkBO and shrinkB were the two best-performing estimators closely follow by the ridge and lasso regression estimators."}
+```{r scpmesim2, eval = T, echo = F, fig.cap = "The oracle precision matrices were tri-diagonal with variable dimension (p) and the data was generated with sample size n = 100 and response vector dimension r = 10. The model errors (ME) for each estimator with variable dimension of the design matrix are plotted. shrinkBO and shrinkB were the two best-performing estimators closely follow by the ridge and lasso regression estimators."}
 
 # load  data
 load("images/sim6.Rdata")
@@ -271,13 +265,13 @@ sim6 %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", P == 150, R == 10) 
 
 ### Regression Simulations with Covariance Shrinkage
 
-This final simulation was run and explored due to the fact each of the SCPME regression estimators require an estimation of the cross-covariance matrix. In the previous simulations, we used the maximum likelihood estimator. However, because the data-generating procedures construct settings that are inherently sparse, we were interested to determine if additional shrinkage of the *cross-covariance* matrix would also prove beneficial. For instance, in a number of settings, we were finding that the estimator `oracleO` ($\beta = \Omega_{x}^{*}\hat{\Sigma}_{xy}$) was performing worse than `oracleS` ($\beta = \hat{\Omega}_{x}\Sigma_{xy}^{*}$) which perhaps suggests that estimating the covariance matrix $\Sigma_{xy}$ well is *more* important than estimating $\Omega$ well. This simulation explores that theory a bit further.
+This final simulation was explored due to the fact that each of the SCPME regression estimators require an estimation of the cross-covariance matrix. In the previous simulations, we naively used the maximum likelihood estimate. However, because the data-generating procedure constructs settings that are inherently sparse, we were interested to determine if additional shrinkage of the maximum likelihood estimate for the *cross-covariance* matrix would also prove beneficial. For instance, in a number of settings, we were finding that the estimator `oracleO` was performing worse than `oracleS`. This perhaps suggests that estimating the covariance matrix $\Sigma_{xy}$ well is *more* important than estimating $\Omega$ well. This simulation explores that theory a bit further.
 
-The data-generating procedure for this simulation is similar to previous one but here we take $n = 100$, $p = 200$, $r = 10$, *and* we additionally multiple the cross-covariance sample estimator by a factor of $k$ where $k \in (0.1, 0.2, ..., 0.9, 1)$. Figure \@ref(fig:scpmesim7) plots the MSPE for `shrinkB` for each tuning parameter, $\lambda$, and constant, $k$, pair. Figure \@ref(fig:scpmesim9) plots the MSPE similarly for `shrinkBO`.
+The data-generating procedure for this simulation is similar to previous one but here we take $n = 100$, $p = 200$, $r = 10$, and, in addition, we multiply the population cross-covariance estimator by a factor of $k$ where $k \in (0.1, 0.2, ..., 0.9, 1)$. Figure \@ref(fig:scpmesim7) plots the MSPE for `shrinkB` for each tuning parameter, $\lambda$, and constant, $k$, pair. Figure \@ref(fig:scpmesim9) plots the MSPE similarly for `shrinkBO`.
 
 Interestingly, we find that in this high dimension setting, it does appear that shrinking the sample covariance matrix by a constant factor helps the overall prediction performance of the SCPME estimators. This is indicated by the fact that the optimal constant, $k$, hovers between 0.3 and 0.6 for each of the estimators. We also performed a simulation in low dimensions (not shown) but we did not see the same benefit.
 
-
+\vspace{0.5cm}
 ```{r, eval = T, echo = F}
 
 # load  data
