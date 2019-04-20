@@ -41,7 +41,7 @@ Solving for $\hat{\Omega}$ in \@ref(eq:omegaloglik2) uses what we are going to c
 where $L$, the augmented lagrangian, is defined as
 
 \begin{equation}
-L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda^{T}\left(A\Omega B - Z - C\right)\right] + \frac{\rho}{2}\left\|A\Omega B - Z - C\right\|_{F}^{2}
+L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda '\left(A\Omega B - Z - C\right)\right] + \frac{\rho}{2}\left\|A\Omega B - Z - C\right\|_{F}^{2}
 (\#eq:auglagrange3)
 \end{equation}
 
@@ -51,24 +51,24 @@ Instead of solving the first step directly, the authors propose an alternative, 
 
 \begin{equation}
 \begin{split}
-  \tilde{L}_{\rho}\left(\Omega, Z^{k}, \Lambda^{k}\right) = f\left(\Omega\right) &+ g\left(Z^{k}\right) + tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \\
-  &+ \frac{\rho}{2}vec\left(\Omega - \Omega^{k}\right)^{T}Q\left(\Omega - \Omega^{k}\right)
+  \tilde{L}_{\rho}\left(\Omega, Z^{k}, \Lambda^{k}\right) = f\left(\Omega\right) &+ g\left(Z^{k}\right) + tr\left[(\Lambda^{k})'(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \\
+  &+ \frac{\rho}{2}vec\left(\Omega - \Omega^{k}\right)' Q\left(\Omega - \Omega^{k}\right)
 (\#eq:approx)
 \end{split}
 \end{equation}
 
-where $Q = \tau I_{p} - \left(A^{T}A \otimes BB^{T}\right)$ and $\tau$ is chosen such that $Q$ is positive definite. Note that if $Q$ is positive definite, then $L_{\rho}\left(\cdot\right) \leq \tilde{L}\left(\cdot\right)$ for all $\Omega$ and $\tilde{L}$ is a majorizing function^[If $Q$ is positive definite, then $vec\left(\Omega - \Omega^{k} \right)^{T}\rho Q\left(\Omega - \Omega^{k} \right)/2 > 0$ since $\rho > 0$ and $vec\left(\Omega - \Omega^{k}\right)$ is always nonzero whenever $\Omega \neq \Omega^{k}$.]. The *augmented ADMM* algorithm developed by Molstad and Rothman, which now includes the majorize-minimize principle, consists of the following repeated iterations:
+where $Q = \tau I_{p} - \left(A'A \otimes BB'\right)$ and $\tau$ is chosen such that $Q$ is positive definite. Note that if $Q$ is positive definite, then $L_{\rho}\left(\cdot\right) \leq \tilde{L}\left(\cdot\right)$ for all $\Omega$ and $\tilde{L}$ is a majorizing function^[If $Q$ is positive definite, then $vec\left(\Omega - \Omega^{k} \right)'\rho Q\left(\Omega - \Omega^{k} \right)/2 > 0$ since $\rho > 0$ and $vec\left(\Omega - \Omega^{k}\right)$ is always nonzero whenever $\Omega \neq \Omega^{k}$.]. The *augmented ADMM* algorithm developed by Molstad and Rothman, which now includes the majorize-minimize principle, consists of the following repeated iterations:
 
 \begin{equation}
 \begin{split}
   \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{tr\left[\left(S + G^{k}\right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\}\\
-  Z^{k + 1} &= \arg\min_{Z \in \mathbb{R}^{n \times r}}\left\{\lambda\left\|Z\right\|_{1} + tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \right\} \\
+  Z^{k + 1} &= \arg\min_{Z \in \mathbb{R}^{n \times r}}\left\{\lambda\left\|Z\right\|_{1} + tr\left[(\Lambda^{k})'(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \right\} \\
   \Lambda^{k + 1} &= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right)
 (\#eq:augADMM)\notag
 \end{split}
 \end{equation}
 
-where $G^{k} = \rho A^{T}\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}\Lambda^{k} \right)B^{T}$. Each step in this algorithm can now conveniently be solved in closed-form and the full details of each can be found in the appendix \@ref(proofOmegak). The following theorem provides the simplified steps in the algorithm.
+where $G^{k} = \rho A'\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}\Lambda^{k} \right)B'$. Each step in this algorithm can now conveniently be solved in closed-form and the full details of each can be found in the appendix \@ref(proofOmegak). The following theorem provides the simplified steps in the algorithm.
 
 
 ```{theorem, name = "Augmented ADMM Algorithm for Shrinking Characteristics of Precision Matrix Estimators."}
@@ -78,21 +78,21 @@ Define the soft-thresholding function as $\mbox{soft}(a, b) = \mbox{sign}(a)(\le
 1. Compute $G^{k}$.
 
 \begin{equation}
-G^{k} = \rho A^{T}\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}\Lambda^{k} \right)B^{T}
+G^{k} = \rho A'\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}\Lambda^{k} \right)B'
 (\#eq:Gk)\notag
 \end{equation}
 
 2. Via spectral decomposition, decompose
 
 \begin{equation}
-S + \left( G^{k} + (G^{k})^{T} \right)/2 - \rho\tau\Omega^{k} = VQV^{T}
+S + \left( G^{k} + (G^{k})' \right)/2 - \rho\tau\Omega^{k} = VQV'
 (\#eq:VQV)\notag
 \end{equation}
 
 3. Update $\Omega^{k + 1}$.^[Proof of \@ref(eq:Omegak) in section \@ref(proofOmegak)]
 
 \begin{equation}
-\Omega^{k + 1} = V\left( -Q + (Q^{2} + 4\rho\tau I_{p})^{1/2} \right)V^{T}/(2\rho\tau)
+\Omega^{k + 1} = V\left( -Q + (Q^{2} + 4\rho\tau I_{p})^{1/2} \right)V' /(2\rho\tau)
 (\#eq:Omegak)
 \end{equation}
 
@@ -115,10 +115,10 @@ Z^{k + 1} = \mbox{soft}\left( A\Omega^{k + 1}B - C + \rho^{-1}\Lambda^{k}, \rho^
 
 ### Stopping Criterion
 
-A possibe stopping criterion for this framework is one derived from similar optimality conditions used in the previous chapter in section \@ref(ADMMstop). The primal optimality condition here is that $A\Omega^{k + 1}B - Z^{k + 1} - C = 0$ and the two dual optimality conditions are $0 \in \partial f\left(\Omega^{k + 1}\right) + \left(B(\Lambda^{k + 1})^{T}A + A^{T}\Lambda^{k + 1}B^{T} \right)/2$ and $0 \in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}$. Similarly, we will define the left-hand side of the primal optimality condition as the primal residual $r^{k + 1} = A\Omega^{k + 1}B - Z^{k + 1} - C$ and the dual residual^[Proof of \@ref(eq:stopproof) in section \@ref(proofstopproof).] as
+A possibe stopping criterion for this framework is one derived from similar optimality conditions used in the previous chapter in section \@ref(ADMMstop). The primal optimality condition here is that $A\Omega^{k + 1}B - Z^{k + 1} - C = 0$ and the two dual optimality conditions are $0 \in \partial f\left(\Omega^{k + 1}\right) + \left(B(\Lambda^{k + 1})'A + A'\Lambda^{k + 1}B' \right)/2$ and $0 \in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}$. Similarly, we will define the left-hand side of the primal optimality condition as the primal residual $r^{k + 1} = A\Omega^{k + 1}B - Z^{k + 1} - C$ and the dual residual^[Proof of \@ref(eq:stopproof) in section \@ref(proofstopproof).] as
 
 \begin{equation}
-s^{k + 1} = \frac{\rho}{2}\left( B(Z^{k + 1} - Z^{k})^{T}A + A^{T}(Z^{k + 1} - Z^{k})B^{T} \right)
+s^{k + 1} = \frac{\rho}{2}\left( B(Z^{k + 1} - Z^{k})'A + A'(Z^{k + 1} - Z^{k})B' \right)
 (\#eq:stopproof)\notag
 \end{equation}
 
@@ -127,7 +127,7 @@ For proper convergence, we will require that both residuals are approximately eq
 \begin{equation}
 \begin{split}
   \epsilon^{pri} &= \sqrt{nr}\epsilon^{abs} + \epsilon^{rel}\max\left\{ \left\| A\Omega^{k + 1}B \right\|_{F}, \left\| Z^{k + 1} \right\|_{F}, \left\| C \right\|_{F} \right\} \\
-  \epsilon^{dual} &= p\epsilon^{abs} + \epsilon^{rel}\left\| \left( B(\Lambda^{k + 1})^{T}A + A^{T}\Lambda^{k + 1}B^{T} \right)/2 \right\|_{F}
+  \epsilon^{dual} &= p\epsilon^{abs} + \epsilon^{rel}\left\| \left( B(\Lambda^{k + 1})'A + A'\Lambda^{k + 1}B' \right)/2 \right\|_{F}
 (\#eq:scpmestopping)\notag
 \end{split}
 \end{equation}
@@ -150,7 +150,7 @@ If the user specifies that $A = I_{p}, B = \Sigma_{xy}, C = 0, \mbox{ and } \Ome
 (\#eq:penloglik4)\notag
 \end{equation}
 
-Specifically, this optimization problem has the effect of deriving an estimate of $\Omega_{x}$ while assuming sparsity in the forward regression coefficient $\beta$. Of course, in practice we do not know the true covariance matrix $\Sigma_{xy}$ but we might consider using the sample estimate $\hat{\Sigma}_{xy} = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(Y_{i} - \bar{Y}\right)^{T}/n$ in place of $\Sigma_{xy}$. We could then use our estimator, $\hat{\Omega}_{x}$, to construct the estimated forward regression coefficient matrix $\hat{\beta} = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$. Estimators such as these are truly novel an can conveniently be estimated by the SCPME framework. Another such estimator that is a product of this new framework is one where we construct $A \mbox{ and } C$ similarly but take $B = \left[ \Sigma_{xy}, I_{p} \right]$ so that the identity matrix is appended to the cross-covariance matrix of $X$ and $Y$. In this case, not only are we assuming that $\beta$ is sparse, but we are also assuming sparsity in $\Omega$.
+Specifically, this optimization problem has the effect of deriving an estimate of $\Omega_{x}$ while assuming sparsity in the forward regression coefficient $\beta$. Of course, in practice we do not know the true covariance matrix $\Sigma_{xy}$ but we might consider using the sample estimate $\hat{\Sigma}_{xy} = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(Y_{i} - \bar{Y}\right)'/n$ in place of $\Sigma_{xy}$. We could then use our estimator, $\hat{\Omega}_{x}$, to construct the estimated forward regression coefficient matrix $\hat{\beta} = \hat{\Omega}_{x}\hat{\Sigma}_{xy}$. Estimators such as these are truly novel an can conveniently be estimated by the SCPME framework. Another such estimator that is a product of this new framework is one where we construct $A \mbox{ and } C$ similarly but take $B = \left[ \Sigma_{xy}, I_{p} \right]$ so that the identity matrix is appended to the cross-covariance matrix of $X$ and $Y$. In this case, not only are we assuming that $\beta$ is sparse, but we are also assuming sparsity in $\Omega$.
 
 \begin{equation}
 P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\left[\Sigma_{xy}, I_{p}\right] \right\|_{1} = \lambda\left\| \beta \right\|_{1} + \lambda\left\| \Omega \right\|_{1}
@@ -409,30 +409,75 @@ d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_
 
 ## Discussion
 
-The last estimator in the previous section reveals an interesting connection to the joint log-likelihood of $X$ and $Y$ (under a few assumptions) when we consider its analogous *ridge* version - the *ridge SCPME estimator*:
+Apart from the two SCPME estimators discussed in the previous section, the generality of the SCPME framework allows for many previously unknown precision matrix estimators to be explored. One estimator that was concieved of in our work but deserves further attention in future research is of the form
 
 \begin{equation}
-\hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega \Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
+\hat{\Omega}_{x} = \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ tr(S_{x}\Omega_{x}) - \log\left| \Omega_{x} \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega_{x} \Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
 (\#eq:penregression)\notag
 \end{equation}
 
-To see this, let us suppose that we have $n$ independent copies of the random pair $(Y_{i}, X_{i})$ and we assume a linear relationship of the following form:
+Note that here we are using the Frobenius norm instead of the matrix $l_{1}$-norm in the SCPME framework but this requires only a slight modification of the augmented ADMM algorithm - which will be presented later. As before, the script notation denotes matrices that are column-centered. This optimization problem and objective function estimates a precision matrix that balances minimizing the gaussian negative log-likelihood for $\Omega_{x}$ with minimizing the MSPE for the forward regression coefficient matrix $\beta \equiv \Omega_{x}\Sigma_{xy}$. In other words, this estimator estimates a precision matrix using the likelihood function but that does not otherwise hinder predictive performance of the forward regression model.
+
+This estimator also reveals an interesting connection to the joint log-likelihood of $X \in \mathbb{R}^{p}$ and $Y \in \mathbb{R}^{r}$ (assuming $X$ is now random). To see this, let us suppose that we have $n$ independent copies of the random pair $(Y_{i}, X_{i})$ and we assume a linear relationship.
 
 \begin{equation}
-Y_{i} = \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right) + E_{i}
-(\#eq:linregression)\notag
+Y_{i} = \mu_{y} + \beta'\left(X_{i} - \mu_{x}\right) + E_{i}
 \end{equation}
 
-where $E_{i} \sim N_{r}\left( 0, \Omega_{y | x}^{-1} \right)$ and $X_{i} \sim N_{p}\left( \mu_{x}, \Omega^{-1} \right)$. These two assumptions imply that the conditional distribution of $Y_{i}|X_{i}$ is of the form
+where $E_{i} \sim N_{r}\left( 0, \Omega_{y | x}^{-1} \right)$ and $X_{i} \sim N_{p}\left( \mu_{x}, \Omega_{x}^{-1} \right)$. This implies that the conditional distribution of $Y_{i}|X_{i}$ is of the form
 
 \begin{equation}
-Y_{i} | X_{i} \sim N_{r}\left( \mu_{y} + \beta^{T}\left(X_{i} - \mu_{x}\right), \Omega_{y | x}^{-1} \right)
-(\#eq:linnormal)\notag
+Y_{i} | X_{i} \sim N_{r}\left( \mu_{y} + \beta'\left(X_{i} - \mu_{x}\right), \Omega_{y | x}^{-1} \right)
 \end{equation}
 
-We can use this conditional distribution along with the marginal distribution of $X$ to derive the joint likelihood of $X$ and $Y$. Similar to before, we will take $\Omega_{y | x} \equiv \Sigma_{y | x}^{-1}, \Omega \equiv \Sigma_{xx}^{-1}, \mbox{ and } \beta \equiv \Omega\Sigma_{xy}$ for convenience. We will also let $f$ denote the probability distribution function for each respective variable.
+We can use this conditional distribution along with the marginal distribution of $X$ to derive the joint log-likelihood of $X$ and $Y$. Without loss of generality, we will assume that $\mu_{x} = \mu_{y} = 0$. This can similarly achieved by simply centering the data by the sample averages.
 
-(Talk about regression estimator minimizing frobenius norm of predictions)
+\begin{equation}
+\begin{split}
+  l\left( \Omega_{y | x}, \Omega_{x}, \Sigma_{xy} | Y, X \right) &= constant + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}\sum_{i = 1}^{n} tr\left[ \left( Y_{i} - \Sigma_{xy}'\Omega_{x} X_{i} \right)\left( Y_{i} - \Sigma_{xy}'\Omega_{x} X_{i} \right)'\Omega_{y | x} \right] \\
+  &+\frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}\sum_{i = 1}^{n}tr\left( X_{i}X_{i}'\Omega_{x} \right) \\
+  &= constant + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)'\left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{y | x} \right)\Omega_{y | x} \right] \\
+  &+ \frac{n}{2}\log\left| \Omega_{x} \right| - \frac{n}{2}tr\left( S_{x}\Omega_{x} \right)
+(\#eq:partialjointloglik)\notag
+\end{split}
+\end{equation}
+
+Note that $\beta \equiv \Omega\Sigma_{xy}$ and $S_{x}$ still denotes the marginal sample covariance matrix of random variable $X$. Now suppose we are interested in optimizing this gaussian log-likelihood function with respect to $\Omega$:
+
+\begin{equation}
+\begin{split}
+  \hat{\Omega}_{x} &= \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)^{T}\left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)\Omega_{y | x} \right] + \frac{n}{2}tr\left( S_{x}\Omega_{x} \right) - \frac{n}{2}\log\left| \Omega_{x} \right| \right\} \\
+  &= \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ tr\left( S_{x}\Omega_{x} \right) - \log\left| \Omega_{x} \right| + \frac{1}{n}\left\| \left( \mathbb{X}\Omega_{x}\Sigma_{xy} - \mathbb{Y} \right)\Omega_{y | x}^{1/2} \right\|_{F}^{2} \right\}
+(\#eq:omegajointloglik)\notag
+\end{split}
+\end{equation}
+
+If we assume that, given $X$, each of the $r$ responses are pairwise independent with equal variance so that $\Omega_{y | x}^{1/2} = I_{r}/\sigma_{y | x}$ and let $\lambda = 2/(n\sigma_{y | x}^{2})$, then we have that
+
+\begin{equation}
+\hat{\Omega}_{x} = \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ tr\left( S_{x}\Omega_{x} \right) - \log\left| \Omega \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega\Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
+(\#eq:omegajointmle)\notag
+\end{equation}
+
+There are a few takeaways we can make after revealing this connection. The first is that the estimator constructed in the previous section is, in fact, solving a very similar problem to that of optimizing the joint likelihood with respect to $\Omega$.
 
 
-(REMEMBER INFORMATION IN APPENDIX)
+Note that the only difference is in step 4.
+
+```{theorem, name = "Modified Augmented ADMM Algorithm for Shrinking Characteristics of Precision Matrix Estimators with Frobenius Norm"}
+
+Set $k = 0$ and initialize $Z^{0}, \Lambda^{0}, \Omega^{0}$, and $\rho$ and repeat steps 1-5 until convergence.
+
+1. Compute $G^{k} = \rho A'\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}\Lambda^{k} \right)B'$
+
+2. Decompose $S + \left( G^{k} + (G^{k})' \right)/2 - \rho\tau\Omega^{k} = VQV'$ (via the spectral decomposition).
+
+3. Set $\Omega^{k + 1} = V\left( -Q + (Q^{2} + 4\rho\tau I_{p})^{1/2} \right)V'/(2\rho\tau)$
+
+4. Set $Z^{k + 1} = \left[ \rho\left( A\Omega^{k + 1} B - C \right) + \Lambda^{k} \right]/(\lambda + \rho)$
+
+5. Set $\Lambda^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)$
+
+```
+
+Note that no closed-form solution to this estimator exists and so we must resort to some iterative algorithm similar to the SCPME augmented ADMM algorithm in order to solve it^[Proof in section \@ref(proofpenregression).].

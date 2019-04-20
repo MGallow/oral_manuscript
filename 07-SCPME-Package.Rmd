@@ -42,7 +42,7 @@ The primary function in the `SCPME` package is `shrink()`. The input values $X$ 
 
 In this example, the data matrix is $100 \times 5$ and the response is generated according to the following model:
 
-\[ Y_{i} = \beta^{T}X_{i} + E_{i} \]
+\[ Y_{i} = \beta'X_{i} + E_{i} \]
 
 where $E_{i} \sim N\left( 0, 1 \right)$ and $X_{i}$ is generated from a multivariate normal distribution with mean zero and tapered oracle covariance matrix $S$. A tapered covariance matrix has the property that its inverse - the precision matrix - is tri-diagonal. Estimating this oracle precision matrix well and efficiently will be our primary interest. In addition, $\beta$ is randomly generated and sparse. The data will be generated using the `data_gen()` function contained in the package.
 
@@ -83,7 +83,7 @@ All of the estimators so far have used a lasso penalty that penalizes the sum of
 
 \[P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\Sigma_{xy} \right\|_{1} = \lambda\left\| \beta \right\|_{1} \]
 
-This objective function estimates an $\Omega$ via the marginal log-likelihood of $X$ under the assumption that the forward regression coefficient $\beta$ is sparse (recall that $\beta \equiv \Omega\Sigma_{xy}$). Of course, in practice, we do not know the true covariance matrix $\Sigma_{xy}$ but we might consider using the sample estimate $\hat{\Sigma}_{xy} = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(Y_{i} - \bar{Y}\right)^{T}/n$.
+This objective function estimates an $\Omega$ via the marginal log-likelihood of $X$ under the assumption that the forward regression coefficient $\beta$ is sparse (recall that $\beta \equiv \Omega\Sigma_{xy}$). Of course, in practice, we do not know the true covariance matrix $\Sigma_{xy}$ but we might consider using the sample estimate $\hat{\Sigma}_{xy} = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(Y_{i} - \bar{Y}\right)'/n$.
 
 <br>\vspace{0.5cm}
 ```{r, message = FALSE, echo = TRUE}
