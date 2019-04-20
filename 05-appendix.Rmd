@@ -5,7 +5,7 @@
 
 ### Proof of \@ref(eq:omegaalgo) {#proofomegaalgo}
 
-@witten2009covariance and @price2015ridge showed that the following optimization problem can be solved in closed-form. We outline their steps below.
+@witten2009covariance and @price2015ridge showed that the following optimization problem can be solved in closed-form. We outline their steps here.
 
 \begin{equation}
 \Omega^{k + 1} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[\Lambda^{k}\left(\Omega - Z^{k}\right)\right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} \right\}
@@ -184,7 +184,7 @@ Let us now plug in this equality into our optimization problem that includes the
 
 \begin{equation}
 \begin{split}
-  \hat{Omega}^{k + 1} &:= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\tilde{L}_{\rho}(\Omega, Z^{k}, \Lambda^{k}) \\
+  \hat{\Omega}^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\tilde{L}_{\rho}(\Omega, Z^{k}, \Lambda^{k}) \\
   &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{\begin{matrix}
  tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[(\Lambda^{k})^{T}(A\Omega B - Z^{k} - C) \right] + \rho\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2}/2 \end{matrix}\right. \\
   &+ \left.\begin{matrix} vec\left(\Omega - \Omega^{k}\right)^{T}\rho Q\left(\Omega - \Omega^{k}\right)/2 \end{matrix}\right\} \\
@@ -283,7 +283,7 @@ Start by taking the subgradient with respect to $Z$:
 where $\mbox{sign(Z)}$ is the elementwise sign operator. By setting the gradient/sub-differential equal to zero, we arrive at the following equivalence:
 
 \begin{equation}
-Z_{ij}^{k + 1} = \frac{1}{\rho}\left( \rho(A\Omega_{ij}^{k + 1}B - C) + \Lambda_{ij}^{k} - Sign(Z_{ij}^{k + 1})\lambda \right)
+Z_{ij}^{k + 1} = \frac{1}{\rho}\left( \rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k} - Sign\left(Z_{ij}^{k + 1}\right)\lambda \right)
 (\#eq:ZZsoftproof2)\notag
 \end{equation}
 
@@ -302,12 +302,12 @@ for all $i = 1,..., p$ and $j = 1,..., p$. We observe two scenarios:
 \rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k} < -\lambda\alpha \notag
 \end{equation}
 
-This implies that $\mbox{sign}(Z_{ij}^{k + 1}) = \mbox{sign}\left(\rho(A\Omega_{ij}^{k + 1}B - C) + \Lambda_{ij}^{k}\right)$. Putting all the pieces together, we arrive at
+This implies that $\mbox{sign}\left(Z_{ij}^{k + 1}\right) = \mbox{sign}\left(\rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k}\right)$. Putting all the pieces together, we arrive at
 
 \begin{equation}
 \begin{split}
-Z_{ij}^{k + 1} &= \frac{1}{\rho}\mbox{sign}\left(\rho(A\Omega_{ij}^{k + 1}B - C) + \Lambda_{ij}^{k}\right)\left( \left| \rho(A\Omega_{ij}^{k + 1}B - C) + \Lambda_{ij}^{k} \right| - \lambda \right)_{+} \\
-&= \frac{1}{\rho}\mbox{soft}\left(\rho(A\Omega_{ij}^{k + 1}B - C) + \Lambda_{ij}^{k}, \lambda\right)
+Z_{ij}^{k + 1} &= \frac{1}{\rho}\mbox{sign}\left(\rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k}\right)\left( \left| \rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k} \right| - \lambda \right)_{+} \\
+&= \frac{1}{\rho}\mbox{soft}\left(\rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k}, \lambda\right)
 (\#eq:appendixZZproof2)\notag
 \end{split}
 \end{equation}
