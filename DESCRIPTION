@@ -4,6 +4,7 @@ Title: oral_manuscript
 Version: 0.0.1
 Imports: bookdown,
   ADMMsigma,
+  SCPME,
   microbenchmark,
   glasso,
   magrittr,
