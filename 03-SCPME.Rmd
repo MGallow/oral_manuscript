@@ -215,6 +215,7 @@ The following table shows the average model error for each estimator when $n = 1
 ```{r scpmesim2, eval = T, echo = F, fig.cap = "The oracle precision matrices were tri-diagonal with variable dimension (p) and the data was generated with sample size n = 100 and response vector dimension r = 10. The model errors (ME) for each estimator with variable dimension of the design matrix are plotted. shrinkBO and shrinkB were the two best-performing estimators closely follow by the ridge and lasso regression estimators."}
 
 # load  data
+library(magrittr)
 load("images/sim6.Rdata")
 
 # set P to numeric
@@ -320,6 +321,8 @@ d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_
 ```{r scpmesim9, eval = T, echo = F, fig.cap = "The oracle precision matrices were tri-diagonal with dimension p = 200 and the data was generated with a sample size n = 100 and response vector dimension r = 10. The cross validation MSPE are plotted for each lambda and constant tuning parameter pair. The optimal tuning parameter pair was found to be log10(lam) = -0.5 and const = 0.3. Note that brighter areas signify smaller losses."}
 
 # shrinkBO MSPE by lam and const (N = 100, P = 200, R = 10, sigma = "tridiag")
+library(dplyr)
+library(ggplot2)
 d = sigma %>% filter(N == 100, P == 200, R == 10, sparse == 0.5, sigma == "tridiag", model == "shrinkBO") %>% group_by(lam, const) %>% summarise(mean = mean(Error)) %>% mutate(augmean = 1/(c(mean)))
 
 min = d[d$mean == min(d$mean),]
