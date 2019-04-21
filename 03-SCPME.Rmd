@@ -409,16 +409,16 @@ d %>% ggplot(aes(const, log10(lam))) + geom_raster(aes(fill = augmean)) + scale_
 
 ## Discussion
 
-Apart from the two SCPME estimators discussed in the previous section, the generality of the SCPME framework allows for many previously unknown precision matrix estimators to be explored. One estimator that was concieved of in our work but deserves further attention in future research is of the form
+Apart from the two SCPME estimators discussed in the previous section, the generality of the SCPME framework allows for many previously unconceptualized precision matrix estimators to be explored. One estimator that was concieved of in our work but deserves further attention in future research is of the form
 
 \begin{equation}
 \hat{\Omega}_{x} = \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ tr(S_{x}\Omega_{x}) - \log\left| \Omega_{x} \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega_{x} \Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
 (\#eq:penregression)\notag
 \end{equation}
 
-Note that here we are using the Frobenius norm instead of the matrix $l_{1}$-norm in the SCPME framework but this requires only a slight modification of the augmented ADMM algorithm - which will be presented later. As before, the script notation denotes matrices that are column-centered. This optimization problem and objective function estimates a precision matrix that balances minimizing the gaussian negative log-likelihood for $\Omega_{x}$ with minimizing the MSPE for the forward regression coefficient matrix $\beta \equiv \Omega_{x}\Sigma_{xy}$. In other words, this estimator estimates a precision matrix using the likelihood function but that does not otherwise hinder predictive performance of the forward regression model.
+For clarity in regards to the SCPME framework, $A = \mathbb{X}, B = \Sigma_{xy}, \mbox{ and } C = \mathbb{Y}$. As before, $\mathbb{X}$ is the $n \times p$ matrix with rows $X_{i} \in \mathbb{R}^{p}$ for $i = 1,..., n$ and the script notation denotes that the matrix has been column-centered. The matrix $\mathbb{Y}$ is a similar representation for the observed responses $Y_{i} \in \mathbb{R}^{r}$. Also note that here we are using the Frobenius norm instead of the matrix $l_{1}$-norm but this replacement requires only a slight modification of the augmented ADMM algorithm for optimization - details of which will be presented later.
 
-This estimator also reveals an interesting connection to the joint log-likelihood of $X \in \mathbb{R}^{p}$ and $Y \in \mathbb{R}^{r}$ (assuming $X$ is now random). To see this, let us suppose that we have $n$ independent copies of the random pair $(Y_{i}, X_{i})$ and we assume a linear relationship.
+This optimization problem estimates a precision matrix that balances minimizing the gaussian negative log-likelihood for $\Omega_{x}$ with minimizing the squared prediction error for the forward regression model. In other words, the objective function aims to penalize estimates, determined by $\lambda$, that too heavily favor maximizing the marginal likelihood for $X$ over the predictive performance of the conditional model $Y$ given $X$. This estimator also reveals an interesting connection to the joint log-likelihood of the two random variables. To see this, let us suppose that we have $n$ independent copies of the random pair $(Y_{i}, X_{i})$ and we assume a linear relationship such that
 
 \begin{equation}
 Y_{i} = \mu_{y} + \beta'\left(X_{i} - \mu_{x}\right) + E_{i}
@@ -430,7 +430,7 @@ where $E_{i} \sim N_{r}\left( 0, \Omega_{y | x}^{-1} \right)$ and $X_{i} \sim N_
 Y_{i} | X_{i} \sim N_{r}\left( \mu_{y} + \beta'\left(X_{i} - \mu_{x}\right), \Omega_{y | x}^{-1} \right)
 \end{equation}
 
-We can use this conditional distribution along with the marginal distribution of $X$ to derive the joint log-likelihood of $X$ and $Y$. Without loss of generality, we will assume that $\mu_{x} = \mu_{y} = 0$. This can similarly achieved by simply centering the data by the sample averages.
+We can use this conditional distribution along with the marginal distribution of $X$ to derive the joint log-likelihood of $X$ and $Y$. Recall that $\beta \equiv \Omega_{x}\Sigma_{xy}$ and $S_{x}$ is the marginal sample covariance matrix of $X$. Without loss of generality, we will assume here that $\mu_{x} = \mu_{y} = 0$.
 
 \begin{equation}
 \begin{split}
@@ -442,27 +442,26 @@ We can use this conditional distribution along with the marginal distribution of
 \end{split}
 \end{equation}
 
-Note that $\beta \equiv \Omega\Sigma_{xy}$ and $S_{x}$ still denotes the marginal sample covariance matrix of random variable $X$. Now suppose we are interested in optimizing this gaussian log-likelihood function with respect to $\Omega$:
+Optimizing this joint log-likelihood with respect to $\Omega_{x}$ reveals strong similiarities to the estimator that was derived from the SCPME framework:
 
 \begin{equation}
 \begin{split}
-  \hat{\Omega}_{x} &= \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)^{T}\left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)\Omega_{y | x} \right] + \frac{n}{2}tr\left( S_{x}\Omega_{x} \right) - \frac{n}{2}\log\left| \Omega_{x} \right| \right\} \\
+  \hat{\Omega}_{x} &= \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)'\left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)\Omega_{y | x} \right] + \frac{n}{2}tr\left( S_{x}\Omega_{x} \right) - \frac{n}{2}\log\left| \Omega_{x} \right| \right\} \\
   &= \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ tr\left( S_{x}\Omega_{x} \right) - \log\left| \Omega_{x} \right| + \frac{1}{n}\left\| \left( \mathbb{X}\Omega_{x}\Sigma_{xy} - \mathbb{Y} \right)\Omega_{y | x}^{1/2} \right\|_{F}^{2} \right\}
 (\#eq:omegajointloglik)\notag
 \end{split}
 \end{equation}
 
-If we assume that, given $X$, each of the $r$ responses are pairwise independent with equal variance so that $\Omega_{y | x}^{1/2} = I_{r}/\sigma_{y | x}$ and let $\lambda = 2/(n\sigma_{y | x}^{2})$, then we have that
+If it is the case that, given $X$, each of the $r$ responses are pairwise independent with equal variance so that $\Omega_{y | x}^{1/2} = \sigma_{y | x}I_{r}$ and we let $\lambda = 2\sigma_{y | x}^{2}/n$, then we have that
 
 \begin{equation}
-\hat{\Omega}_{x} = \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ tr\left( S_{x}\Omega_{x} \right) - \log\left| \Omega \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega\Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
+\hat{\Omega}_{x} = \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ tr\left( S_{x}\Omega_{x} \right) - \log\left| \Omega_{x} \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega_{x}\Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
 (\#eq:omegajointmle)\notag
 \end{equation}
 
-There are a few takeaways we can make after revealing this connection. The first is that the estimator constructed in the previous section is, in fact, solving a very similar problem to that of optimizing the joint likelihood with respect to $\Omega$.
+This is exactly the estimator conceived of previously. Of course, throughout this derivation there were several assumptions that were made and in practice we do not know the true values of neither $\Omega_{y | x}$ nor $\Sigma_{xy}$. However, we can see that this estimator is solving a very similar problem to that of optimizing the joint log-likelihood with respect to $\Omega_{x}$. We think this estimator and related ones deserve attention in future work.
 
-
-Note that the only difference is in step 4.
+The algorithm for solving this optimization problem is below. Note that no closed-form solution exists and so we must resort to some iterative algorithm similar to the SCPME augmented ADMM algorithm^[Proof in section \@ref(proofpenregression).]. The only difference here is that in step four we no longer require elementwise soft-thresholding.
 
 ```{theorem, name = "Modified Augmented ADMM Algorithm for Shrinking Characteristics of Precision Matrix Estimators with Frobenius Norm"}
 
@@ -479,5 +478,3 @@ Set $k = 0$ and initialize $Z^{0}, \Lambda^{0}, \Omega^{0}$, and $\rho$ and repe
 5. Set $\Lambda^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)$
 
 ```
-
-Note that no closed-form solution to this estimator exists and so we must resort to some iterative algorithm similar to the SCPME augmented ADMM algorithm in order to solve it^[Proof in section \@ref(proofpenregression).].
