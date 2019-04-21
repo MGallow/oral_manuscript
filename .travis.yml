@@ -18,9 +18,9 @@ cache:
 # - install package with dependencies
 install:
   - Rscript -e 'install.packages("devtools")'
-  - Rscript -e 'install.packages(c("tidyverse", "formatR"))'
+  #- Rscript -e 'install.packages(c("tidyverse", "formatR"))'
   - Rscript -e 'update.packages(ask = FALSE)'
-#  - Rscript -e 'devtools::install(pkg = ".", dependencies = TRUE)'
+  - Rscript -e 'devtools::install(pkg = ".", dependencies = TRUE)'
 
 # render both output forms of the book
 script:
