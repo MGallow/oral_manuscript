@@ -12,8 +12,6 @@ output:
   bookdown::gitbook:
     toc_depth: 2
 documentclass: report
-header-includes:
-   - \usepackage{graphicx}
 bibliography: [lib.bib, packages.bib]
 #bibliography: lib.bib
 biblio-style: apalike
