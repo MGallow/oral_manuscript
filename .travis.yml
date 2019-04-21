@@ -18,7 +18,8 @@ cache:
 # - install package with dependencies
 install:
   - Rscript -e 'install.packages("devtools")'
-  #- Rscript -e 'install.packages(c("tidyverse", "formatR"))'
+  - Rscript -e 'install.packages("tinytex")'
+  - Rscript -e 'tinytex::install_tinytex()'
   - Rscript -e 'update.packages(ask = FALSE)'
   - Rscript -e 'devtools::install(pkg = ".", dependencies = TRUE)'
 
