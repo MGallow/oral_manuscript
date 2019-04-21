@@ -5,37 +5,38 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Oral Manuscript</title>
-  <meta name="description" content="This is a working manuscript in preparation for Matt Galloway’s doctoral oral examination.">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <title>References | Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression</title>
+  <meta name="description" content="Matt Galloway’s Master’s thesis.">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Oral Manuscript" />
+  <meta property="og:title" content="References | Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression" />
   <meta property="og:type" content="book" />
+  <meta property="og:url" content="http://mattxgalloway.com/oral_manuscript/" />
   
-  
-  <meta property="og:description" content="This is a working manuscript in preparation for Matt Galloway’s doctoral oral examination." />
+  <meta property="og:description" content="Matt Galloway’s Master’s thesis." />
   <meta name="github-repo" content="MGallow/oral_manuscript" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Oral Manuscript" />
+  <meta name="twitter:title" content="References | Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression" />
   
-  <meta name="twitter:description" content="This is a working manuscript in preparation for Matt Galloway’s doctoral oral examination." />
+  <meta name="twitter:description" content="Matt Galloway’s Master’s thesis." />
   
 
 <meta name="author" content="Matt Galloway">
 
 
-<meta name="date" content="2018-06-20">
+<meta name="date" content="2019-04-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="penalized-regression-estimators.html">
+<link rel="prev" href="scpme-r-package.html">
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -131,43 +132,27 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">Matt Galloway Oral Manuscript</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Prerequisites</a></li>
-<li class="chapter" data-level="2" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>2</b> Introduction</a></li>
-<li class="chapter" data-level="3" data-path="tutorial.html"><a href="tutorial.html"><i class="fa fa-check"></i><b>3</b> Tutorial</a><ul>
-<li class="chapter" data-level="3.1" data-path="tutorial.html"><a href="tutorial.html#usage"><i class="fa fa-check"></i><b>3.1</b> Usage</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="precision-matrix-estimation.html"><a href="precision-matrix-estimation.html"><i class="fa fa-check"></i><b>2</b> Precision Matrix Estimation</a><ul>
+<li class="chapter" data-level="2.1" data-path="precision-matrix-estimation.html"><a href="precision-matrix-estimation.html#background"><i class="fa fa-check"></i><b>2.1</b> Background</a></li>
+<li class="chapter" data-level="2.2" data-path="precision-matrix-estimation.html"><a href="precision-matrix-estimation.html#admm-algorithm"><i class="fa fa-check"></i><b>2.2</b> ADMM Algorithm</a></li>
+<li class="chapter" data-level="2.3" data-path="precision-matrix-estimation.html"><a href="precision-matrix-estimation.html#simulations"><i class="fa fa-check"></i><b>2.3</b> Simulations</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="details.html"><a href="details.html"><i class="fa fa-check"></i><b>4</b> Details</a><ul>
-<li class="chapter" data-level="4.1" data-path="details.html"><a href="details.html#admm-algorithm"><i class="fa fa-check"></i><b>4.1</b> ADMM Algorithm</a></li>
-<li class="chapter" data-level="4.2" data-path="details.html"><a href="details.html#scaled-form-admm"><i class="fa fa-check"></i><b>4.2</b> Scaled-Form ADMM</a></li>
-<li class="chapter" data-level="4.3" data-path="details.html"><a href="details.html#algorithm"><i class="fa fa-check"></i><b>4.3</b> Algorithm</a><ul>
-<li class="chapter" data-level="4.3.1" data-path="details.html"><a href="details.html#proof-of-1"><i class="fa fa-check"></i><b>4.3.1</b> Proof of (1):</a></li>
-<li class="chapter" data-level="4.3.2" data-path="details.html"><a href="details.html#proof-of-2"><i class="fa fa-check"></i><b>4.3.2</b> Proof of (2)</a></li>
+<li class="chapter" data-level="3" data-path="scpme.html"><a href="scpme.html"><i class="fa fa-check"></i><b>3</b> SCPME</a><ul>
+<li class="chapter" data-level="3.1" data-path="scpme.html"><a href="scpme.html#augmented-admm-algorithm"><i class="fa fa-check"></i><b>3.1</b> Augmented ADMM Algorithm</a></li>
+<li class="chapter" data-level="3.2" data-path="scpme.html"><a href="scpme.html#regression-illustration"><i class="fa fa-check"></i><b>3.2</b> Regression Illustration</a></li>
+<li class="chapter" data-level="3.3" data-path="scpme.html"><a href="scpme.html#simulations-1"><i class="fa fa-check"></i><b>3.3</b> Simulations</a></li>
+<li class="chapter" data-level="3.4" data-path="scpme.html"><a href="scpme.html#discussion"><i class="fa fa-check"></i><b>3.4</b> Discussion</a></li>
 </ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>A</b> Appendix</a></li>
+<li class="chapter" data-level="B" data-path="admmsigma-r-package.html"><a href="admmsigma-r-package.html"><i class="fa fa-check"></i><b>B</b> <code>ADMMsigma</code> R Package</a><ul>
+<li class="chapter" data-level="B.1" data-path="admmsigma-r-package.html"><a href="admmsigma-r-package.html#installation"><i class="fa fa-check"></i><b>B.1</b> Installation</a></li>
+<li class="chapter" data-level="B.2" data-path="admmsigma-r-package.html"><a href="admmsigma-r-package.html#tutorial"><i class="fa fa-check"></i><b>B.2</b> Tutorial</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="simulations.html"><a href="simulations.html"><i class="fa fa-check"></i><b>5</b> Simulations</a><ul>
-<li class="chapter" data-level="5.1" data-path="simulations.html"><a href="simulations.html#compound-symmetric-p-100-n-50"><i class="fa fa-check"></i><b>5.1</b> Compound Symmetric: P = 100, N = 50</a></li>
-<li class="chapter" data-level="5.2" data-path="simulations.html"><a href="simulations.html#compound-symmetric-p-10-n-1000"><i class="fa fa-check"></i><b>5.2</b> Compound Symmetric: P = 10, N = 1000</a></li>
-<li class="chapter" data-level="5.3" data-path="simulations.html"><a href="simulations.html#dense-p-100-n-50"><i class="fa fa-check"></i><b>5.3</b> Dense: P = 100, N = 50</a></li>
-<li class="chapter" data-level="5.4" data-path="simulations.html"><a href="simulations.html#dense-p-10-n-50"><i class="fa fa-check"></i><b>5.4</b> Dense: P = 10, N = 50</a></li>
-<li class="chapter" data-level="5.5" data-path="simulations.html"><a href="simulations.html#tridiagonal-p-100-n-50"><i class="fa fa-check"></i><b>5.5</b> Tridiagonal: P = 100, N = 50</a></li>
-</ul></li>
-<li class="chapter" data-level="6" data-path="benchmark.html"><a href="benchmark.html"><i class="fa fa-check"></i><b>6</b> Benchmark</a><ul>
-<li class="chapter" data-level="6.0.1" data-path="benchmark.html"><a href="benchmark.html#computer-specs"><i class="fa fa-check"></i><b>6.0.1</b> Computer Specs:</a></li>
-</ul></li>
-<li class="chapter" data-level="7" data-path="penalized-regression-estimators.html"><a href="penalized-regression-estimators.html"><i class="fa fa-check"></i><b>7</b> Penalized Regression Estimators</a><ul>
-<li class="chapter" data-level="7.1" data-path="penalized-regression-estimators.html"><a href="penalized-regression-estimators.html#formulas"><i class="fa fa-check"></i><b>7.1</b> Formulas</a></li>
-<li class="chapter" data-level="7.2" data-path="penalized-regression-estimators.html"><a href="penalized-regression-estimators.html#estimators"><i class="fa fa-check"></i><b>7.2</b> Estimators</a><ul>
-<li class="chapter" data-level="7.2.1" data-path="penalized-regression-estimators.html"><a href="penalized-regression-estimators.html#assume-ridge-beta-optimize-in-sample-prediction-error"><i class="fa fa-check"></i><b>7.2.1</b> Assume ridge <span class="math inline">\(\beta\)</span>, optimize in-sample prediction error</a></li>
-<li class="chapter" data-level="7.2.2" data-path="penalized-regression-estimators.html"><a href="penalized-regression-estimators.html#assume-ridge-beta-optimize-the-likelihood-for-beta"><i class="fa fa-check"></i><b>7.2.2</b> Assume ridge <span class="math inline">\(\beta\)</span>, optimize the likelihood for <span class="math inline">\(\beta\)</span></a></li>
-<li class="chapter" data-level="7.2.3" data-path="penalized-regression-estimators.html"><a href="penalized-regression-estimators.html#assume-ridge-sigma_xx-1-optimize-in-sample-prediction-error"><i class="fa fa-check"></i><b>7.2.3</b> Assume ridge <span class="math inline">\(\Sigma_{xx}^{-1}\)</span>, optimize in-sample prediction error</a></li>
-<li class="chapter" data-level="7.2.4" data-path="penalized-regression-estimators.html"><a href="penalized-regression-estimators.html#assume-ridge-sigma_xx-1-optimize-likelihood-for-beta"><i class="fa fa-check"></i><b>7.2.4</b> Assume ridge <span class="math inline">\(\Sigma_{xx}^{-1}\)</span>, optimize likelihood for <span class="math inline">\(\beta\)</span></a></li>
-<li class="chapter" data-level="7.2.5" data-path="penalized-regression-estimators.html"><a href="penalized-regression-estimators.html#assume-ridge-sigma_xx-1-optimize-likelihood-for-sigma_xx-1"><i class="fa fa-check"></i><b>7.2.5</b> Assume ridge <span class="math inline">\(\Sigma_{xx}^{-1}\)</span>, optimize likelihood for <span class="math inline">\(\Sigma_{xx}^{-1}\)</span></a></li>
-<li class="chapter" data-level="7.2.6" data-path="penalized-regression-estimators.html"><a href="penalized-regression-estimators.html#assume-ridge-sigma_xy-optimize-in-sample-prediction-error"><i class="fa fa-check"></i><b>7.2.6</b> Assume ridge <span class="math inline">\(\Sigma_{xy}\)</span>, optimize in-sample prediction error</a></li>
-<li class="chapter" data-level="7.2.7" data-path="penalized-regression-estimators.html"><a href="penalized-regression-estimators.html#assume-ridge-sigma_xy-optimize-likelihood-for-beta"><i class="fa fa-check"></i><b>7.2.7</b> Assume ridge <span class="math inline">\(\Sigma_{xy}\)</span>, optimize likelihood for <span class="math inline">\(\beta\)</span></a></li>
-<li class="chapter" data-level="7.2.8" data-path="penalized-regression-estimators.html"><a href="penalized-regression-estimators.html#assume-ridge-sigma_x-y-1-optimize-likelihood-for-sigma_x-y-1"><i class="fa fa-check"></i><b>7.2.8</b> Assume ridge <span class="math inline">\(\Sigma_{x | y}^{-1}\)</span>, optimize likelihood for <span class="math inline">\(\Sigma_{x | y}^{-1}\)</span></a></li>
-<li class="chapter" data-level="7.2.9" data-path="penalized-regression-estimators.html"><a href="penalized-regression-estimators.html#assume-ridge-alpha-optimize-in-sample-prediction-error-for-alpha"><i class="fa fa-check"></i><b>7.2.9</b> Assume ridge <span class="math inline">\(\alpha\)</span>, optimize in-sample prediction error for <span class="math inline">\(\alpha\)</span></a></li>
-<li class="chapter" data-level="7.2.10" data-path="penalized-regression-estimators.html"><a href="penalized-regression-estimators.html#assume-ridge-alpha-optimize-likelihood-for-alpha"><i class="fa fa-check"></i><b>7.2.10</b> Assume ridge <span class="math inline">\(\alpha\)</span>, optimize likelihood for <span class="math inline">\(\alpha\)</span></a></li>
-</ul></li>
+<li class="chapter" data-level="C" data-path="scpme-r-package.html"><a href="scpme-r-package.html"><i class="fa fa-check"></i><b>C</b> <code>SCPME</code> R Package</a><ul>
+<li class="chapter" data-level="C.1" data-path="scpme-r-package.html"><a href="scpme-r-package.html#installation-1"><i class="fa fa-check"></i><b>C.1</b> Installation</a></li>
+<li class="chapter" data-level="C.2" data-path="scpme-r-package.html"><a href="scpme-r-package.html#tutorial-1"><i class="fa fa-check"></i><b>C.2</b> Tutorial</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -182,7 +167,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Oral Manuscript</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression</a>
           </h1>
         </div>
 
@@ -198,16 +183,79 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Boyd, Stephen, Neal Parikh, Eric Chu, Borja Peleato, Jonathan Eckstein, and others. 2011. “Distributed Optimization and Statistical Learning via the Alternating Direction Method of Multipliers.” <em>Foundations and Trends in Machine Learning</em> 3 (1). Now Publishers, Inc.: 1–122.</p>
 </div>
 <div>
+<p>Cai, Tony, and Weidong Liu. 2011. “A Direct Estimation Approach to Sparse Linear Discriminant Analysis.” <em>Journal of the American Statistical Association</em> 106 (496). Taylor &amp; Francis: 1566–77.</p>
+</div>
+<div>
+<p>Dalal, Onkar, and Bala Rajaratnam. 2017. “Sparse Gaussian Graphical Model Estimation via Alternating Minimization.” <em>Biometrika</em> 104 (2). Oxford University Press: 379–95.</p>
+</div>
+<div>
+<p>Fan, Jianqing, Yang Feng, and Xin Tong. 2012. “A Road to Classification in High Dimensional Space: The Regularized Optimal Affine Discriminant.” <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 74 (4). Wiley Online Library: 745–71.</p>
+</div>
+<div>
+<p>Fan, Jianqing, Yang Feng, and Yichao Wu. 2009. “Network Exploration via the Adaptive Lasso and Scad Penalties.” <em>The Annals of Applied Statistics</em> 3 (2). NIH Public Access: 521.</p>
+</div>
+<div>
+<p>Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. 2008. “Sparse Inverse Covariance Estimation with the Graphical Lasso.” <em>Biostatistics</em> 9 (3). Oxford University Press: 432–41.</p>
+</div>
+<div>
+<p>Lam, Clifford, and Jianqing Fan. 2009. “Sparsistency and Rates of Convergence in Large Covariance Matrix Estimation.” <em>Annals of Statistics</em> 37 (6B). NIH Public Access: 4254.</p>
+</div>
+<div>
+<p>Lange, Kenneth. 2016. <em>MM Optimization Algorithms</em>. Vol. 147. SIAM.</p>
+</div>
+<div>
+<p>Mai, Qing, Hui Zou, and Ming Yuan. 2012. “A Direct Approach to Sparse Discriminant Analysis in Ultra-High Dimensions.” <em>Biometrika</em> 99 (1). Oxford University Press: 29–42.</p>
+</div>
+<div>
+<p>Molstad, Aaron J, and Adam J Rothman. 2016. “Indirect Multivariate Response Linear Regression.” <em>Biometrika</em> 103 (3). Oxford University Press: 595–607.</p>
+</div>
+<div>
+<p>———. 2017. “Shrinking Characteristics of Precision Matrix Estimators.” <em>Biometrika</em>.</p>
+</div>
+<div>
+<p>———. 2018. “A Penalized Likelihood Method for Classification with Matrix-Valued Predictors.” <em>Journal of Computational and Graphical Statistics</em>. Taylor &amp; Francis, 1–12.</p>
+</div>
+<div>
+<p>Price, Bradley S, Charles J Geyer, and Adam J Rothman. 2015. “Ridge Fusion in Statistical Learning.” <em>Journal of Computational and Graphical Statistics</em> 24 (2). Taylor &amp; Francis: 439–54.</p>
+</div>
+<div>
+<p>Rothman, Adam J, Peter J Bickel, Elizaveta Levina, Ji Zhu, and others. 2008. “Sparse Permutation Invariant Covariance Estimation.” <em>Electronic Journal of Statistics</em> 2. The Institute of Mathematical Statistics; the Bernoulli Society: 494–515.</p>
+</div>
+<div>
+<p>Rothman, Adam J, Liliana Forzani, and others. 2014. “On the Existence of the Weighted Bridge Penalized Gaussian Likelihood Precision Matrix Estimator.” <em>Electronic Journal of Statistics</em> 8 (2). The Institute of Mathematical Statistics; the Bernoulli Society: 2693–2700.</p>
+</div>
+<div>
+<p>Witten, Daniela M, and Robert Tibshirani. 2009. “Covariance-Regularized Regression and Classification for High Dimensional Problems.” <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 71 (3). Wiley Online Library: 615–36.</p>
+</div>
+<div>
+<p>Yuan, Ming, and Yi Lin. 2007. “Model Selection and Estimation in the Gaussian Graphical Model.” <em>Biometrika</em> 94 (1). Oxford University Press: 19–35.</p>
+</div>
+<div>
 <p>Zou, Hui, and Trevor Hastie. 2005. “Regularization and Variable Selection via the Elastic Net.” <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 67 (2). Wiley Online Library: 301–20.</p>
 </div>
 </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             </section>
 
           </div>
         </div>
       </div>
-<a href="penalized-regression-estimators.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="scpme-r-package.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 
     </div>
   </div>
@@ -228,7 +276,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -238,8 +286,12 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/MGallow/oral_manuscript/edit/master/07-references.Rmd",
+"link": "https://github.com/MGallow/oral_manuscript/edit/master/99-references.Rmd",
 "text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
 },
 "download": ["Manuscript.pdf", "Manuscript.epub"],
 "toc": {
@@ -255,7 +307,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "true";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;

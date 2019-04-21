@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Chapter 2 Precision Matrix Estimation | Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression</title>
+  <meta name="description" content="Matt Galloway’s Master’s thesis.">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+
+  <meta property="og:title" content="Chapter 2 Precision Matrix Estimation | Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression" />
+  <meta property="og:type" content="book" />
+  <meta property="og:url" content="http://mattxgalloway.com/oral_manuscript/" />
+  
+  <meta property="og:description" content="Matt Galloway’s Master’s thesis." />
+  <meta name="github-repo" content="MGallow/oral_manuscript" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 2 Precision Matrix Estimation | Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression" />
+  
+  <meta name="twitter:description" content="Matt Galloway’s Master’s thesis." />
+  
+
+<meta name="author" content="Matt Galloway">
+
+
+<meta name="date" content="2019-04-21">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="intro.html">
+<link rel="next" href="scpme.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Matt Galloway Oral Manuscript</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="precision-matrix-estimation.html"><a href="precision-matrix-estimation.html"><i class="fa fa-check"></i><b>2</b> Precision Matrix Estimation</a><ul>
+<li class="chapter" data-level="2.1" data-path="precision-matrix-estimation.html"><a href="precision-matrix-estimation.html#background"><i class="fa fa-check"></i><b>2.1</b> Background</a></li>
+<li class="chapter" data-level="2.2" data-path="precision-matrix-estimation.html"><a href="precision-matrix-estimation.html#admm-algorithm"><i class="fa fa-check"></i><b>2.2</b> ADMM Algorithm</a></li>
+<li class="chapter" data-level="2.3" data-path="precision-matrix-estimation.html"><a href="precision-matrix-estimation.html#simulations"><i class="fa fa-check"></i><b>2.3</b> Simulations</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="scpme.html"><a href="scpme.html"><i class="fa fa-check"></i><b>3</b> SCPME</a><ul>
+<li class="chapter" data-level="3.1" data-path="scpme.html"><a href="scpme.html#augmented-admm-algorithm"><i class="fa fa-check"></i><b>3.1</b> Augmented ADMM Algorithm</a></li>
+<li class="chapter" data-level="3.2" data-path="scpme.html"><a href="scpme.html#regression-illustration"><i class="fa fa-check"></i><b>3.2</b> Regression Illustration</a></li>
+<li class="chapter" data-level="3.3" data-path="scpme.html"><a href="scpme.html#simulations-1"><i class="fa fa-check"></i><b>3.3</b> Simulations</a></li>
+<li class="chapter" data-level="3.4" data-path="scpme.html"><a href="scpme.html#discussion"><i class="fa fa-check"></i><b>3.4</b> Discussion</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>A</b> Appendix</a></li>
+<li class="chapter" data-level="B" data-path="admmsigma-r-package.html"><a href="admmsigma-r-package.html"><i class="fa fa-check"></i><b>B</b> <code>ADMMsigma</code> R Package</a><ul>
+<li class="chapter" data-level="B.1" data-path="admmsigma-r-package.html"><a href="admmsigma-r-package.html#installation"><i class="fa fa-check"></i><b>B.1</b> Installation</a></li>
+<li class="chapter" data-level="B.2" data-path="admmsigma-r-package.html"><a href="admmsigma-r-package.html#tutorial"><i class="fa fa-check"></i><b>B.2</b> Tutorial</a></li>
+</ul></li>
+<li class="chapter" data-level="C" data-path="scpme-r-package.html"><a href="scpme-r-package.html"><i class="fa fa-check"></i><b>C</b> <code>SCPME</code> R Package</a><ul>
+<li class="chapter" data-level="C.1" data-path="scpme-r-package.html"><a href="scpme-r-package.html#installation-1"><i class="fa fa-check"></i><b>C.1</b> Installation</a></li>
+<li class="chapter" data-level="C.2" data-path="scpme-r-package.html"><a href="scpme-r-package.html#tutorial-1"><i class="fa fa-check"></i><b>C.2</b> Tutorial</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="precision-matrix-estimation" class="section level1">
+<h1><span class="header-section-number">Chapter 2</span> Precision Matrix Estimation</h1>
+<div id="background" class="section level2">
+<h2><span class="header-section-number">2.1</span> Background</h2>
+<p>The foundation of much of the precision matrix estimation literature is the gaussian negative log-likelihood. Consider the case where we observe <span class="math inline">\(n\)</span> independent, identically distributed (iid) copies of the random variable <span class="math inline">\(X\)</span>, where the <span class="math inline">\(i\)</span>th observation <span class="math inline">\(X_{i} \in \mathbb{R}^{p}\)</span> is normally distributed with mean, <span class="math inline">\(\mu\)</span>, and variance, <span class="math inline">\(\Omega^{-1}\)</span>. That is, <span class="math inline">\(X_{i}\)</span> follows a <span class="math inline">\(p\)</span>-dimensional normal distribution which is typically denoted as <span class="math inline">\(X_{i} \sim N_{p}\left( \mu, \Omega^{-1} \right)\)</span>. By definition, this multivariate formulation implies the probability distribution function, <span class="math inline">\(f\)</span>, is of the form</p>
+<p><span class="math display" id="eq:normallikone">\[\begin{equation} 
+  f\left(X_{i}; \mu, \Omega\right) = (2\pi)^{-p/2}\left| \Omega \right|^{1/2}\exp\left[ -\frac{1}{2}\left( X_{i} - \mu \right)&#39;\Omega\left( X_{i} - \mu \right) \right] 
+\tag{2.1}\notag
+\end{equation}\]</span></p>
+<p>Furthermore, because we assume that each observation is independent, the probability distribution function for all <span class="math inline">\(n\)</span> observations <span class="math inline">\(X_{1}, ..., X_{n}\)</span> is equal to</p>
+<p><span class="math display" id="eq:normallik">\[\begin{equation} 
+\begin{split}
+  f\left(X_{1}, ..., X_{n}; \mu, \Omega\right) &amp;= \prod_{i = 1}^{n}(2\pi)^{-p/2}\left| \Omega \right|^{1/2}\exp\left[ -\frac{1}{2}\left( X_{i} - \mu \right)&#39;\Omega\left( X_{i} - \mu \right) \right] \\
+  &amp;= (2\pi)^{-np/2}\left| \Omega \right|^{n/2}\mbox{etr}\left[ -\frac{1}{2}\sum_{i = 1}^{n}\left( X_{i} - \mu \right)\left( X_{i} - \mu \right)&#39;\Omega \right]
+\end{split}
+\tag{2.2}\notag
+\end{equation}\]</span></p>
+<p>Therefore, the gaussian log-likelihood, <span class="math inline">\(l\)</span>, for <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\Omega\)</span> given <span class="math inline">\(X = (X_{1}, .., X_{n})\)</span> can be written as</p>
+<p><span class="math display" id="eq:normalloglik">\[\begin{equation}
+  l(\mu, \Omega | X) = constant + \frac{n}{2}\log\left| \Omega \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \mu \right)\left(X_{i} - \mu \right)&#39;\Omega \right]
+\tag{2.3}\notag
+\end{equation}\]</span></p>
+<p>The estimator for <span class="math inline">\(\mu\)</span> that maximizes the log-likelihood is <span class="math inline">\(\hat{\mu}^{mle} = \bar{X} \equiv \sum_{i = 1}^{n}X_{i}/n\)</span>, so that the partially maximized gaussian log-likelihood function for <span class="math inline">\(\Omega\)</span> is</p>
+<p><span class="math display" id="eq:partialmaxloglik">\[\begin{equation}
+\begin{split}
+  l(\Omega | X) &amp;= \frac{n}{2}\log\left| \Omega \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \bar{X} \right)\left(X_{i} - \bar{X} \right)&#39;\Omega \right] \\
+  &amp;= \frac{n}{2}\log\left| \Omega \right| - \frac{n}{2}tr\left( S\Omega \right)
+\tag{2.4}\notag
+\end{split}
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(S = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(X_{i} - \bar{X}\right)&#39;/n\)</span> is the usual sample estimator for the population covariance matrix, <span class="math inline">\(\Sigma\)</span>. In addition to <span class="math inline">\(\mu\)</span>, one could also derive the maximum likelihood estimator for <span class="math inline">\(\Omega\)</span>. By setting the gradient of the partially maximized log-likelihood equal to zero, one could show that</p>
+<p><span class="math display" id="eq:omegamle">\[\begin{equation}
+\begin{split}
+\hat{\Omega}^{mle} &amp;= \arg\max_{\Omega \in S_{+}^{p}}\left\{ \frac{n}{2}\log\left| \Omega \right| - \frac{n}{2}tr\left(S\Omega \right) \right\} \\
+  &amp;= \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| \right\} \\
+  &amp;= S^{-1}
+\end{split}
+\tag{2.5}\notag
+\end{equation}\]</span></p>
+<p>so that the MLE for <span class="math inline">\(\Omega\)</span>, when it exists, is <span class="math inline">\(\hat{\Omega}^{mle} = S^{-1} = \left[\sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(X_{i} - \bar{X}\right)&#39;/n \right]^{-1}\)</span>. The reality, however, is that this object does <em>not</em> always exist. In settings where the number of observations is exceeded by the number of features in a sample, the sample covariance matrix is rank deficient and no longer invertible. For this reason, many papers in the last decade have proposed <em>shrinkage estimators</em> of the population precision matrix similar to the shrinkage estimators in regression settings. That is, instead of minimizing solely the negative log-likelihood function, researchers have proposed minimizing the gaussian log-likelihood <em>plus</em> a penalty term, <span class="math inline">\(P\)</span>, where <span class="math inline">\(P\)</span> is often a function of the precision matrix.</p>
+<p><span class="math display" id="eq:omegapen">\[\begin{equation}
+\hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + P\left( \Omega \right) \right\}
+\tag{2.6}
+\end{equation}\]</span></p>
+<p>The penalties that have been proposed for precision matrix estimation are typically a variation of the ridge penalty <span class="math inline">\(P\left(\Omega \right) = \lambda\|\Omega \|_{F}^{2}/2\)</span> or the lasso penalty <span class="math inline">\(P\left(\Omega \right) = \lambda\left\|\Omega\right\|_{1}\)</span> (here <span class="math inline">\(\lambda\)</span> is a tuning parameter). The authors, <span class="citation">Yuan and Lin (<a href="#ref-yuan2007model">2007</a>)</span>, initially proposed the lasso-penalized gaussian log-likelihood defined as</p>
+<p><span class="math display" id="eq:omegapenlasso">\[\begin{equation}
+\hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\sum_{i \neq j}\left|\Omega_{ij}\right| \right\}
+\tag{2.7}
+\end{equation}\]</span></p>
+<p>so as not to penalize the diagonal elements of the precision matrix estimate. Other papers published on the lasso-penalized gaussian likelihood precision matrix estimator include <span class="citation">Rothman et al. (<a href="#ref-rothman2008sparse">2008</a>)</span> and <span class="citation">Friedman, Hastie, and Tibshirani (<a href="#ref-friedman2008sparse">2008</a>)</span>. In addition, many efficient algorithms have been proposed to solve for <span class="math inline">\(\hat{\Omega}\)</span>, however, the most popular method is the graphical lasso algorithm (glasso) introduced by <span class="citation">Friedman, Hastie, and Tibshirani (<a href="#ref-friedman2008sparse">2008</a>)</span>. Their method utilizes an iterative block-wise coordinate descent algorithm that builds upon the coordinate descent algorithm used in lasso-penalized regression.</p>
+<p>Non-lasso, non-convex penalties were considered in <span class="citation">Lam and Fan (<a href="#ref-lam2009sparsistency">2009</a>)</span> and <span class="citation">Fan, Feng, and Wu (<a href="#ref-fan2009network">2009</a>)</span> and other papers considered penalizations like the Frobenius norm (<span class="citation">Rothman, Forzani, and others (<a href="#ref-rothman2014existence">2014</a>)</span>; <span class="citation">Witten and Tibshirani (<a href="#ref-witten2009covariance">2009</a>)</span>; <span class="citation">Price, Geyer, and Rothman (<a href="#ref-price2015ridge">2015</a>)</span>). In fact, the latter two papers show that the resulting minimizer can be solved in closed-form - which will be discussed later in this manuscript. However, the penalty explored through the remainder of this chapter is not a lasso penality nor a ridge penalty but, in fact, a convex combination of the two known as the <em>elastic-net</em> penalty:</p>
+<p><span class="math display" id="eq:penelastic">\[\begin{equation}
+P\left( \Omega \right) = \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right\|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right]
+\tag{2.8}\notag
+\end{equation}\]</span></p>
+<p>with additional tuning parameter <span class="math inline">\(0 \leq \alpha \leq 1\)</span>. Clearly, when <span class="math inline">\(\alpha = 0\)</span> this penalty reduces to a ridge penalty and when <span class="math inline">\(\alpha = 1\)</span> it reduces to a lasso penalty. Originally proposed in <span class="citation">Zou and Hastie (<a href="#ref-zou2005regularization">2005</a>)</span> in the context of regression, this penalty has since been popularized and is used in the penalized regression R package <code>glmnet</code>. This penalty allows for additional flexibility but, despite this, no published work to our knowledge has explored the elastic-net penalty in the context of precision matrix estimation. We will show how to solve the following optimization problem in the next section using the ADMM algorithm.</p>
+<p><span class="math display" id="eq:optimelastic">\[\begin{equation}
+\hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega \right| + \lambda\left[\frac{1 - \alpha}{2}\left\| \Omega \right|_{F}^{2} + \alpha\left\| \Omega \right\|_{1} \right] \right\}
+\tag{2.9}
+\end{equation}\]</span></p>
+</div>
+<div id="admm-algorithm" class="section level2">
+<h2><span class="header-section-number">2.2</span> ADMM Algorithm</h2>
+<p>ADMM stands for alternating direction method of multipliers. The algorithm was largely popularized by Stephen Boyd and his fellow authors in the book <em>Distributed Optimization and Statistical Learning via the Alternating Direction Method of Multipliers</em> <span class="citation">(Boyd et al. <a href="#ref-boyd2011distributed">2011</a>)</span>. As the authors state in the text, the “ADMM is an algorithm that is intended to blend the decomposability of dual ascent with the superior convergence properties of the method of multipliers.” By closely following Boyd’s descriptions and guidance in the published text, we will show in this section that the ADMM algorithm is particularly well-suited to solve the penalized log-likelihood optimization problem we are interested in here.</p>
+<p>In general, the ADMM algorithm supposes that we want to solve an optimization problem of the form</p>
+<p><span class="math display" id="eq:boyd">\[\begin{equation}
+\begin{split}
+  \mbox{minimize } f(x) + g(z) \\
+  \mbox{subject to } Ax + Bz = c
+\end{split}
+\tag{2.10}\notag
+\end{equation}\]</span></p>
+<p>where we can assume here that <span class="math inline">\(x \in \mathbb{R}^{n}, z \in \mathbb{R}^{m}, A \in \mathbb{R}^{p \times n}, B \in \mathbb{R}^{p \times m}\)</span>, <span class="math inline">\(c \in \mathbb{R}^{p}\)</span>, and <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span> are convex functions. In order to find the pair <span class="math inline">\((x^{*}, z^{*})\)</span> that achieves the infimum, the ADMM algorithm uses an <em>augmented lagrangian</em>, <span class="math inline">\(L\)</span>, which <span class="citation">Boyd et al. (<a href="#ref-boyd2011distributed">2011</a>)</span> define as</p>
+<p><span class="math display" id="eq:auglagrange">\[\begin{equation}
+L_{\rho}(x, z, y) = f(x) + g(z) + y&#39;(Ax + Bz - c) + \frac{\rho}{2}\left\| Ax + Bz - c \right\|_{2}^{2}
+\tag{2.11}\notag
+\end{equation}\]</span></p>
+<p>In this formulation, <span class="math inline">\(y \in \mathbb{R}^{p}\)</span> is called the lagrange multiplier and <span class="math inline">\(\rho &gt; 0\)</span> is some scalar that acts as the step size for the algorithm. Note that any infimum under the augmented lagrangian is equivalent to the infimum of the traditional lagrangian since any feasible point <span class="math inline">\((x, z)\)</span> must satisfy the constraint <span class="math inline">\(\rho\left\| Ax + Bz - c \right\|_{2}^{2}/2 = 0\)</span>. <span class="citation">Boyd et al. (<a href="#ref-boyd2011distributed">2011</a>)</span> show that using the ADMM algorithm the infimum will be approached under the following repeated iterations:</p>
+<p><span class="math display" id="eq:admmalgo">\[\begin{equation}
+\begin{split}
+  x^{k + 1} &amp;= \arg\min_{x \in \mathbb{R}^{n}}L_{\rho}(x, z^{k}, y^{k}) \\
+  z^{k + 1} &amp;= \arg\min_{z \in \mathbb{R}^{m}}L_{\rho}(x^{k + 1}, z, y^{k}) \\
+  y^{k + 1} &amp;= y^{k} + \rho(Ax^{k + 1} + Bz^{k + 1} - c)
+\end{split}  
+\tag{2.12}\notag
+\end{equation}\]</span></p>
+<p>where the superscript, <span class="math inline">\(k\)</span>, denotes the number of iterations. Conveniently, this general algorithm can be coerced into a format useful in precision matrix estimation. Suppose we let <span class="math inline">\(f\)</span> be equal to the non-penalized gaussian log-likelihood, <span class="math inline">\(g\)</span> equal to the elastic-net penalty, <span class="math inline">\(P\left( \Omega \right)\)</span>, and we use the constraint that <span class="math inline">\(\Omega \in \mathbb{S}_{+}^{p}\)</span> must be equal to some matrix <span class="math inline">\(Z \in \mathbb{R}^{p \times p}\)</span>, then the augmented lagrangian in the context of precision matrix estimation is of the form</p>
+<p><span class="math display" id="eq:auglagrange2">\[\begin{equation}
+L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda\left(\Omega - Z\right)\right] + \frac{\rho}{2}\left\|\Omega - Z\right\|_{F}^{2}
+\tag{2.13}\notag
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(\Lambda\)</span> takes the role of <span class="math inline">\(y\)</span> as the lagrange multiplier. The ADMM algorithm now consists of the following repeated iterations:</p>
+<p><span class="math display" id="eq:ADMMorig">\[\begin{equation}
+\begin{split}
+  \Omega^{k + 1} &amp;= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[\Lambda^{k}\left(\Omega - Z^{k}\right)\right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} \right\} \\
+  Z^{k + 1} &amp;= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\} \\
+  \Lambda^{k + 1} &amp;= \Lambda^{k} + \rho\left( \Omega^{k + 1} - Z^{k + 1} \right)
+\tag{2.14}
+\end{split}
+\end{equation}\]</span></p>
+<p>Furthermore, it turns out that each step in this algorithm can be solved efficiently in closed-form. The full details of each can be found in the appendix <a href="appendix.html#proofomegaalgo">A.0.1</a> but the following theorem provides the simplified steps in the algorithm.</p>
+
+<div class="theorem">
+<p><span id="thm:unnamed-chunk-2" class="theorem"><strong>Theorem 2.1  (ADMM Algorithm for Elastic-Net Penalized Precision Matrix Estimation)  </strong></span>
+Define the soft-thresholding function as <span class="math inline">\(\mbox{soft}(a, b) = \mbox{sign}(a)(\left| a \right| - b)_{+}\)</span> and <span class="math inline">\(S\)</span> as the sample covariance matrix. Set <span class="math inline">\(k = 0\)</span> and initialize <span class="math inline">\(Z^{0}, \Lambda^{0}\)</span>, and <span class="math inline">\(\rho\)</span>. Repeat steps 1-3 until convergence:</p>
+<ol style="list-style-type: decimal">
+<li>Decompose <span class="math inline">\(S + \Lambda^{k} - \rho Z^{k} = VQV&#39;\)</span> via spectral decomposition<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. Then</li>
+</ol>
+<p><span class="math display" id="eq:omegaalgo">\[\begin{equation}
+\Omega^{k + 1} = \frac{1}{2\rho}V\left[ -Q + \left( Q^{2} + 4\rho I_{p} \right)^{1/2} \right]V&#39;
+\tag{2.15}
+\end{equation}\]</span></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Elementwise soft-thresholding for all <span class="math inline">\(i = 1,..., p\)</span> and <span class="math inline">\(j = 1,..., p\)</span><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</li>
+</ol>
+<p><span class="math display" id="eq:ZZalgo">\[\begin{equation}
+\begin{split}
+Z_{ij}^{k + 1} &amp;= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{sign}\left(\rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k}\right)\left( \left| \rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k} \right| - \lambda\alpha \right)_{+} \\
+&amp;= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{soft}\left(\rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k}, \lambda\alpha\right)
+\tag{2.16}
+\end{split}
+\end{equation}\]</span></p>
+<ol start="3" style="list-style-type: decimal">
+<li>Update <span class="math inline">\(\Lambda^{k + 1}\)</span>.</li>
+</ol>
+<p><span class="math display" id="eq:lamalgo">\[\begin{equation}
+\Lambda^{k + 1} = \Lambda^{k} + \rho\left( \Omega^{k + 1} - Z^{k + 1} \right)
+\tag{2.17}\notag
+\end{equation}\]</span></p>
+</div>
+
+<div id="scaled-form-admm" class="section level3">
+<h3><span class="header-section-number">2.2.1</span> Scaled-Form ADMM</h3>
+<p>Another popular, alternative form of the ADMM algorithm can be used when scaling the dual variable (<span class="math inline">\(\Lambda^{k}\)</span>) which we will briefly mention in the context of precision matrix estimation here.</p>
+<p>Define <span class="math inline">\(R^{k} = \Omega - Z^{k}\)</span> and <span class="math inline">\(U^{k} = \Lambda^{k}/\rho\)</span> then</p>
+<p><span class="math display" id="eq:scaled">\[\begin{equation}
+\begin{split}
+  tr\left[ \Lambda^{k}\left( \Omega - Z^{k} \right) \right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} &amp;= tr\left[ \Lambda^{k}R^{k} \right] + \frac{\rho}{2}\left\| R^{k} \right\|_{F}^{2} \\
+  &amp;= \frac{\rho}{2}\left\| R^{k} + \Lambda^{k}/\rho \right\|_{F}^{2} - \frac{\rho}{2}\left\| \Lambda^{k}/\rho \right\|_{F}^{2} \\
+  &amp;= \frac{\rho}{2}\left\| R^{k} + U^{k} \right\|_{F}^{2} - \frac{\rho}{2}\left\| U^{k} \right\|_{F}^{2}
+\tag{2.18}\notag
+\end{split}
+\end{equation}\]</span></p>
+<p>Therefore, a scaled-form ADMM algorithm can now be written as</p>
+<p><span class="math display" id="eq:ADMMscaled">\[\begin{equation}
+\begin{split}
+  \Omega^{k + 1} &amp;= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\rho}{2}\left\| \Omega - Z^{k} + U^{k} \right\|_{F}^{2} \right\} \\
+  Z^{k + 1} &amp;= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z + U^{k} \right\|_{F}^{2} \right\} \\
+  U^{k + 1} &amp;= U^{k} + \Omega^{k + 1} - Z^{k + 1}
+\tag{2.19}
+\end{split}
+\end{equation}\]</span></p>
+<p>Note that there are limitations to using this method. Because the dual variable is scaled by <span class="math inline">\(\rho\)</span> (the step size), this form limits one to using a constant step size for all <span class="math inline">\(k\)</span> steps if no further adjustments are made to <span class="math inline">\(U^{k}\)</span>.</p>
+</div>
+<div id="ADMMstop" class="section level3">
+<h3><span class="header-section-number">2.2.2</span> Stopping Criterion</h3>
+<p>There are three optimality conditions for the ADMM algorithm that we can use to inform the convergence and stopping criterion. These general conditions were outlined in <span class="citation">Boyd et al. (<a href="#ref-boyd2011distributed">2011</a>)</span> but here we cater them to precision matrix estimation. The first condition is the primal optimality condition <span class="math inline">\(\Omega^{k + 1} - Z^{k + 1} = 0\)</span> and the other two conditions are the dual conditions <span class="math inline">\(0 \in \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k + 1}\)</span> and <span class="math inline">\(0 \in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}\)</span>. The first dual optimality condition is a result of taking the sub-differential of the lagrangian (non-augmented) with respect to <span class="math inline">\(\Omega^{k + 1}\)</span> and the second is a result of taking the sub-differential of the lagrangian with respect to <span class="math inline">\(Z^{k + 1}\)</span>. Note that in the first condition we must honor the symmetric constraint in <span class="math inline">\(\Omega\)</span> but the second condition does not require it.</p>
+<p>If we define the left-hand side of the primal optimality condition as the <em>primal residual</em> <span class="math inline">\(r^{k + 1} = \Omega^{k + 1} - Z^{k + 1}\)</span>, then at convergence we must require that <span class="math inline">\(r^{k + 1} \approx 0\)</span>. Likewise, if we define the <em>dual residual</em> <span class="math inline">\(s^{k + 1} = \rho\left( Z^{k + 1} - Z^{k} \right)\)</span>, we must also require that <span class="math inline">\(s^{k + 1} \approx 0\)</span> for proper convergence. This dual residual is the direct result of the fact that <span class="math inline">\(\Omega^{k + 1}\)</span> is the minimizer of the augmented lagragian<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> so that <span class="math inline">\(0 \in \partial L_{p}\left( \Omega, Z^{k}, \Lambda^{k} \right)\)</span> and consequently <span class="math inline">\(0 \in \rho\left( Z^{k + 1} - Z^{k} \right)\)</span><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>.</p>
+<p>Combining these three optimality conditions, Boyd suggests a stopping criterion similar to <span class="math inline">\(\epsilon^{pri} \leq \left\| r^{k + 1} \right\|_{F}\)</span> and <span class="math inline">\(\epsilon^{dual} \leq \left\| s^{k + 1} \right\|_{F}\)</span> where <span class="math inline">\(\epsilon^{rel} = \epsilon^{abs} = 10^{-3}\)</span> and
+<span class="math display" id="eq:admmstopping">\[\begin{equation}
+\begin{split}
+  \epsilon^{pri} &amp;= p\epsilon^{abs} + \epsilon^{rel}\max\left\{ \left\| \Omega^{k + 1} \right\|_{F}, \left\| Z^{k + 1} \right\|_{F} \right\} \\
+  \epsilon^{dual} &amp;= p\epsilon^{abs} + \epsilon^{rel}\left\| \Lambda^{k + 1} \right\|_{F}
+\tag{2.20}\notag
+\end{split}
+\end{equation}\]</span></p>
+</div>
+</div>
+<div id="simulations" class="section level2">
+<h2><span class="header-section-number">2.3</span> Simulations</h2>
+<p>As a proof-of-concept that the elastic-net penalty in the context of precision matrix estimation can provide useful results and that the ADMM algorithm used in this process works, this section offers a short simulation. For the simulation, we generated data from multiple, unique precision matrices with various oracle structures. For each data-generating procedure, the algorithm was run with a 5-fold cross validation to tune parameters <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(\alpha\)</span>. After 20 replications, the cross validation errors were totalled and the optimal tuning parameters were selected (results are in the top half of the figures). These results were then compared with the Kullback Leibler (KL) losses between the estimated matrices and the oracle matrices (results are in the bottom half of the figures).</p>
+<p>The first figure shows the results when the data was generated from a multivariate normal distribution with mean equal to zero and a tri-diagonal oracle precision matrix. This oracle matrix was first generated as <span class="math inline">\(\left(S_{ij}\right) = 0.7^{\left|i - j \right|}\)</span> for <span class="math inline">\(i,j = 1,..., p\)</span> and then inverted. The results show that because the oracle precision matrix is sparse, the algorithm correctly chooses a sparse solution with <span class="math inline">\(\alpha = 1\)</span> - indicating a lasso penalty.</p>
+<p>The second figure shows the results when the data was generated from a multivariate normal distribution with mean equal to zero and a <em>dense</em> oracle precision matrix (non-sparse). Here, we randomly generated an orthogonal basis, set all eigen values equal to 1000, and then combined the matrices using QR decomposition. Interestingly, we find that the optimal <span class="math inline">\(\alpha\)</span> in this case is 0.6 which closely matches the optimal result based on the KL loss. This shows that there are cases where an elastic-net penalty can provide useful results and that using only a lasso penalty may unnecessarily restrict our penalized estimation.</p>
+
+<!-- #### Compound Symmetric: P = 100, N = 50 -->
+<!-- ```{r, message = FALSE, echo = TRUE, eval = FALSE} -->
+<!-- # oracle precision matrix -->
+<!-- Omega = matrix(0.9, ncol = 100, nrow = 100) -->
+<!-- diag(Omega = 1) -->
+<!-- # generate covariance matrix -->
+<!-- S = qr.solve(Omega) -->
+<!-- # generate data -->
+<!-- Z = matrix(rnorm(100*50), nrow = 50, ncol = 100) -->
+<!-- out = eigen(S, symmetric = TRUE) -->
+<!-- S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors) -->
+<!-- X = Z %*% S.sqrt -->
+<!-- ``` -->
+<!-- <br>\vspace{0.5cm} -->
+<!-- ```{r admmsim1, eval = T, echo = F, fig.cap = "Figure caption here."} -->
+<!-- knitr::include_graphics("images/compound_N50_P100.png") -->
+<!-- ``` -->
+<!-- #### Compound Symmetric: P = 10, N = 1000 -->
+<!-- ```{r, message = FALSE, echo = TRUE, eval = FALSE} -->
+<!-- # oracle precision matrix -->
+<!-- Omega = matrix(0.9, ncol = 10, nrow = 10) -->
+<!-- diag(Omega = 1) -->
+<!-- # generate covariance matrix -->
+<!-- S = qr.solve(Omega) -->
+<!-- # generate data -->
+<!-- Z = matrix(rnorm(10*1000), nrow = 1000, ncol = 10) -->
+<!-- out = eigen(S, symmetric = TRUE) -->
+<!-- S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors) -->
+<!-- X = Z %*% S.sqrt -->
+<!-- ``` -->
+<!-- <br>\vspace{0.5cm} -->
+<!-- ```{r admmsim2, eval = T, echo = F, fig.cap = "Figure caption here."} -->
+<!-- knitr::include_graphics("images/compound_N1000_P10.png") -->
+<!-- ``` -->
+<!-- #### Dense: P = 10, N = 50 -->
+<!-- ```{r, message = FALSE, echo = TRUE, eval = FALSE, tidy = FALSE} -->
+<!-- # generate eigen values -->
+<!-- eigen = c(rep(1000, 5, rep(1, 10 - 5))) -->
+<!-- # randomly generate orthogonal basis (via QR) -->
+<!-- Q = matrix(rnorm(10*10), nrow = 10, ncol = 10) %>% qr %>% qr.Q -->
+<!-- # generate covariance matrix -->
+<!-- S = Q %*% diag(eigen) %*% t(Q) -->
+<!-- # generate data -->
+<!-- Z = matrix(rnorm(10*50), nrow = 50, ncol = 10) -->
+<!-- out = eigen(S, symmetric = TRUE) -->
+<!-- S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors) -->
+<!-- X = Z %*% S.sqrt -->
+<!-- ``` -->
+<!-- <br>\vspace{0.5cm} -->
+<!-- ```{r admmsim4, eval = T, echo = F, fig.cap = "Figure caption here."} -->
+<!-- knitr::include_graphics("images/repsKLdense_N50_P10.png") -->
+<!-- ``` -->
+<!-- #### Tridiagonal: P = 100, N = 50 -->
+<!-- ```{r, message = FALSE, echo = TRUE, eval = FALSE, tidy = FALSE} -->
+<!-- # generate covariance matrix -->
+<!-- # (can confirm inverse is tri-diagonal) -->
+<!-- S = matrix(0, nrow = 100, ncol = 100) -->
+<!-- for (i in 1:100){ -->
+<!--    for (j in 1:100){ -->
+<!--      S[i, j] = 0.7^abs(i - j) -->
+<!--  } -->
+<!-- } -->
+<!-- # generate data -->
+<!-- Z = matrix(rnorm(10*50), nrow = 50, ncol = 10) -->
+<!-- out = eigen(S, symmetric = TRUE) -->
+<!-- S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors) -->
+<!-- X = Z %*% S.sqrt -->
+<!-- ``` -->
+<!-- <br>\vspace{0.5cm} -->
+<!-- <center> -->
+<!-- ![Figure caption here.](images/repsKLtridiag_N50_P100.png){ -->
+<!-- width=90% } -->
+<!-- </center> -->
+<div class="figure" style="text-align: center"><span id="fig:admmsim5"></span>
+<img src="images/repsKLtridiag_N50_P100.png" alt="The oracle precision matrices were tri-diagonal with dimension p = 100 and the data was generated with a sample size of n = 50. The cross validation errors are in the top figure and the KL losses between the estimated matrices and the oracle matrices are shown in the bottom figure. The optimal tuning parameter pair for each heatmap was found to be log10(lam) = -0.9 and alpha = 1. Note that brighter areas signify smaller losses." width="85%"  />
+<p class="caption">
+FIGURE 2.1: The oracle precision matrices were tri-diagonal with dimension p = 100 and the data was generated with a sample size of n = 50. The cross validation errors are in the top figure and the KL losses between the estimated matrices and the oracle matrices are shown in the bottom figure. The optimal tuning parameter pair for each heatmap was found to be log10(lam) = -0.9 and alpha = 1. Note that brighter areas signify smaller losses.
+</p>
+</div>
+<!-- #### Dense: P = 100, N = 50 -->
+<!-- ```{r, message = FALSE, echo = TRUE, eval = FALSE, tidy = FALSE} -->
+<!-- # generate eigen values -->
+<!-- eigen = c(rep(1000, 5, rep(1, 100 - 5))) -->
+<!-- # randomly generate orthogonal basis (via QR) -->
+<!-- Q = matrix(rnorm(100*100), nrow = 100, ncol = 100) %>% qr %>% qr.Q -->
+<!-- # generate covariance matrix -->
+<!-- S = Q %*% diag(eigen) %*% t(Q) -->
+<!-- # generate data -->
+<!-- Z = matrix(rnorm(100*50), nrow = 50, ncol = 100) -->
+<!-- out = eigen(S, symmetric = TRUE) -->
+<!-- S.sqrt = out$vectors %*% diag(out$values^0.5) %*% t(out$vectors) -->
+<!-- X = Z %*% S.sqrt -->
+<!-- ``` -->
+<!-- <br>\vspace{0.5cm} -->
+<!-- <center> -->
+<!-- <!-- ![Figure caption here.](images/repsKLdenseQR_N50_P100.png){ -->
+<!-- width=90% } -->
+<!-- </center> -->
+<!-- } -->
+<div class="figure" style="text-align: center"><span id="fig:admmsim3"></span>
+<img src="images/repsKLdenseQR_N50_P100.png" alt="The oracle precision matrices were dense with dimension p = 100 and the data was generated with a sample size of n = 50. The cross validation errors are in the top figure and the KL losses between the estimated matrices and the oracle matrices are shown in the bottom figure. The optimal tuning parameter pair for the cross validation errors was found to be log10(lam) = -0.4 and alpha = 0.6 and log10(lam) = -0.5 and alpha = 0.7 for the KL losses. Note that brighter areas signify smaller losses." width="85%"  />
+<p class="caption">
+FIGURE 2.2: The oracle precision matrices were dense with dimension p = 100 and the data was generated with a sample size of n = 50. The cross validation errors are in the top figure and the KL losses between the estimated matrices and the oracle matrices are shown in the bottom figure. The optimal tuning parameter pair for the cross validation errors was found to be log10(lam) = -0.4 and alpha = 0.6 and log10(lam) = -0.5 and alpha = 0.7 for the KL losses. Note that brighter areas signify smaller losses.
+</p>
+</div>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-yuan2007model">
+<p>Yuan, Ming, and Yi Lin. 2007. “Model Selection and Estimation in the Gaussian Graphical Model.” <em>Biometrika</em> 94 (1). Oxford University Press: 19–35.</p>
+</div>
+<div id="ref-rothman2008sparse">
+<p>Rothman, Adam J, Peter J Bickel, Elizaveta Levina, Ji Zhu, and others. 2008. “Sparse Permutation Invariant Covariance Estimation.” <em>Electronic Journal of Statistics</em> 2. The Institute of Mathematical Statistics; the Bernoulli Society: 494–515.</p>
+</div>
+<div id="ref-friedman2008sparse">
+<p>Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. 2008. “Sparse Inverse Covariance Estimation with the Graphical Lasso.” <em>Biostatistics</em> 9 (3). Oxford University Press: 432–41.</p>
+</div>
+<div id="ref-lam2009sparsistency">
+<p>Lam, Clifford, and Jianqing Fan. 2009. “Sparsistency and Rates of Convergence in Large Covariance Matrix Estimation.” <em>Annals of Statistics</em> 37 (6B). NIH Public Access: 4254.</p>
+</div>
+<div id="ref-fan2009network">
+<p>Fan, Jianqing, Yang Feng, and Yichao Wu. 2009. “Network Exploration via the Adaptive Lasso and Scad Penalties.” <em>The Annals of Applied Statistics</em> 3 (2). NIH Public Access: 521.</p>
+</div>
+<div id="ref-rothman2014existence">
+<p>Rothman, Adam J, Liliana Forzani, and others. 2014. “On the Existence of the Weighted Bridge Penalized Gaussian Likelihood Precision Matrix Estimator.” <em>Electronic Journal of Statistics</em> 8 (2). The Institute of Mathematical Statistics; the Bernoulli Society: 2693–2700.</p>
+</div>
+<div id="ref-witten2009covariance">
+<p>Witten, Daniela M, and Robert Tibshirani. 2009. “Covariance-Regularized Regression and Classification for High Dimensional Problems.” <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 71 (3). Wiley Online Library: 615–36.</p>
+</div>
+<div id="ref-price2015ridge">
+<p>Price, Bradley S, Charles J Geyer, and Adam J Rothman. 2015. “Ridge Fusion in Statistical Learning.” <em>Journal of Computational and Graphical Statistics</em> 24 (2). Taylor &amp; Francis: 439–54.</p>
+</div>
+<div id="ref-zou2005regularization">
+<p>Zou, Hui, and Trevor Hastie. 2005. “Regularization and Variable Selection via the Elastic Net.” <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 67 (2). Wiley Online Library: 301–20.</p>
+</div>
+<div id="ref-boyd2011distributed">
+<p>Boyd, Stephen, Neal Parikh, Eric Chu, Borja Peleato, Jonathan Eckstein, and others. 2011. “Distributed Optimization and Statistical Learning via the Alternating Direction Method of Multipliers.” <em>Foundations and Trends in Machine Learning</em> 3 (1). Now Publishers, Inc.: 1–122.</p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>Proof of <a href="precision-matrix-estimation.html#eq:omegaalgo">(2.15)</a> in section <a href="appendix.html#proofomegaalgo">A.0.1</a>.<a href="precision-matrix-estimation.html#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>Proof of <a href="precision-matrix-estimation.html#eq:ZZalgo">(2.16)</a> in section <a href="appendix.html#proofZZalgo">A.0.2</a>.<a href="precision-matrix-estimation.html#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>Proof in section <a href="appendix.html#proofdualresidual">A.0.3</a>.<a href="precision-matrix-estimation.html#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>Note that the second dual optimality condition <span class="math inline">\(0 \in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}\)</span> is always satisfied. More details can be found in section <a href="appendix.html#proofdualopt">A.0.4</a>.<a href="precision-matrix-estimation.html#fnref4" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="intro.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="scpme.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/MGallow/oral_manuscript/edit/master/02-PME.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": ["Manuscript.pdf", "Manuscript.epub"],
+"toc": {
+"collapse": "none"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

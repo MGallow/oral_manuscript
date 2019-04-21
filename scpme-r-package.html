@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>C SCPME R Package | Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression</title>
+  <meta name="description" content="Matt Galloway’s Master’s thesis.">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+
+  <meta property="og:title" content="C SCPME R Package | Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression" />
+  <meta property="og:type" content="book" />
+  <meta property="og:url" content="http://mattxgalloway.com/oral_manuscript/" />
+  
+  <meta property="og:description" content="Matt Galloway’s Master’s thesis." />
+  <meta name="github-repo" content="MGallow/oral_manuscript" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="C SCPME R Package | Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression" />
+  
+  <meta name="twitter:description" content="Matt Galloway’s Master’s thesis." />
+  
+
+<meta name="author" content="Matt Galloway">
+
+
+<meta name="date" content="2019-04-21">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="admmsigma-r-package.html">
+<link rel="next" href="references.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Matt Galloway Oral Manuscript</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="precision-matrix-estimation.html"><a href="precision-matrix-estimation.html"><i class="fa fa-check"></i><b>2</b> Precision Matrix Estimation</a><ul>
+<li class="chapter" data-level="2.1" data-path="precision-matrix-estimation.html"><a href="precision-matrix-estimation.html#background"><i class="fa fa-check"></i><b>2.1</b> Background</a></li>
+<li class="chapter" data-level="2.2" data-path="precision-matrix-estimation.html"><a href="precision-matrix-estimation.html#admm-algorithm"><i class="fa fa-check"></i><b>2.2</b> ADMM Algorithm</a></li>
+<li class="chapter" data-level="2.3" data-path="precision-matrix-estimation.html"><a href="precision-matrix-estimation.html#simulations"><i class="fa fa-check"></i><b>2.3</b> Simulations</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="scpme.html"><a href="scpme.html"><i class="fa fa-check"></i><b>3</b> SCPME</a><ul>
+<li class="chapter" data-level="3.1" data-path="scpme.html"><a href="scpme.html#augmented-admm-algorithm"><i class="fa fa-check"></i><b>3.1</b> Augmented ADMM Algorithm</a></li>
+<li class="chapter" data-level="3.2" data-path="scpme.html"><a href="scpme.html#regression-illustration"><i class="fa fa-check"></i><b>3.2</b> Regression Illustration</a></li>
+<li class="chapter" data-level="3.3" data-path="scpme.html"><a href="scpme.html#simulations-1"><i class="fa fa-check"></i><b>3.3</b> Simulations</a></li>
+<li class="chapter" data-level="3.4" data-path="scpme.html"><a href="scpme.html#discussion"><i class="fa fa-check"></i><b>3.4</b> Discussion</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>A</b> Appendix</a></li>
+<li class="chapter" data-level="B" data-path="admmsigma-r-package.html"><a href="admmsigma-r-package.html"><i class="fa fa-check"></i><b>B</b> <code>ADMMsigma</code> R Package</a><ul>
+<li class="chapter" data-level="B.1" data-path="admmsigma-r-package.html"><a href="admmsigma-r-package.html#installation"><i class="fa fa-check"></i><b>B.1</b> Installation</a></li>
+<li class="chapter" data-level="B.2" data-path="admmsigma-r-package.html"><a href="admmsigma-r-package.html#tutorial"><i class="fa fa-check"></i><b>B.2</b> Tutorial</a></li>
+</ul></li>
+<li class="chapter" data-level="C" data-path="scpme-r-package.html"><a href="scpme-r-package.html"><i class="fa fa-check"></i><b>C</b> <code>SCPME</code> R Package</a><ul>
+<li class="chapter" data-level="C.1" data-path="scpme-r-package.html"><a href="scpme-r-package.html#installation-1"><i class="fa fa-check"></i><b>C.1</b> Installation</a></li>
+<li class="chapter" data-level="C.2" data-path="scpme-r-package.html"><a href="scpme-r-package.html#tutorial-1"><i class="fa fa-check"></i><b>C.2</b> Tutorial</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="scpme-r-package" class="section level1">
+<h1><span class="header-section-number">C</span> <code>SCPME</code> R Package</h1>
+<p><code>SCPME</code> is an R package that estimates a penalized precision matrix via a modified alternating direction method of multipliers (ADMM) algorithm as described in <span class="citation">Molstad and Rothman (<a href="#ref-molstad2017shrinking">2017</a>)</span>. Specifically, the modified ADMM algorithm solves the following optimization problem:</p>
+<p><span class="math display">\[ \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{ tr\left(S \Omega\right) - \log\det\left(\Omega\right) + \lambda\left\| A\Omega B - C \right\|_{1} \right\} \]</span></p>
+<p>where <span class="math inline">\(\lambda &gt; 0\)</span> is a tuning parameter, <span class="math inline">\(A, B, \mbox{ and } C\)</span> are known, user-specified matrices, and we define <span class="math inline">\(\left\|A \right\|_{1} = \sum_{i, j} \left| A_{ij} \right|\)</span>.</p>
+<p>This form of penalty leads to many new, interesting, and novel estimators for the precision matrix <span class="math inline">\(\Omega\)</span>. Users can construct matrices <span class="math inline">\(A, B, \mbox{ and } C\)</span> so that emphasis is placed on the sum, absolute value of a <em>characteristic</em> of <span class="math inline">\(\Omega\)</span>. We will explore a few of these estimators in the tutorial section.</p>
+<p>A list of functions contained in the package can be found below:</p>
+<ul>
+<li><p><code>shrink()</code> computes the estimated precision matrix</p></li>
+<li><p><code>data_gen()</code> data generation function (for convenience)</p></li>
+<li><p><code>plot.shrink()</code> produces a heat map or optional line graph for the cross validation errors</p></li>
+</ul>
+<div id="installation-1" class="section level2">
+<h2><span class="header-section-number">C.1</span> Installation</h2>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The easiest way to install is from CRAN</span>
+<span class="kw">install.packages</span>(<span class="st">&quot;SCPME&quot;</span>)
+
+<span class="co"># You can also install the development version from GitHub:</span>
+<span class="co"># install.packages(&#39;devtools&#39;)</span>
+devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;MGallow/SCPME&quot;</span>)</code></pre>
+<p><br></p>
+<p>This package is hosted on Github at <a href="https://github.com/MGallow/SCPME">github.com/MGallow/SCPME</a>. The project website is located at <a href="http://mattxgalloway.com/SCPME/">mattxgalloway.com/SCPME</a>.</p>
+</div>
+<div id="tutorial-1" class="section level2">
+<h2><span class="header-section-number">C.2</span> Tutorial</h2>
+<p>The primary function in the <code>SCPME</code> package is <code>shrink()</code>. The input values <span class="math inline">\(X\)</span> is an <span class="math inline">\(n \times p\)</span> data matrix so that there are <span class="math inline">\(n\)</span> rows each representing an observation and <span class="math inline">\(p\)</span> columns each representing a unique variable and <span class="math inline">\(Y\)</span> is an <span class="math inline">\(n \times r\)</span> response matrix where <span class="math inline">\(r\)</span> is the dimension of the response vector. By default, <code>SCPME</code> will estimate <span class="math inline">\(\Omega\)</span> using a lasso penalty (<span class="math inline">\(A = I_{p}, B = I_{p}, \mbox{ and } C = 0\)</span>) and choose the optimal <span class="math inline">\(\lambda\)</span> tuning parameter that minimizes the mean squared prediction error for the regression of the variable <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span> (here <span class="math inline">\(I_{p}\)</span> denotes a <span class="math inline">\(p\)</span>-dimension identity matrix). If <span class="math inline">\(Y\)</span> is not provided, then tuning parameter selection will be based on the validation likelihood. Note that <span class="math inline">\(\Omega\)</span> (perhaps better denoted here as <span class="math inline">\(\Omega_{x}\)</span>) will only have meaningful shrinkage unless the data vector <span class="math inline">\(X \in \mathbb{R^{p}}\)</span> is multi-dimensional (<span class="math inline">\(p &gt; 1\)</span>).</p>
+<p>In this example, the data matrix is <span class="math inline">\(100 \times 5\)</span> and the response is generated according to the following model:</p>
+<p><span class="math display">\[ Y_{i} = \beta&#39;X_{i} + E_{i} \]</span></p>
+<p>where <span class="math inline">\(E_{i} \sim N\left( 0, 1 \right)\)</span> and <span class="math inline">\(X_{i}\)</span> is generated from a multivariate normal distribution with mean zero and tapered oracle covariance matrix <span class="math inline">\(S\)</span>. A tapered covariance matrix has the property that its inverse - the precision matrix - is tri-diagonal. Estimating this oracle precision matrix well and efficiently will be our primary interest. In addition, <span class="math inline">\(\beta\)</span> is randomly generated and sparse. The data will be generated using the <code>data_gen()</code> function contained in the package.</p>
+<p><br></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(SCPME)
+<span class="kw">set.seed</span>(<span class="dv">123</span>)
+
+<span class="co"># generate 100 x 5 X data matrix and 100 x 1 Y data matrix</span>
+data =<span class="st"> </span><span class="kw">data_gen</span>(<span class="dt">p =</span> <span class="dv">5</span>, <span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">r =</span> <span class="dv">1</span>)
+
+<span class="co"># the oracle regression coefficients are sparse</span>
+data<span class="op">$</span>betas</code></pre>
+<pre><code>##             [,1]
+## [1,] -0.25065233
+## [2,]  0.00000000
+## [3,]  0.69707555
+## [4,]  0.03153231
+## [5,]  0.00000000</code></pre>
+<p><br></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># shrink sum absolute entries in omega</span>
+<span class="kw">shrink</span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y)</code></pre>
+<pre><code>## 
+## Call: shrink(X = data$X, Y = data$Y)
+## 
+## Iterations: 37
+## 
+## Tuning parameters:
+##       log10(lam)    lam
+## [1,]      -1.163  0.069
+## 
+## Log-likelihood: -178.20154
+## 
+## Omega:
+##          [,1]     [,2]     [,3]     [,4]     [,5]
+## [1,]  1.60847 -0.73553 -0.14094 -0.04329 -0.11730
+## [2,] -0.73553  1.66045 -0.52579 -0.03576 -0.03342
+## [3,] -0.14094 -0.52579  1.73410 -0.85121 -0.07332
+## [4,] -0.04329 -0.03576 -0.85121  2.02541 -0.93612
+## [5,] -0.11730 -0.03342 -0.07332 -0.93612  1.62397</code></pre>
+<p><br></p>
+<p>Notice here that the estimated precision matrix is <em>not</em> sparse. This is due to the fact that our cross validation criteria is the mean-squared prediction error. We can estimate a new precision matrix using the validation likelihood as the cross validation criteria with the following command:</p>
+<p><br></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># shrink sum absolute entries in omega</span>
+<span class="kw">shrink</span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">crit.cv =</span> <span class="st">&quot;loglik&quot;</span>)</code></pre>
+<pre><code>## 
+## Call: shrink(X = data$X, Y = data$Y, crit.cv = &quot;loglik&quot;)
+## 
+## Iterations: 51
+## 
+## Tuning parameters:
+##       log10(lam)    lam
+## [1,]      -2.163  0.007
+## 
+## Log-likelihood: -120.02858
+## 
+## Omega:
+##          [,1]     [,2]     [,3]     [,4]     [,5]
+## [1,]  2.11926 -1.17294 -0.13784 -0.00678 -0.20014
+## [2,] -1.17294  2.28420 -0.81629  0.00009 -0.00001
+## [3,] -0.13784 -0.81629  2.45520 -1.42117  0.01650
+## [4,] -0.00678  0.00009 -1.42117  3.09526 -1.56839
+## [5,] -0.20014 -0.00001  0.01650 -1.56839  2.24703</code></pre>
+<p><br></p>
+<p>All of the estimators so far have used a lasso penalty that penalizes the sum of the absolute value of all the entries in <span class="math inline">\(\Omega\)</span> (<span class="math inline">\(A = I_{p}, B = I_{p}, \mbox{ and } C = 0\)</span>). In effect, this penalty embeds an assumption in our estimate that the true population precision matrix, <span class="math inline">\(\Omega\)</span>, is sparse. The flexibility of the penalty described in <span class="citation">Molstad and Rothman (<a href="#ref-molstad2017shrinking">2017</a>)</span> allows us to make other assumptions as well. For instance, in the penalty we could set <span class="math inline">\(A = I_{p}, B = \Sigma_{xy}\)</span> where <span class="math inline">\(\Sigma_{xy}\)</span> is the covariance matrix of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, and <span class="math inline">\(C = 0\)</span>. In which case our penalty function</p>
+<p><span class="math display">\[P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\Sigma_{xy} \right\|_{1} = \lambda\left\| \beta \right\|_{1} \]</span></p>
+<p>This objective function estimates an <span class="math inline">\(\Omega\)</span> via the marginal log-likelihood of <span class="math inline">\(X\)</span> under the assumption that the forward regression coefficient <span class="math inline">\(\beta\)</span> is sparse (recall that <span class="math inline">\(\beta \equiv \Omega\Sigma_{xy}\)</span>). Of course, in practice, we do not know the true covariance matrix <span class="math inline">\(\Sigma_{xy}\)</span> but we might consider using the sample estimate <span class="math inline">\(\hat{\Sigma}_{xy} = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(Y_{i} - \bar{Y}\right)&#39;/n\)</span>.</p>
+<p><br></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># assume sparsity in beta</span>
+lam_max =<span class="st"> </span><span class="kw">max</span>(<span class="kw">abs</span>(<span class="kw">crossprod</span>(data<span class="op">$</span>X, data<span class="op">$</span>Y)))
+(<span class="dt">shrink =</span> <span class="kw">shrink</span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">B =</span> <span class="kw">cov</span>(data<span class="op">$</span>X, data<span class="op">$</span>Y), <span class="dt">lam.max =</span> lam_max, 
+    <span class="dt">nlam =</span> <span class="dv">20</span>))</code></pre>
+<pre><code>## 
+## Call: shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), nlam = 20, 
+##     lam.max = lam_max)
+## 
+## Iterations: 84
+## 
+## Tuning parameters:
+##       log10(lam)    lam
+## [1,]      -0.167  0.681
+## 
+## Log-likelihood: -133.98097
+## 
+## Omega:
+##          [,1]     [,2]     [,3]     [,4]     [,5]
+## [1,]  2.12467 -1.20016 -0.01149  0.01660 -0.20424
+## [2,] -1.20016  2.28202 -0.70370  0.03047 -0.01211
+## [3,] -0.01149 -0.70370  2.09284 -1.47505  0.01020
+## [4,]  0.01660  0.03047 -1.47505  2.86829 -1.45784
+## [5,] -0.20424 -0.01211  0.01020 -1.45784  2.18752</code></pre>
+<p>Note that we specified the maximum <code>lam</code> value in the previous function to expand the tuning parameter grid. With these settings, the augmented ADMM algorithm also solves for the estimated <span class="math inline">\(\beta\)</span> coefficient matrix simultaneously:</p>
+<p><br></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># print estimated beta matrix</span>
+shrink<span class="op">$</span>Z</code></pre>
+<pre><code>##            [,1]
+## [1,] 0.00000000
+## [2,] 0.00000000
+## [3,] 0.42221120
+## [4,] 0.04782093
+## [5,] 0.00000000</code></pre>
+<p><br></p>
+<p>Another possible penalty is to set <span class="math inline">\(B = \left[ \Sigma_{xy}, I_{p} \right]\)</span> so that the identity matrix is appended to the covariance matrix of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. That is, the penalty <span class="math inline">\(P\)</span>, is constructed as</p>
+<p><span class="math display">\[ P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\left[\Sigma_{xy}, I_{p}\right] \right\|_{1} = \lambda\left\| \beta \right\|_{1} + \lambda\left\| \Omega \right\|_{1} \]</span></p>
+<p>In this case, we are equally penalizing the sum, absolute values of entries in <span class="math inline">\(\beta\)</span> <em>and</em> <span class="math inline">\(\Omega\)</span> which embeds an assumption that <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\Omega\)</span> are both sparse.</p>
+<p><br></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># assume sparsity in beta AND omega</span>
+(<span class="dt">shrink =</span> <span class="kw">shrink</span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">B =</span> <span class="kw">cbind</span>(<span class="kw">cov</span>(data<span class="op">$</span>X, data<span class="op">$</span>Y), <span class="kw">diag</span>(<span class="kw">ncol</span>(data<span class="op">$</span>X))), 
+    <span class="dt">lam.max =</span> <span class="dv">10</span>, <span class="dt">lam.min.ratio =</span> <span class="fl">1e-04</span>, <span class="dt">nlam =</span> <span class="dv">20</span>))</code></pre>
+<pre><code>## 
+## Call: shrink(X = data$X, Y = data$Y, B = cbind(cov(data$X, data$Y), 
+##     diag(ncol(data$X))), nlam = 20, lam.max = 10, lam.min.ratio = 1e-04)
+## 
+## Iterations: 46
+## 
+## Tuning parameters:
+##       log10(lam)    lam
+## [1,]       0.368  2.336
+## 
+## Log-likelihood: -624.54758
+## 
+## Omega:
+##          [,1]     [,2]     [,3]     [,4]     [,5]
+## [1,]  0.26376 -0.00003 -0.00015 -0.00010 -0.00005
+## [2,] -0.00003  0.24002 -0.00017 -0.00012 -0.00006
+## [3,] -0.00015 -0.00017  0.19066 -0.00516 -0.00020
+## [4,] -0.00010 -0.00012 -0.00516  0.20362 -0.00014
+## [5,] -0.00005 -0.00006 -0.00020 -0.00014  0.22750</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># print estimated beta</span>
+shrink<span class="op">$</span>Z[, <span class="dv">1</span>, drop =<span class="st"> </span><span class="ot">FALSE</span>]</code></pre>
+<pre><code>##            [,1]
+## [1,] 0.06389361
+## [2,] 0.08542992
+## [3,] 0.14200713
+## [4,] 0.12357129
+## [5,] 0.09958374</code></pre>
+<p><br></p>
+<p><code>SCPME</code> also has the capability to provide plots (heatmaps and line graphs) for the cross validation errors. In the heatmap plot below, the more bright, white areas correspond to a better tuning parameter selection (lower cross validation error).</p>
+<p><br></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># produce CV heat map</span>
+<span class="kw">plot</span>(shrink, <span class="dt">type =</span> <span class="st">&quot;heatmap&quot;</span>)</code></pre>
+<div class="figure" style="text-align: center"><span id="fig:SCPMEpackage1"></span>
+<img src="Manuscript_files/figure-html/SCPMEpackage1-1.png" alt="CV heatmap for SCPME tutorial" width="80%"  />
+<p class="caption">
+FIGURE C.1: CV heatmap for SCPME tutorial
+</p>
+</div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># produce line graph</span>
+<span class="kw">plot</span>(shrink, <span class="dt">type =</span> <span class="st">&quot;line&quot;</span>)</code></pre>
+<div class="figure" style="text-align: center"><span id="fig:SCPMEpackage2"></span>
+<img src="Manuscript_files/figure-html/SCPMEpackage2-1.png" alt="CV line graph for SCPME tutorial" width="80%"  />
+<p class="caption">
+FIGURE C.2: CV line graph for SCPME tutorial
+</p>
+</div>
+<p><br></p>
+<p><code>SCPME</code> has a number of more advanced options including alternative convergence criteria and parallel CV that are explained in detail on the project website at <a href="http://mattxgalloway.com/SCPME/">mattxgalloway.com/SCPME</a>.</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-molstad2017shrinking">
+<p>Molstad, Aaron J, and Adam J Rothman. 2017. “Shrinking Characteristics of Precision Matrix Estimators.” <em>Biometrika</em>.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="admmsigma-r-package.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/MGallow/oral_manuscript/edit/master/07-SCPME-Package.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": ["Manuscript.pdf", "Manuscript.epub"],
+"toc": {
+"collapse": "none"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
