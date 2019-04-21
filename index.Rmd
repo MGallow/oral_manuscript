@@ -33,6 +33,12 @@ description: "Matt Galloway's Master's thesis."
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, cache = FALSE, tidy = TRUE, out.width = "85%", fig.align = "center", out.extra = "")
 
+# load packages
+library(magrittr)
+library(dplyr)
+library(ggplot2)
+library(pander)
+
 ```
 
 ```{r include=FALSE}
