@@ -106,10 +106,11 @@
 
 \usepackage{booktabs}
 \usepackage{amsthm}
+\usepackage{amsmath}
 \usepackage{fancyhdr} % Required for custom headers
 \usepackage{lastpage} % Required to determine the last page for the footer
 \usepackage{extramarks} % Required for headers and footers
-\usepackage{graphicx}
+\usepackage{graphicx} % Required for knitr::include_graphics
 \makeatletter
 \def\thm@space@setup{%
   \thm@preskip=8pt plus 2pt minus 4pt
@@ -118,14 +119,14 @@
 \makeatother
 \pagestyle{fancy}
 % \pagestyle{empty}
-\usepackage[left]{lineno} % line number package
-\linenumbers % line number command
+% \usepackage[left]{lineno} % line number package
+% \linenumbers % line number command
 \usepackage[]{natbib}
 \bibliographystyle{apalike}
 
 \title{Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression}
 \author{Matt Galloway}
-\date{2019-04-21}
+\date{2019-04-22}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -151,6 +152,14 @@
 \setcounter{tocdepth}{1}
 \tableofcontents
 }
+\hypertarget{preface}{%
+\chapter*{Preface}\label{preface}}
+
+
+I would like to thank my advisor Professor Adam Rothman for his guidance and support this past year. His enthusiasm towards this research area is ultimately what got me interested and I truly enjoyed having the opportunity to learn from him.
+
+My parents also deserve a note of appreciation and thanks -- one probably much longer than this. Graduate school's challenges extend far beyond the classroom and I'm so lucky to have you by my side.
+
 \hypertarget{intro}{%
 \chapter{Introduction}\label{intro}}
 
@@ -664,25 +673,25 @@ The following table shows the average model error for each estimator when \(n = 
 \newpage
 
 \begin{longtable}[]{@{}ccc@{}}
-\caption{ME by P (N = 100, R = 10, sparse = 0.5, sigma = tridiag)
+\caption{Average model error for dimension p = 150.
 \vspace{0.5cm}}\tabularnewline
 \toprule
 \begin{minipage}[b]{0.14\columnwidth}\centering
-model\strut
+Model\strut
 \end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\centering
-error\strut
+Error\strut
 \end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\centering
-sd\strut
+SD\strut
 \end{minipage}\tabularnewline
 \midrule
 \endfirsthead
 \toprule
 \begin{minipage}[b]{0.14\columnwidth}\centering
-model\strut
+Model\strut
 \end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\centering
-error\strut
+Error\strut
 \end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\centering
-sd\strut
+SD\strut
 \end{minipage}\tabularnewline
 \midrule
 \endhead
@@ -1558,8 +1567,8 @@ This objective function estimates an \(\Omega\) via the marginal log-likelihood 
 \begin{Highlighting}[]
 \CommentTok{# assume sparsity in beta}
 \NormalTok{lam_max =}\StringTok{ }\KeywordTok{max}\NormalTok{(}\KeywordTok{abs}\NormalTok{(}\KeywordTok{crossprod}\NormalTok{(data}\OperatorTok{$}\NormalTok{X, data}\OperatorTok{$}\NormalTok{Y)))}
-\NormalTok{(}\DataTypeTok{shrink =} \KeywordTok{shrink}\NormalTok{(}\DataTypeTok{X =}\NormalTok{ data}\OperatorTok{$}\NormalTok{X, }\DataTypeTok{Y =}\NormalTok{ data}\OperatorTok{$}\NormalTok{Y, }\DataTypeTok{B =} \KeywordTok{cov}\NormalTok{(data}\OperatorTok{$}\NormalTok{X, data}\OperatorTok{$}\NormalTok{Y), }\DataTypeTok{lam.max =}\NormalTok{ lam_max, }
-    \DataTypeTok{nlam =} \DecValTok{20}\NormalTok{))}
+\NormalTok{(}\DataTypeTok{shrink =} \KeywordTok{shrink}\NormalTok{(}\DataTypeTok{X =}\NormalTok{ data}\OperatorTok{$}\NormalTok{X, }\DataTypeTok{Y =}\NormalTok{ data}\OperatorTok{$}\NormalTok{Y, }\DataTypeTok{B =} \KeywordTok{cov}\NormalTok{(data}\OperatorTok{$}\NormalTok{X, data}\OperatorTok{$}\NormalTok{Y), }
+    \DataTypeTok{lam.max =}\NormalTok{ lam_max, }\DataTypeTok{nlam =} \DecValTok{20}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1618,8 +1627,9 @@ In this case, we are equally penalizing the sum, absolute values of entries in \
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# assume sparsity in beta AND omega}
-\NormalTok{(}\DataTypeTok{shrink =} \KeywordTok{shrink}\NormalTok{(}\DataTypeTok{X =}\NormalTok{ data}\OperatorTok{$}\NormalTok{X, }\DataTypeTok{Y =}\NormalTok{ data}\OperatorTok{$}\NormalTok{Y, }\DataTypeTok{B =} \KeywordTok{cbind}\NormalTok{(}\KeywordTok{cov}\NormalTok{(data}\OperatorTok{$}\NormalTok{X, data}\OperatorTok{$}\NormalTok{Y), }\KeywordTok{diag}\NormalTok{(}\KeywordTok{ncol}\NormalTok{(data}\OperatorTok{$}\NormalTok{X))), }
-    \DataTypeTok{lam.max =} \DecValTok{10}\NormalTok{, }\DataTypeTok{lam.min.ratio =} \FloatTok{1e-04}\NormalTok{, }\DataTypeTok{nlam =} \DecValTok{20}\NormalTok{))}
+\NormalTok{(}\DataTypeTok{shrink =} \KeywordTok{shrink}\NormalTok{(}\DataTypeTok{X =}\NormalTok{ data}\OperatorTok{$}\NormalTok{X, }\DataTypeTok{Y =}\NormalTok{ data}\OperatorTok{$}\NormalTok{Y, }\DataTypeTok{B =} \KeywordTok{cbind}\NormalTok{(}\KeywordTok{cov}\NormalTok{(data}\OperatorTok{$}\NormalTok{X, }
+\NormalTok{    data}\OperatorTok{$}\NormalTok{Y), }\KeywordTok{diag}\NormalTok{(}\KeywordTok{ncol}\NormalTok{(data}\OperatorTok{$}\NormalTok{X))), }\DataTypeTok{lam.max =} \DecValTok{10}\NormalTok{, }\DataTypeTok{lam.min.ratio =} \FloatTok{1e-04}\NormalTok{, }
+    \DataTypeTok{nlam =} \DecValTok{20}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 

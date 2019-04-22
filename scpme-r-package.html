@@ -25,7 +25,7 @@
 <meta name="author" content="Matt Galloway">
 
 
-<meta name="date" content="2019-04-21">
+<meta name="date" content="2019-04-22">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -132,6 +132,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">Matt Galloway Oral Manuscript</a></li>
 
 <li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
 <li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="precision-matrix-estimation.html"><a href="precision-matrix-estimation.html"><i class="fa fa-check"></i><b>2</b> Precision Matrix Estimation</a><ul>
 <li class="chapter" data-level="2.1" data-path="precision-matrix-estimation.html"><a href="precision-matrix-estimation.html#background"><i class="fa fa-check"></i><b>2.1</b> Background</a></li>
@@ -270,8 +271,8 @@ data<span class="op">$</span>betas</code></pre>
 <p><br></p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># assume sparsity in beta</span>
 lam_max =<span class="st"> </span><span class="kw">max</span>(<span class="kw">abs</span>(<span class="kw">crossprod</span>(data<span class="op">$</span>X, data<span class="op">$</span>Y)))
-(<span class="dt">shrink =</span> <span class="kw">shrink</span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">B =</span> <span class="kw">cov</span>(data<span class="op">$</span>X, data<span class="op">$</span>Y), <span class="dt">lam.max =</span> lam_max, 
-    <span class="dt">nlam =</span> <span class="dv">20</span>))</code></pre>
+(<span class="dt">shrink =</span> <span class="kw">shrink</span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">B =</span> <span class="kw">cov</span>(data<span class="op">$</span>X, data<span class="op">$</span>Y), 
+    <span class="dt">lam.max =</span> lam_max, <span class="dt">nlam =</span> <span class="dv">20</span>))</code></pre>
 <pre><code>## 
 ## Call: shrink(X = data$X, Y = data$Y, B = cov(data$X, data$Y), nlam = 20, 
 ##     lam.max = lam_max)
@@ -307,8 +308,9 @@ shrink<span class="op">$</span>Z</code></pre>
 <p>In this case, we are equally penalizing the sum, absolute values of entries in <span class="math inline">\(\beta\)</span> <em>and</em> <span class="math inline">\(\Omega\)</span> which embeds an assumption that <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\Omega\)</span> are both sparse.</p>
 <p><br></p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># assume sparsity in beta AND omega</span>
-(<span class="dt">shrink =</span> <span class="kw">shrink</span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">B =</span> <span class="kw">cbind</span>(<span class="kw">cov</span>(data<span class="op">$</span>X, data<span class="op">$</span>Y), <span class="kw">diag</span>(<span class="kw">ncol</span>(data<span class="op">$</span>X))), 
-    <span class="dt">lam.max =</span> <span class="dv">10</span>, <span class="dt">lam.min.ratio =</span> <span class="fl">1e-04</span>, <span class="dt">nlam =</span> <span class="dv">20</span>))</code></pre>
+(<span class="dt">shrink =</span> <span class="kw">shrink</span>(<span class="dt">X =</span> data<span class="op">$</span>X, <span class="dt">Y =</span> data<span class="op">$</span>Y, <span class="dt">B =</span> <span class="kw">cbind</span>(<span class="kw">cov</span>(data<span class="op">$</span>X, 
+    data<span class="op">$</span>Y), <span class="kw">diag</span>(<span class="kw">ncol</span>(data<span class="op">$</span>X))), <span class="dt">lam.max =</span> <span class="dv">10</span>, <span class="dt">lam.min.ratio =</span> <span class="fl">1e-04</span>, 
+    <span class="dt">nlam =</span> <span class="dv">20</span>))</code></pre>
 <pre><code>## 
 ## Call: shrink(X = data$X, Y = data$Y, B = cbind(cov(data$X, data$Y), 
 ##     diag(ncol(data$X))), nlam = 20, lam.max = 10, lam.min.ratio = 1e-04)

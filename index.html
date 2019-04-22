@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>B ADMMsigma R Package | Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression</title>
+  <title>Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression</title>
   <meta name="description" content="Matt Galloway’s Master’s thesis.">
   <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="B ADMMsigma R Package | Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression" />
+  <meta property="og:title" content="Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="http://mattxgalloway.com/oral_manuscript/" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="MGallow/oral_manuscript" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="B ADMMsigma R Package | Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression" />
+  <meta name="twitter:title" content="Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression" />
   
   <meta name="twitter:description" content="Matt Galloway’s Master’s thesis." />
   
@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="appendix.html">
-<link rel="next" href="scpme-r-package.html">
+
+<link rel="next" href="intro.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -176,111 +176,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="admmsigma-r-package" class="section level1">
-<h1><span class="header-section-number">B</span> <code>ADMMsigma</code> R Package</h1>
-<p><code>ADMMsigma</code> is an R package that estimates a penalized precision matrix, often denoted <span class="math inline">\(\Omega\)</span>, via the alternating direction method of multipliers (ADMM) algorithm. Though not the fastest estimation method, the ADMM algorithm is easily adaptable and allows for rapid experimentation by the user, which is the primary goal of this package.</p>
-<p>The package currently supports a general elastic-net penalty that allows for both ridge and lasso-type penalties as special cases. In particular, the algorithm solves the following optimization problem:</p>
-<p><span class="math display">\[ \hat{\Omega} = \arg\min_{\Omega \in S_{+}^{p}}\left\{tr(S\Omega) - \log\det\left(\Omega\right) + \lambda\left[\frac{1 - \alpha}{2}\left\|\Omega\right\|_{F}^{2} + \alpha\left\|\Omega\right\|_{1} \right] \right\} \]</span></p>
-<p>where <span class="math inline">\(\lambda &gt; 0\)</span>, <span class="math inline">\(0 \leq \alpha \leq 1\)</span> are tuning parameters, <span class="math inline">\(\left\|\cdot \right\|_{F}^{2}\)</span> is the Frobenius norm, and we define <span class="math inline">\(\left\|A \right\|_{1} = \sum_{i, j} \left| A_{ij} \right|\)</span>.</p>
-<p>A list of functions contained in the package can be found below:</p>
-<ul>
-<li><p><code>ADMMsigma()</code> computes the estimated precision matrix via the ADMM algorithm (ridge, lasso, and elastic-net regularization optional)</p></li>
-<li><p><code>RIDGEsigma()</code> computes the estimated ridge penalized precision matrix via closed-form solution</p></li>
-<li><p><code>plot.ADMMsigma()</code> produces a heat map or optional line graph for cross validation errors</p></li>
-<li><p><code>plot.RIDGEsigma()</code> produces a heat map or optional line graph for cross validation errors</p></li>
-</ul>
-<div id="installation" class="section level2">
-<h2><span class="header-section-number">B.1</span> Installation</h2>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The easiest way to install is from CRAN</span>
-<span class="kw">install.packages</span>(<span class="st">&quot;ADMMsigma&quot;</span>)
+<div id="header">
+<h1 class="title">Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression</h1>
+<p class="author"><em>Matt Galloway</em></p>
+<p class="date"><em>2019-04-22</em></p>
+</div>
+<div id="preface" class="section level1 unnumbered">
+<h1>Preface</h1>
+<p>I would like to thank my advisor Professor Adam Rothman for his guidance and support this past year. His enthusiasm towards this research area is ultimately what got me interested and I truly enjoyed having the opportunity to learn from him.</p>
+<p>My parents also deserve a note of appreciation and thanks – one probably much longer than this. Graduate school’s challenges extend far beyond the classroom and I’m so lucky to have you by my side.</p>
 
-<span class="co"># You can also install the development version from GitHub:</span>
-<span class="co"># install.packages(&#39;devtools&#39;)</span>
-devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;MGallow/ADMMsigma&quot;</span>)</code></pre>
-<p><br></p>
-<p>This package is hosted on Github at <a href="https://github.com/MGallow/ADMMsigma">github.com/MGallow/ADMMsigma</a>. The project website is located at <a href="http://mattxgalloway.com/ADMMsigma/">mattxgalloway.com/ADMMsigma</a>.</p>
-</div>
-<div id="tutorial" class="section level2">
-<h2><span class="header-section-number">B.2</span> Tutorial</h2>
-<p>By default, <code>ADMMsigma</code> will estimate a penalized precision matrix, <span class="math inline">\(\Omega\)</span>, using the elastic-net penalty and choose the optimal <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(\alpha\)</span> tuning parameters. The primary function is simply <code>ADMMsigma()</code>. The input value <span class="math inline">\(X\)</span> is an <span class="math inline">\(n \times p\)</span> data matrix so that there are <span class="math inline">\(n\)</span> rows each representing an observation and <span class="math inline">\(p\)</span> columns each representing a unique feauture or variable.</p>
-<p>Here, we will use a <span class="math inline">\(100 \times 5\)</span> data matrix that is generated from a multivariate normal distribution with mean zero and tapered oracle covariance matrix <span class="math inline">\(S\)</span>. A tapered covariance matrix has an inverse - or precision matrix - that is tri-diagonal, which is useful for illustration purposes because the object is sparse (many zero entries) and the shrinkage penalty should prove useful.</p>
-<p><br></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># elastic-net type penalty (set tolerance to 1e-8)</span>
-<span class="kw">ADMMsigma</span>(X, <span class="dt">tol.abs =</span> <span class="fl">1e-08</span>, <span class="dt">tol.rel =</span> <span class="fl">1e-08</span>)</code></pre>
-<pre><code>## 
-## Call: ADMMsigma(X = X, tol.abs = 1e-08, tol.rel = 1e-08)
-## 
-## Iterations: 48
-## 
-## Tuning parameters:
-##       log10(lam)  alpha
-## [1,]      -1.599      1
-## 
-## Log-likelihood: -108.41003
-## 
-## Omega:
-##          [,1]     [,2]     [,3]     [,4]     [,5]
-## [1,]  2.15283 -1.26902  0.00000  0.00000  0.19765
-## [2,] -1.26902  2.79032 -1.32206 -0.08056  0.00925
-## [3,]  0.00000 -1.32206  2.85470 -1.17072 -0.00865
-## [4,]  0.00000 -0.08056 -1.17072  2.49554 -1.18959
-## [5,]  0.19765  0.00925 -0.00865 -1.18959  1.88121</code></pre>
-<p><br></p>
-<p>We can see that the optimal <span class="math inline">\(\alpha\)</span> value selected is one. This selection corresponds with a lasso penalty – a special case of the elastic-net penalty.</p>
-<p>We can also explicitly assume sparsity in our estimate rather than let the package decide by restricting the class of penalties to the lasso. We do this by simply setting <code>alpha = 1</code> in our function:</p>
-<p><br></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># lasso penalty (default tolerance)</span>
-<span class="kw">ADMMsigma</span>(X, <span class="dt">alpha =</span> <span class="dv">1</span>)</code></pre>
-<pre><code>## 
-## Call: ADMMsigma(X = X, alpha = 1)
-## 
-## Iterations: 24
-## 
-## Tuning parameters:
-##       log10(lam)  alpha
-## [1,]      -1.599      1
-## 
-## Log-likelihood: -108.41193
-## 
-## Omega:
-##          [,1]     [,2]     [,3]     [,4]     [,5]
-## [1,]  2.15308 -1.26962  0.00000  0.00000  0.19733
-## [2,] -1.26962  2.79103 -1.32199 -0.08135  0.00978
-## [3,]  0.00000 -1.32199  2.85361 -1.16953 -0.00921
-## [4,]  0.00000 -0.08135 -1.16953  2.49459 -1.18914
-## [5,]  0.19733  0.00978 -0.00921 -1.18914  1.88096</code></pre>
-<p><br></p>
-<p><code>ADMMsigma</code> also has the capability to provide plots for the cross validation errors. This allows the user to analyze and manually select the appropriate tuning parameters. In the heatmap plot below, the bright, white areas of the heat map correspond to a better tuning parameter selection (low validation error). In the line graph, each line corresponds to a different <span class="math inline">\(\alpha\)</span> tuning parameter.</p>
-<p><br></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># produce CV heat map for ADMMsigma</span>
-ADMM =<span class="st"> </span><span class="kw">ADMMsigma</span>(X, <span class="dt">tol.abs =</span> <span class="fl">1e-08</span>, <span class="dt">tol.rel =</span> <span class="fl">1e-08</span>)
-<span class="kw">plot</span>(ADMM, <span class="dt">type =</span> <span class="st">&quot;heatmap&quot;</span>)</code></pre>
-<div class="figure" style="text-align: center"><span id="fig:ADMMsigmapackage1"></span>
-<img src="Manuscript_files/figure-html/ADMMsigmapackage1-1.png" alt="CV heatmap for ADMMsigma tutorial." width="80%"  />
-<p class="caption">
-FIGURE B.1: CV heatmap for ADMMsigma tutorial.
-</p>
-</div>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># produce line graph for CV errors for ADMMsigma</span>
-<span class="kw">plot</span>(ADMM, <span class="dt">type =</span> <span class="st">&quot;line&quot;</span>)</code></pre>
-<div class="figure" style="text-align: center"><span id="fig:ADMMsigmapackage2"></span>
-<img src="Manuscript_files/figure-html/ADMMsigmapackage2-1.png" alt="CV line graph for ADMMsigma tutorial." width="80%"  />
-<p class="caption">
-FIGURE B.2: CV line graph for ADMMsigma tutorial.
-</p>
-</div>
-<p><br></p>
-<p><code>ADMMsigma</code> has a number of more advanced options such as cross validation criteria, regularization path, and parallel CV that are explained in more detail on the project website at <a href="http://mattxgalloway.com/ADMMsigma/">mattxgalloway.com/ADMMsigma</a>.</p>
-
-</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="appendix.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="scpme-r-package.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+
+<a href="intro.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -310,7 +223,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/MGallow/oral_manuscript/edit/master/06-ADMMsigma-Package.Rmd",
+"link": "https://github.com/MGallow/oral_manuscript/edit/master/index.Rmd",
 "text": "Edit"
 },
 "history": {
