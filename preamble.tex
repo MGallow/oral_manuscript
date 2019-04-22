@@ -1,9 +1,10 @@
 \usepackage{booktabs}
 \usepackage{amsthm}
+\usepackage{amsmath}
 \usepackage{fancyhdr} % Required for custom headers
 \usepackage{lastpage} % Required to determine the last page for the footer
 \usepackage{extramarks} % Required for headers and footers
-\usepackage{graphicx}
+\usepackage{graphicx} % Required for knitr::include_graphics
 \makeatletter
 \def\thm@space@setup{%
   \thm@preskip=8pt plus 2pt minus 4pt
@@ -12,5 +13,5 @@
 \makeatother
 \pagestyle{fancy}
 % \pagestyle{empty}
-\usepackage[left]{lineno} % line number package
-\linenumbers % line number command
+% \usepackage[left]{lineno} % line number package
+% \linenumbers % line number command

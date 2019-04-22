@@ -226,10 +226,10 @@ sim6 %>% filter(N == 100, R == 10, sparse == 0.5, sigma == "tridiag", !model %in
 ```
 
 \newpage
-```{r, eval = T, echo = F, fig.cap = "ME by P (N = 100, R = 10, sparse = 0.5, sigma = tridiag)"}
+```{r, eval = T, echo = F, fig.cap = "Average model error for dimension p = 150."}
 
 # ME table (N = 100, sparse = 0.5, sigma = "tridiag", P = 150, R = 10)
-sim6 %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", P == 150, R == 10) %>% group_by(model) %>% summarise(error = mean(Error), sd = sd(Error)) %>% arrange(error) %>% pander(caption = "ME by P (N = 100, R = 10, sparse = 0.5, sigma = tridiag)")
+sim6 %>% filter(N == 100, sparse == 0.5, sigma == "tridiag", P == 150, R == 10) %>% rename(Model = model, error = Error) %>% group_by(Model) %>% summarise(Error = mean(error), SD = sd(error)) %>% arrange(Error) %>% pander(caption = "Average model error for dimension p = 150.")
 
 ```
 \vspace{0.5cm}

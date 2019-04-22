@@ -31,7 +31,7 @@ description: "Matt Galloway's Master's thesis."
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = FALSE, tidy = TRUE, out.width = "85%", fig.align = "center", out.extra = "")
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE, tidy = TRUE, tidy.opts = list(width.cutoff = 60), out.width = "85%", fig.align = "center", out.extra = "")
 
 # load packages
 library(magrittr)
@@ -47,3 +47,9 @@ knitr::write_bib(c(.packages(), "glasso", "ADMMsigma", "SCPME"), 'packages.bib')
 
 ```
 
+
+# Preface {-}
+
+I would like to thank my advisor Professor Adam Rothman for his guidance and support this past year. His enthusiasm towards this research area is ultimately what got me interested and I truly enjoyed having the opportunity to learn from him.
+
+My parents also deserve a note of appreciation and thanks -- one probably much longer than this. Graduate school's challenges extend far beyond the classroom and I'm so lucky to have you by my side.
