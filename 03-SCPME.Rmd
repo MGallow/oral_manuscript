@@ -32,11 +32,14 @@ A similar estimator was proposed by @dalal2017sparse when $C = 0$ but here we do
 
 Solving for $\hat{\Omega}$ in \@ref(eq:omegaloglik2) uses what we are going to call an *augmented ADMM algorithm*. Molstad and Rothman do not offer a name for this specific algorithm but it leverages the majorize-minimize principle in one of the steps in the algorithm - augmenting the original ADMM algorithm discussed in the previous chapter. Within the context of the proposed penalty, the original ADMM algorithm for precision matrix estimation would consist of iterating over the following three steps:
 
-\begin{align}
+\begin{equation}
+\begin{split}
   \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}L_{\rho}(\Omega, Z^{k}, \Lambda^{k}) \\
   Z^{k + 1} &= \arg\min_{Z \in \mathbb{R}^{n \times r}}L_{\rho}(\Omega^{k + 1}, Z, \Lambda^{k}) \\
   \Lambda^{k + 1} &= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right)
-\end{align}
+\end{split}
+(#\eq:augmentedprecision)
+\end{equation}
 
 where $L$, the augmented lagrangian, is defined as
 
@@ -53,8 +56,8 @@ Instead of solving the first step directly, the authors propose an alternative, 
 \begin{split}
   \tilde{L}_{\rho}\left(\Omega, Z^{k}, \Lambda^{k}\right) = f\left(\Omega\right) &+ g\left(Z^{k}\right) + tr\left[(\Lambda^{k})'(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \\
   &+ \frac{\rho}{2}vec\left(\Omega - \Omega^{k}\right)' Q\left(\Omega - \Omega^{k}\right)
-(\#eq:approx)
 \end{split}
+(\#eq:approx)
 \end{equation}
 
 where $Q = \tau I_{p} - \left(A'A \otimes BB'\right)$ and $\tau$ is chosen such that $Q$ is positive definite. Note that if $Q$ is positive definite, then $L_{\rho}\left(\cdot\right) \leq \tilde{L}\left(\cdot\right)$ for all $\Omega$ and $\tilde{L}$ is a majorizing function^[If $Q$ is positive definite, then $vec\left(\Omega - \Omega^{k} \right)'\rho Q\left(\Omega - \Omega^{k} \right)/2 > 0$ since $\rho > 0$ and $vec\left(\Omega - \Omega^{k}\right)$ is always nonzero whenever $\Omega \neq \Omega^{k}$.]. The *augmented ADMM* algorithm developed by Molstad and Rothman, which now includes the majorize-minimize principle, consists of the following repeated iterations:
@@ -64,8 +67,8 @@ where $Q = \tau I_{p} - \left(A'A \otimes BB'\right)$ and $\tau$ is chosen such 
   \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{tr\left[\left(S + G^{k}\right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\}\\
   Z^{k + 1} &= \arg\min_{Z \in \mathbb{R}^{n \times r}}\left\{\lambda\left\|Z\right\|_{1} + tr\left[(\Lambda^{k})'(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \right\} \\
   \Lambda^{k + 1} &= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right)
-(\#eq:augADMM)\notag
 \end{split}
+(\#eq:augADMM)\notag
 \end{equation}
 
 where $G^{k} = \rho A'\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}\Lambda^{k} \right)B'$. Each step in this algorithm can now conveniently be solved in closed-form and the full details of each can be found in the appendix \@ref(proofOmegak). The following theorem provides the simplified steps in the algorithm.
@@ -128,8 +131,8 @@ For proper convergence, we will require that both residuals are approximately eq
 \begin{split}
   \epsilon^{pri} &= \sqrt{nr}\epsilon^{abs} + \epsilon^{rel}\max\left\{ \left\| A\Omega^{k + 1}B \right\|_{F}, \left\| Z^{k + 1} \right\|_{F}, \left\| C \right\|_{F} \right\} \\
   \epsilon^{dual} &= p\epsilon^{abs} + \epsilon^{rel}\left\| \left( B(\Lambda^{k + 1})'A + A'\Lambda^{k + 1}B' \right)/2 \right\|_{F}
-(\#eq:scpmestopping)\notag
 \end{split}
+(\#eq:scpmestopping)\notag
 \end{equation}
 
 
@@ -438,8 +441,8 @@ We can use this conditional distribution along with the marginal distribution of
   &+\frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}\sum_{i = 1}^{n}tr\left( X_{i}X_{i}'\Omega_{x} \right) \\
   &= constant + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)'\left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{y | x} \right)\Omega_{y | x} \right] \\
   &+ \frac{n}{2}\log\left| \Omega_{x} \right| - \frac{n}{2}tr\left( S_{x}\Omega_{x} \right)
-(\#eq:partialjointloglik)\notag
 \end{split}
+(\#eq:partialjointloglik)\notag
 \end{equation}
 
 Optimizing this joint log-likelihood with respect to $\Omega_{x}$ reveals strong similiarities to the estimator that was derived from the SCPME framework:
@@ -448,8 +451,8 @@ Optimizing this joint log-likelihood with respect to $\Omega_{x}$ reveals strong
 \begin{split}
   \hat{\Omega}_{x} &= \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)'\left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)\Omega_{y | x} \right] + \frac{n}{2}tr\left( S_{x}\Omega_{x} \right) - \frac{n}{2}\log\left| \Omega_{x} \right| \right\} \\
   &= \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ tr\left( S_{x}\Omega_{x} \right) - \log\left| \Omega_{x} \right| + \frac{1}{n}\left\| \left( \mathbb{X}\Omega_{x}\Sigma_{xy} - \mathbb{Y} \right)\Omega_{y | x}^{1/2} \right\|_{F}^{2} \right\}
-(\#eq:omegajointloglik)\notag
 \end{split}
+(\#eq:omegajointloglik)\notag
 \end{equation}
 
 If it is the case that, given $X$, each of the $r$ responses are pairwise independent with equal variance so that $\Omega_{y | x}^{1/2} = \sigma_{y | x}I_{r}$ and we let $\lambda = 2\sigma_{y | x}^{2}/n$, then we have that

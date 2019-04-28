@@ -33,8 +33,8 @@ The estimator for $\mu$ that maximizes the log-likelihood is $\hat{\mu}^{mle} = 
 \begin{split}
   l(\Omega | X) &= \frac{n}{2}\log\left| \Omega \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \bar{X} \right)\left(X_{i} - \bar{X} \right)'\Omega \right] \\
   &= \frac{n}{2}\log\left| \Omega \right| - \frac{n}{2}tr\left( S\Omega \right)
-(\#eq:partialmaxloglik)\notag
 \end{split}
+(\#eq:partialmaxloglik)\notag
 \end{equation}
 
 where $S = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(X_{i} - \bar{X}\right)'/n$ is the usual sample estimator for the population covariance matrix, $\Sigma$. In addition to $\mu$, one could also derive the maximum likelihood estimator for $\Omega$. By setting the gradient of the partially maximized log-likelihood equal to zero, one could show that
@@ -126,8 +126,8 @@ where $\Lambda$ takes the role of $y$ as the lagrange multiplier. The ADMM algor
   \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[\Lambda^{k}\left(\Omega - Z^{k}\right)\right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} \right\} \\
   Z^{k + 1} &= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\} \\
   \Lambda^{k + 1} &= \Lambda^{k} + \rho\left( \Omega^{k + 1} - Z^{k + 1} \right)
-(\#eq:ADMMorig)
 \end{split}
+(\#eq:ADMMorig)
 \end{equation}
 
 Furthermore, it turns out that each step in this algorithm can be solved efficiently in closed-form. The full details of each can be found in the appendix \@ref(proofomegaalgo) but the following theorem provides the simplified steps in the algorithm.
@@ -177,8 +177,8 @@ Define $R^{k} = \Omega - Z^{k}$ and $U^{k} = \Lambda^{k}/\rho$ then
   tr\left[ \Lambda^{k}\left( \Omega - Z^{k} \right) \right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} &= tr\left[ \Lambda^{k}R^{k} \right] + \frac{\rho}{2}\left\| R^{k} \right\|_{F}^{2} \\
   &= \frac{\rho}{2}\left\| R^{k} + \Lambda^{k}/\rho \right\|_{F}^{2} - \frac{\rho}{2}\left\| \Lambda^{k}/\rho \right\|_{F}^{2} \\
   &= \frac{\rho}{2}\left\| R^{k} + U^{k} \right\|_{F}^{2} - \frac{\rho}{2}\left\| U^{k} \right\|_{F}^{2}
-(\#eq:scaled)\notag
 \end{split}
+(\#eq:scaled)\notag
 \end{equation}
 
 Therefore, a scaled-form ADMM algorithm can now be written as
@@ -188,8 +188,8 @@ Therefore, a scaled-form ADMM algorithm can now be written as
   \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\rho}{2}\left\| \Omega - Z^{k} + U^{k} \right\|_{F}^{2} \right\} \\
   Z^{k + 1} &= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z + U^{k} \right\|_{F}^{2} \right\} \\
   U^{k + 1} &= U^{k} + \Omega^{k + 1} - Z^{k + 1}
-(\#eq:ADMMscaled)
 \end{split}
+(\#eq:ADMMscaled)
 \end{equation}
 
 Note that there are limitations to using this method. Because the dual variable is scaled by $\rho$ (the step size), this form limits one to using a constant step size for all $k$ steps if no further adjustments are made to $U^{k}$.
@@ -207,8 +207,8 @@ Combining these three optimality conditions, Boyd suggests a stopping criterion 
 \begin{split}
   \epsilon^{pri} &= p\epsilon^{abs} + \epsilon^{rel}\max\left\{ \left\| \Omega^{k + 1} \right\|_{F}, \left\| Z^{k + 1} \right\|_{F} \right\} \\
   \epsilon^{dual} &= p\epsilon^{abs} + \epsilon^{rel}\left\| \Lambda^{k + 1} \right\|_{F}
-(\#eq:admmstopping)\notag
 \end{split}
+(\#eq:admmstopping)\notag
 \end{equation}
 
 

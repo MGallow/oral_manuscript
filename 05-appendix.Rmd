@@ -18,8 +18,8 @@ First start by taking the gradient with respect to $\Omega$:
 \begin{split}
   \nabla_{\Omega}&\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[\Lambda^{k}\left(\Omega - Z^{k}\right)\right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} \right\} \\
   &= S - \Omega^{-1} + \Lambda^{k} + \rho\left( \Omega - Z^{k} \right)
-(\#eq:appendixomegagradient)\notag
 \end{split}
+(\#eq:appendixomegagradient)\notag
 \end{equation}
 
 Note that because all of the variables are symmetric, we can ignore the symmetric constraint when deriving the gradient. Next set the gradient equal to zero and decompose $\Omega^{k + 1} = VDV'$ using spectral decomposition so that $D$ is a diagonal matrix with diagonal elements equal to the eigen values of $\Omega^{k + 1}$ and $V$ is the matrix with corresponding eigen vectors as columns so that
@@ -68,8 +68,8 @@ Start by taking the subgradient with respect to $Z$:
   \partial&\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\} \\
   &= \partial\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] \right\} + \nabla_{\Omega}\left\{ tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\} \\
   &= \lambda(1 - \alpha)Z + \mbox{sign}(Z)\lambda\alpha - \Lambda^{k} - \rho\left( \Omega^{k + 1} - Z \right)
-(\#eq:appendixZZgradient)\notag
 \end{split}
+(\#eq:appendixZZgradient)\notag
 \end{equation}
 
 where sign is the elementwise sign operator. By setting the gradient/sub-differential equal to zero, we have that
@@ -100,8 +100,8 @@ This implies that $\mbox{sign}(Z_{ij}) = \mbox{sign}(\rho\Omega_{ij}^{k + 1} + \
 \begin{split}
 Z_{ij}^{k + 1} &= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{sign}\left(\rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k}\right)\left( \left| \rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k} \right| - \lambda\alpha \right)_{+} \\
 &= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{soft}\left(\rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k}, \lambda\alpha\right)
-(\#eq:appendixZZproof)\notag
 \end{split}
+(\#eq:appendixZZproof)\notag
 \end{equation}
 
 where soft is the soft-thresholding function.
@@ -120,8 +120,8 @@ Here we want to show that $0 \in \rho\left(Z^{k + 1} - Z^{k}\right)$ which is a 
   &= \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k} + \rho\left(\Omega^{k + 1} - Z^{k + 1}\right) + \rho\left(Z^{k + 1} - Z^{k}\right) \\
   &= \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k + 1} + \rho\left(Z^{k + 1} - Z^{k}\right) \\
   \Rightarrow 0 &\in \rho\left( Z^{k + 1} - Z^{k} \right)
-(\#eq:appendixdualresidual)\notag
 \end{split}
+(\#eq:appendixdualresidual)\notag
 \end{equation}
 
 
@@ -135,8 +135,8 @@ Here we use the primal optimality condition $\Omega^{k + 1} - Z^{k + 1} = 0$ to 
   0 &\in \partial \left\{ g\left(Z^{k + 1}\right) + tr\left[ \Lambda^{k}\left( \Omega^{k + 1} - Z^{k + 1} \right) \right] + \rho\left\| \Omega^{k + 1} - Z^{k + 1} \right\|_{F}^{2} \right\} \\
   &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k} - \rho\left(\Omega^{k + 1} - Z^{k + 1}\right) \\
   &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1} \\
-(\#eq:appendixdualopt)\notag
 \end{split}
+(\#eq:appendixdualopt)\notag
 \end{equation}
 
 
@@ -150,8 +150,8 @@ To see why this particular function was used, consider the Taylor's expansion of
   \frac{\rho}{2}\left\| A\Omega B - Z^{k} - C \right\|_{F}^{2} &\approx \frac{\rho}{2}\left\| A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2} \\
   &+ \frac{\rho}{2}vec\left( \Omega - \Omega^{k}\right)'\left(A'A \otimes BB'\right)vec\left(\Omega - \Omega^{k}\right) \\
   &+ \rho vec\left(\Omega - \Omega^{k}\right)'vec\left(BB'\Omega^{k}A'A - B(Z^{k})'A - BC'A \right)
-(\#eq:taylors)\notag
 \end{split}
+(\#eq:taylors)\notag
 \end{equation}
 
 Note that the gradient and hessian, respectively, are
@@ -176,8 +176,8 @@ This implies that
   &+ \rho vec\left(\Omega - \Omega^{k}\right)' vec\left(BB'\Omega^{k}A'A - B(Z^{k})'A - BC'A \right) \\
   &= \frac{\rho}{2}\left\| A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2} + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \\
   &+ \rho tr\left[\left(\Omega - \Omega^{k}\right)\left(BB'\Omega^{k}A'A - B(Z^{k})'A - BC'A \right)\right]
-(\#eq:penapprox)\notag
 \end{split}
+(\#eq:penapprox)\notag
 \end{equation}
 
 Let us now plug in this equality into our optimization problem that includes the augmented lagrangian:
@@ -196,8 +196,8 @@ Let us now plug in this equality into our optimization problem that includes the
   &- \left.\begin{matrix} \log\left|\Omega\right| + \rho\tau\left\|\Omega - \Omega^{k}\right\|_{F}^{2}/2 \end{matrix}\right\} \\
   &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{
  tr\left[\left(S + G^{k} \right)\Omega\right] - \log\left|\Omega\right| + \rho\tau\left\|\Omega - \Omega^{k}\right\|_{F}^{2}/2 \right\} \\
-(\#eq:omegaapprox)\notag
 \end{split}
+(\#eq:omegaapprox)\notag
 \end{equation}
 
 where $G^{k} = \rho A'(A\Omega^{k}B - Z^{k} - C + \Lambda^{k}/\rho)B'$.
@@ -219,8 +219,8 @@ First start by taking the gradient with respect to $\Omega$:
   &\nabla_{\Omega}\left\{tr\left[\left(S + G^{k}\right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\} \\
   &= 2S - S\circ I_{p} + G^{k} + (G^{k})' - G^{k}\circ I_{p} - 2\Omega^{-1} + \Omega^{-1}\circ I_{p} \\
   &+ \frac{\rho\tau}{2}\left[2\Omega - 2(\Omega^{k})' + 2\Omega' - 2\Omega^{k} - 2(\Omega - \Omega^{k})'\circ I_{p} \right]
-(\#eq:appendixomegagradient2)\notag
 \end{split}
+(\#eq:appendixomegagradient2)\notag
 \end{equation}
 
 Note that we need to honor the symmetric constraint given by $\Omega$. By setting the gradient equal to zero and multiplying all off-diagonal elements by $1/2$, this simplifies to
@@ -276,8 +276,8 @@ Start by taking the subgradient with respect to $Z$:
   \partial&\left\{ \lambda\left\| Z \right\|_{1} + tr\left[(\Lambda^{k})'\left(A\Omega^{k + 1}B - Z - C\right)\right] + \frac{\rho}{2}\left\| A\Omega^{k + 1}B - Z - C \right\|_{F}^{2} \right\} \\
   &= \partial\left\{ \lambda\left\| Z \right\|_{1} \right\} + \nabla_{\Omega}\left\{ tr\left[(\Lambda^{k})'\left(A\Omega^{k + 1}B - Z - C\right)\right] + \frac{\rho}{2}\left\| A\Omega^{k + 1}B - Z - C \right\|_{F}^{2} \right\} \\
   &= \mbox{sign}(Z)\lambda - \Lambda^{k} - \rho\left( A\Omega^{k + 1}B - Z - C \right)
-(\#eq:appendixZZgradient2)\notag
 \end{split}
+(\#eq:appendixZZgradient2)\notag
 \end{equation}
 
 where $\mbox{sign(Z)}$ is the elementwise sign operator. By setting the gradient/sub-differential equal to zero, we arrive at the following equivalence:
@@ -308,8 +308,8 @@ This implies that $\mbox{sign}\left(Z_{ij}^{k + 1}\right) = \mbox{sign}\left(\rh
 \begin{split}
 Z_{ij}^{k + 1} &= \frac{1}{\rho}\mbox{sign}\left(\rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k}\right)\left( \left| \rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k} \right| - \lambda \right)_{+} \\
 &= \frac{1}{\rho}\mbox{soft}\left(\rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k}, \lambda\right)
-(\#eq:appendixZZproof2)\notag
 \end{split}
+(\#eq:appendixZZproof2)\notag
 \end{equation}
 
 where soft is the soft-thresholding function.
@@ -333,8 +333,8 @@ Here we want to show that $0 \in \rho\left( B(Z^{k + 1} - Z^{k})'A + A'(Z^{k + 1
   &+ \left[ A'\left(\Lambda^{k} + \rho(A\Omega^{k + 1}B - Z^{k + 1} - c)B \right)B' \right]/2 + \rho\left(B(Z^{k + 1} - Z^{k})'A + A'(Z^{k + 1} - Z^{k})B' \right)/2 \\
   &= \partial f\left(\Omega^{k + 1} \right) + \left(B(\Lambda^{k + 1})'A + A'\Lambda^{k + 1}B' \right)/2 + \rho\left(B(Z^{k + 1} - Z^{k})'A + A'(Z^{k + 1} - Z^{k})B' \right)/2 \\
   \Rightarrow 0 &\in \rho\left( B(Z^{k + 1} - Z^{k})'A + A'(Z^{k + 1} - Z^{k})B' \right)/2
-(\#eq:appendixstopproof)\notag
 \end{split}
+(\#eq:appendixstopproof)\notag
 \end{equation}
 
 
@@ -358,8 +358,8 @@ First start by taking the gradient with respect to $\Omega$:
   &= 2S - S\circ I_{p} - 2\Omega^{-1} + \Omega^{-1}\circ I_{p} + \lambda\mathbb{X}'\mathbb{X}\Omega\Sigma_{xy}\Sigma_{xy}' + \lambda\Sigma_{xy}\Sigma_{xy}'\Omega\mathbb{X}'\mathbb{X} \\
   &- \lambda\mathbb{X}'\mathbb{X}\Omega\Sigma_{xy}\Sigma_{xy}'\circ I_{p} - \Sigma_{xy}\mathbb{Y}'\mathbb{X} - \mathbb{X}'\mathbb{Y}\Sigma_{xy} + \Sigma_{xy}\mathbb{Y}'\mathbb{X}\circ I_{P} \\
   \Rightarrow 0 &= S - \hat{\Omega}^{-1} + \frac{\lambda}{2}\left(\mathbb{X}'\mathbb{X}\hat{\Omega}\Sigma_{xy}\Sigma_{xy}' + \Sigma_{xy}\Sigma_{xy}'\hat{\Omega}\mathbb{X}'\mathbb{X} \right) - \lambda\Sigma_{xy}\mathbb{Y}'\mathbb{X}
-(\#eq:penregressionproof)\notag
 \end{split}
+(\#eq:penregressionproof)\notag
 \end{equation}
 
 Note that we cannot isolate $\hat{\Omega}$.
