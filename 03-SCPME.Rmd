@@ -38,7 +38,7 @@ Solving for $\hat{\Omega}$ in \@ref(eq:omegaloglik2) uses what we are going to c
   Z^{k + 1} &= \arg\min_{Z \in \mathbb{R}^{n \times r}}L_{\rho}(\Omega^{k + 1}, Z, \Lambda^{k}) \\
   \Lambda^{k + 1} &= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right)
 \end{split}
-(#\eq:augmentedprecision)
+(\#eq:augmentedprecision)
 \end{equation}
 
 where $L$, the augmented lagrangian, is defined as
