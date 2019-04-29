@@ -25,7 +25,7 @@
 <meta name="author" content="Matt Galloway">
 
 
-<meta name="date" content="2019-04-24">
+<meta name="date" content="2019-04-29">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -198,15 +198,18 @@ P\left(\Omega\right) = \lambda\left\| A\Omega B - C \right\|_{1}
 <div id="augmented-admm-algorithm" class="section level2">
 <h2><span class="header-section-number">3.1</span> Augmented ADMM Algorithm</h2>
 <p>Solving for <span class="math inline">\(\hat{\Omega}\)</span> in <a href="scpme.html#eq:omegaloglik2">(3.3)</a> uses what we are going to call an <em>augmented ADMM algorithm</em>. Molstad and Rothman do not offer a name for this specific algorithm but it leverages the majorize-minimize principle in one of the steps in the algorithm - augmenting the original ADMM algorithm discussed in the previous chapter. Within the context of the proposed penalty, the original ADMM algorithm for precision matrix estimation would consist of iterating over the following three steps:</p>
-<p><span class="math display">\[\begin{align}
+<p><span class="math display" id="eq:augmentedprecision">\[\begin{equation}
+\begin{split}
   \Omega^{k + 1} &amp;= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}L_{\rho}(\Omega, Z^{k}, \Lambda^{k}) \\
   Z^{k + 1} &amp;= \arg\min_{Z \in \mathbb{R}^{n \times r}}L_{\rho}(\Omega^{k + 1}, Z, \Lambda^{k}) \\
   \Lambda^{k + 1} &amp;= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right)
-\end{align}\]</span></p>
+\end{split}
+\tag{3.4}
+\end{equation}\]</span></p>
 <p>where <span class="math inline">\(L\)</span>, the augmented lagrangian, is defined as</p>
 <p><span class="math display" id="eq:auglagrange3">\[\begin{equation}
 L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[\Lambda &#39;\left(A\Omega B - Z - C\right)\right] + \frac{\rho}{2}\left\|A\Omega B - Z - C\right\|_{F}^{2}
-\tag{3.4}
+\tag{3.5}
 \end{equation}\]</span></p>
 <p>Similar to the previous chapter, <span class="math inline">\(f\left(\Omega\right) = tr\left(S\Omega\right) - \log\left|\Omega\right|\)</span> and <span class="math inline">\(g\left(Z\right) = \lambda\left\|Z\right\|_{1}\)</span>. In fact, the details of the algorithm thus far are identical to the previous approach except that we are replacing <span class="math inline">\(\Omega - Z\)</span> with <span class="math inline">\(A\Omega B - Z - C\)</span> in the augmented lagrangian and the dual update <span class="math inline">\(\Lambda^{k + 1}\)</span>.</p>
 <p>Instead of solving the first step directly, the authors propose an alternative, approximating objective function, which we will denote as <span class="math inline">\(\tilde{L}\)</span>, that is based on the majorize-minimize principle<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. The purpose of this approximating function is the desire to solve the first step of the algorithm in closed-form. The ADMM algorithm with this modification based on majorize-minimize principle is also found in <span class="citation">Lange (<a href="#ref-lange2016mm">2016</a>)</span> but here we define the approximating function as</p>
@@ -214,8 +217,8 @@ L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[
 \begin{split}
   \tilde{L}_{\rho}\left(\Omega, Z^{k}, \Lambda^{k}\right) = f\left(\Omega\right) &amp;+ g\left(Z^{k}\right) + tr\left[(\Lambda^{k})&#39;(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \\
   &amp;+ \frac{\rho}{2}vec\left(\Omega - \Omega^{k}\right)&#39; Q\left(\Omega - \Omega^{k}\right)
-\tag{3.5}
 \end{split}
+\tag{3.6}
 \end{equation}\]</span></p>
 <p>where <span class="math inline">\(Q = \tau I_{p} - \left(A&#39;A \otimes BB&#39;\right)\)</span> and <span class="math inline">\(\tau\)</span> is chosen such that <span class="math inline">\(Q\)</span> is positive definite. Note that if <span class="math inline">\(Q\)</span> is positive definite, then <span class="math inline">\(L_{\rho}\left(\cdot\right) \leq \tilde{L}\left(\cdot\right)\)</span> for all <span class="math inline">\(\Omega\)</span> and <span class="math inline">\(\tilde{L}\)</span> is a majorizing function<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. The <em>augmented ADMM</em> algorithm developed by Molstad and Rothman, which now includes the majorize-minimize principle, consists of the following repeated iterations:</p>
 <p><span class="math display" id="eq:augADMM">\[\begin{equation}
@@ -223,8 +226,8 @@ L_{\rho}(\Omega, Z, \Lambda) = f\left(\Omega\right) + g\left(Z\right) + tr\left[
   \Omega^{k + 1} &amp;= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{tr\left[\left(S + G^{k}\right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\}\\
   Z^{k + 1} &amp;= \arg\min_{Z \in \mathbb{R}^{n \times r}}\left\{\lambda\left\|Z\right\|_{1} + tr\left[(\Lambda^{k})&#39;(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \right\} \\
   \Lambda^{k + 1} &amp;= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right)
-\tag{3.6}\notag
 \end{split}
+\tag{3.7}\notag
 \end{equation}\]</span></p>
 <p>where <span class="math inline">\(G^{k} = \rho A&#39;\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}\Lambda^{k} \right)B&#39;\)</span>. Each step in this algorithm can now conveniently be solved in closed-form and the full details of each can be found in the appendix <a href="appendix.html#proofOmegak">A.0.6</a>. The following theorem provides the simplified steps in the algorithm.</p>
 
@@ -236,35 +239,35 @@ Define the soft-thresholding function as <span class="math inline">\(\mbox{soft}
 </ol>
 <p><span class="math display" id="eq:Gk">\[\begin{equation}
 G^{k} = \rho A&#39;\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}\Lambda^{k} \right)B&#39;
-\tag{3.7}\notag
+\tag{3.8}\notag
 \end{equation}\]</span></p>
 <ol start="2" style="list-style-type: decimal">
 <li>Via spectral decomposition, decompose</li>
 </ol>
 <p><span class="math display" id="eq:VQV">\[\begin{equation}
 S + \left( G^{k} + (G^{k})&#39; \right)/2 - \rho\tau\Omega^{k} = VQV&#39;
-\tag{3.8}\notag
+\tag{3.9}\notag
 \end{equation}\]</span></p>
 <ol start="3" style="list-style-type: decimal">
 <li>Update <span class="math inline">\(\Omega^{k + 1}\)</span>.<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></li>
 </ol>
 <p><span class="math display" id="eq:Omegak">\[\begin{equation}
 \Omega^{k + 1} = V\left( -Q + (Q^{2} + 4\rho\tau I_{p})^{1/2} \right)V&#39; /(2\rho\tau)
-\tag{3.9}
+\tag{3.10}
 \end{equation}\]</span></p>
 <ol start="4" style="list-style-type: decimal">
 <li>Update <span class="math inline">\(Z^{k + 1}\)</span> with element-wise soft-thresholding for the resulting matrix.<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></li>
 </ol>
 <p><span class="math display" id="eq:Zk">\[\begin{equation}
 Z^{k + 1} = \mbox{soft}\left( A\Omega^{k + 1}B - C + \rho^{-1}\Lambda^{k}, \rho^{-1}\lambda \right)
-\tag{3.10}
+\tag{3.11}
 \end{equation}\]</span></p>
 <ol start="5" style="list-style-type: decimal">
 <li>Update <span class="math inline">\(\Lambda^{k + 1}\)</span>.</li>
 </ol>
 <p><span class="math display" id="eq:Yk">\[\begin{equation}
 \Lambda^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)
-\tag{3.11}\notag
+\tag{3.12}\notag
 \end{equation}\]</span></p>
 </div>
 
@@ -273,15 +276,15 @@ Z^{k + 1} = \mbox{soft}\left( A\Omega^{k + 1}B - C + \rho^{-1}\Lambda^{k}, \rho^
 <p>A possibe stopping criterion for this framework is one derived from similar optimality conditions used in the previous chapter in section <a href="precision-matrix-estimation.html#ADMMstop">2.2.2</a>. The primal optimality condition here is that <span class="math inline">\(A\Omega^{k + 1}B - Z^{k + 1} - C = 0\)</span> and the two dual optimality conditions are <span class="math inline">\(0 \in \partial f\left(\Omega^{k + 1}\right) + \left(B(\Lambda^{k + 1})&#39;A + A&#39;\Lambda^{k + 1}B&#39; \right)/2\)</span> and <span class="math inline">\(0 \in \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1}\)</span>. Similarly, we will define the left-hand side of the primal optimality condition as the primal residual <span class="math inline">\(r^{k + 1} = A\Omega^{k + 1}B - Z^{k + 1} - C\)</span> and the dual residual<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> as</p>
 <p><span class="math display" id="eq:stopproof">\[\begin{equation}
 s^{k + 1} = \frac{\rho}{2}\left( B(Z^{k + 1} - Z^{k})&#39;A + A&#39;(Z^{k + 1} - Z^{k})B&#39; \right)
-\tag{3.12}\notag
+\tag{3.13}\notag
 \end{equation}\]</span></p>
 <p>For proper convergence, we will require that both residuals are approximately equal to zero. Similar to the stopping criterion discussed previously, one possibility is to set <span class="math inline">\(\epsilon^{rel} = \epsilon^{abs} = 10^{-3}\)</span> and stop the algorithm when <span class="math inline">\(\epsilon^{pri} \leq \left\| r^{k + 1} \right\|_{F}\)</span> and <span class="math inline">\(\epsilon^{dual} \leq \left\| s^{k + 1} \right\|_{F}\)</span> where</p>
 <p><span class="math display" id="eq:scpmestopping">\[\begin{equation}
 \begin{split}
   \epsilon^{pri} &amp;= \sqrt{nr}\epsilon^{abs} + \epsilon^{rel}\max\left\{ \left\| A\Omega^{k + 1}B \right\|_{F}, \left\| Z^{k + 1} \right\|_{F}, \left\| C \right\|_{F} \right\} \\
   \epsilon^{dual} &amp;= p\epsilon^{abs} + \epsilon^{rel}\left\| \left( B(\Lambda^{k + 1})&#39;A + A&#39;\Lambda^{k + 1}B&#39; \right)/2 \right\|_{F}
-\tag{3.13}\notag
 \end{split}
+\tag{3.14}\notag
 \end{equation}\]</span></p>
 </div>
 </div>
@@ -290,17 +293,17 @@ s^{k + 1} = \frac{\rho}{2}\left( B(Z^{k + 1} - Z^{k})&#39;A + A&#39;(Z^{k + 1} -
 <p>One of the research directions mentioned in <span class="citation">Molstad and Rothman (<a href="#ref-molstad2017shrinking">2017</a>)</span> that was not further explored was the application of the SCPME framework to regression. Utilizing the fact that the population regression coefficient matrix <span class="math inline">\(\beta \equiv \Omega_{x}\Sigma_{xy}\)</span> for predictors, <span class="math inline">\(X\)</span>, and the responses, <span class="math inline">\(Y\)</span>, they point out that their framework could allow for the simultaneous estimation of <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\Omega_{x}\)</span>. Like <span class="citation">Witten and Tibshirani (<a href="#ref-witten2009covariance">2009</a>)</span>, this approach would estimate the forward regression coefficient matrix while using shrinkage estimators for the marginal population precision matrix for the predictors. For example, recall that the general optimization problem outlined in the SCPME framework is to estimate <span class="math inline">\(\hat{\Omega}\)</span> such that</p>
 <p><span class="math display" id="eq:penloglik3">\[\begin{equation}
   \hat{\Omega} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr(S\Omega) - \log\left| \Omega \right| + \lambda\left\| A\Omega B - C \right\|_{1} \right\}
-\tag{3.14}\notag
+\tag{3.15}\notag
 \end{equation}\]</span></p>
 <p>If the user specifies that <span class="math inline">\(A = I_{p}, B = \Sigma_{xy}, C = 0, \mbox{ and } \Omega_{x}\)</span> is the precision matrix for the predictors, then the optimization problem of interest is now</p>
 <p><span class="math display" id="eq:penloglik4">\[\begin{equation}
   \hat{\Omega}_{x} = \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ tr(S_{x}\Omega_{x}) - \log\left| \Omega_{x} \right| + \lambda\left\| \Omega_{x} \Sigma_{xy} \right\|_{1} \right\} \\
-\tag{3.15}\notag
+\tag{3.16}\notag
 \end{equation}\]</span></p>
 <p>Specifically, this optimization problem has the effect of deriving an estimate of <span class="math inline">\(\Omega_{x}\)</span> while assuming sparsity in the forward regression coefficient <span class="math inline">\(\beta\)</span>. Of course, in practice we do not know the true covariance matrix <span class="math inline">\(\Sigma_{xy}\)</span> but we might consider using the sample estimate <span class="math inline">\(\hat{\Sigma}_{xy} = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(Y_{i} - \bar{Y}\right)&#39;/n\)</span> in place of <span class="math inline">\(\Sigma_{xy}\)</span>. We could then use our estimator, <span class="math inline">\(\hat{\Omega}_{x}\)</span>, to construct the estimated forward regression coefficient matrix <span class="math inline">\(\hat{\beta} = \hat{\Omega}_{x}\hat{\Sigma}_{xy}\)</span>. Estimators such as these are truly novel an can conveniently be estimated by the SCPME framework. Another such estimator that is a product of this new framework is one where we construct <span class="math inline">\(A \mbox{ and } C\)</span> similarly but take <span class="math inline">\(B = \left[ \Sigma_{xy}, I_{p} \right]\)</span> so that the identity matrix is appended to the cross-covariance matrix of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. In this case, not only are we assuming that <span class="math inline">\(\beta\)</span> is sparse, but we are also assuming sparsity in <span class="math inline">\(\Omega\)</span>.</p>
 <p><span class="math display" id="eq:pen4">\[\begin{equation}
 P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \lambda\left\| \Omega\left[\Sigma_{xy}, I_{p}\right] \right\|_{1} = \lambda\left\| \beta \right\|_{1} + \lambda\left\| \Omega \right\|_{1}
-\tag{3.16}\notag
+\tag{3.17}\notag
 \end{equation}\]</span></p>
 <p>Like before, we could use <span class="math inline">\(\hat{\Sigma}_{xy}\)</span> as a replacement and take our resulting estimator, <span class="math inline">\(\hat{\Omega}_{x}\)</span>, to construct the estimated forward regression coefficient matrix <span class="math inline">\(\hat{\beta} = \hat{\Omega}_{x}\hat{\Sigma}_{xy}\)</span>. The embedded assumptions here are that not all predictors in <span class="math inline">\(X\)</span> are useful in predicting the response, <span class="math inline">\(Y\)</span>, <em>and</em> that a number of the predictors are conditionally independent of one another. These are assumptions that are quite reasonable in practice and in the next section we offer a short simulation comparing these new estimators to related and competing prediction methods.</p>
 </div>
@@ -507,7 +510,7 @@ FIGURE 3.3: The oracle precision matrices were tri-diagonal with dimension p = 2
 <p>Apart from the two SCPME estimators discussed in the previous section, the generality of the SCPME framework allows for many previously unconceptualized precision matrix estimators to be explored. One estimator that was concieved of in our work but deserves further attention in future research is of the form</p>
 <p><span class="math display" id="eq:penregression">\[\begin{equation}
 \hat{\Omega}_{x} = \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ tr(S_{x}\Omega_{x}) - \log\left| \Omega_{x} \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega_{x} \Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
-\tag{3.17}\notag
+\tag{3.18}\notag
 \end{equation}\]</span></p>
 <p>For clarity in regards to the SCPME framework, <span class="math inline">\(A = \mathbb{X}, B = \Sigma_{xy}, \mbox{ and } C = \mathbb{Y}\)</span>. As before, <span class="math inline">\(\mathbb{X}\)</span> is the <span class="math inline">\(n \times p\)</span> matrix with rows <span class="math inline">\(X_{i} \in \mathbb{R}^{p}\)</span> for <span class="math inline">\(i = 1,..., n\)</span> and the script notation denotes that the matrix has been column-centered. The matrix <span class="math inline">\(\mathbb{Y}\)</span> is a similar representation for the observed responses <span class="math inline">\(Y_{i} \in \mathbb{R}^{r}\)</span>. Also note that here we are using the Frobenius norm instead of the matrix <span class="math inline">\(l_{1}\)</span>-norm but this replacement requires only a slight modification of the augmented ADMM algorithm for optimization - details of which will be presented later.</p>
 <p>This optimization problem estimates a precision matrix that balances minimizing the gaussian negative log-likelihood for <span class="math inline">\(\Omega_{x}\)</span> with minimizing the squared prediction error for the forward regression model. In other words, the objective function aims to penalize estimates, determined by <span class="math inline">\(\lambda\)</span>, that too heavily favor maximizing the marginal likelihood for <span class="math inline">\(X\)</span> over the predictive performance of the conditional model <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span>. This estimator also reveals an interesting connection to the joint log-likelihood of the two random variables. To see this, let us suppose that we have <span class="math inline">\(n\)</span> independent copies of the random pair <span class="math inline">\((Y_{i}, X_{i})\)</span> and we assume a linear relationship such that</p>
@@ -525,21 +528,21 @@ Y_{i} | X_{i} \sim N_{r}\left( \mu_{y} + \beta&#39;\left(X_{i} - \mu_{x}\right),
   &amp;+\frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}\sum_{i = 1}^{n}tr\left( X_{i}X_{i}&#39;\Omega_{x} \right) \\
   &amp;= constant + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)&#39;\left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{y | x} \right)\Omega_{y | x} \right] \\
   &amp;+ \frac{n}{2}\log\left| \Omega_{x} \right| - \frac{n}{2}tr\left( S_{x}\Omega_{x} \right)
-\tag{3.18}\notag
 \end{split}
+\tag{3.19}\notag
 \end{equation}\]</span></p>
 <p>Optimizing this joint log-likelihood with respect to <span class="math inline">\(\Omega_{x}\)</span> reveals strong similiarities to the estimator that was derived from the SCPME framework:</p>
 <p><span class="math display" id="eq:omegajointloglik">\[\begin{equation}
 \begin{split}
   \hat{\Omega}_{x} &amp;= \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)&#39;\left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)\Omega_{y | x} \right] + \frac{n}{2}tr\left( S_{x}\Omega_{x} \right) - \frac{n}{2}\log\left| \Omega_{x} \right| \right\} \\
   &amp;= \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ tr\left( S_{x}\Omega_{x} \right) - \log\left| \Omega_{x} \right| + \frac{1}{n}\left\| \left( \mathbb{X}\Omega_{x}\Sigma_{xy} - \mathbb{Y} \right)\Omega_{y | x}^{1/2} \right\|_{F}^{2} \right\}
-\tag{3.19}\notag
 \end{split}
+\tag{3.20}\notag
 \end{equation}\]</span></p>
 <p>If it is the case that, given <span class="math inline">\(X\)</span>, each of the <span class="math inline">\(r\)</span> responses are pairwise independent with equal variance so that <span class="math inline">\(\Omega_{y | x}^{1/2} = \sigma_{y | x}I_{r}\)</span> and we let <span class="math inline">\(\lambda = 2\sigma_{y | x}^{2}/n\)</span>, then we have that</p>
 <p><span class="math display" id="eq:omegajointmle">\[\begin{equation}
 \hat{\Omega}_{x} = \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ tr\left( S_{x}\Omega_{x} \right) - \log\left| \Omega_{x} \right| + \frac{\lambda}{2}\left\| \mathbb{X}\Omega_{x}\Sigma_{xy} - \mathbb{Y} \right\|_{F}^{2} \right\}
-\tag{3.20}\notag
+\tag{3.21}\notag
 \end{equation}\]</span></p>
 <p>This is exactly the estimator conceived of previously. Of course, throughout this derivation there were several assumptions that were made and in practice we do not know the true values of neither <span class="math inline">\(\Omega_{y | x}\)</span> nor <span class="math inline">\(\Sigma_{xy}\)</span>. However, we can see that this estimator is solving a very similar problem to that of optimizing the joint log-likelihood with respect to <span class="math inline">\(\Omega_{x}\)</span>. We think this estimator and related ones deserve attention in future work.</p>
 <p>The algorithm for solving this optimization problem is below. Note that no closed-form solution exists and so we must resort to some iterative algorithm similar to the SCPME augmented ADMM algorithm<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>. The only difference here is that in step four we no longer require elementwise soft-thresholding.</p>
@@ -589,11 +592,11 @@ Set <span class="math inline">\(k = 0\)</span> and initialize <span class="math 
 <div class="footnotes">
 <hr />
 <ol start="5">
-<li id="fn5"><p>Further explanation of the majorizing function <a href="scpme.html#eq:approx">(3.5)</a> in section <a href="appendix.html#taylorsexp">A.0.5</a><a href="scpme.html#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>Further explanation of the majorizing function <a href="scpme.html#eq:approx">(3.6)</a> in section <a href="appendix.html#taylorsexp">A.0.5</a><a href="scpme.html#fnref5" class="footnote-back">↩</a></p></li>
 <li id="fn6"><p>If <span class="math inline">\(Q\)</span> is positive definite, then <span class="math inline">\(vec\left(\Omega - \Omega^{k} \right)&#39;\rho Q\left(\Omega - \Omega^{k} \right)/2 &gt; 0\)</span> since <span class="math inline">\(\rho &gt; 0\)</span> and <span class="math inline">\(vec\left(\Omega - \Omega^{k}\right)\)</span> is always nonzero whenever <span class="math inline">\(\Omega \neq \Omega^{k}\)</span>.<a href="scpme.html#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>Proof of <a href="scpme.html#eq:Omegak">(3.9)</a> in section <a href="appendix.html#proofOmegak">A.0.6</a><a href="scpme.html#fnref7" class="footnote-back">↩</a></p></li>
-<li id="fn8"><p>Proof of <a href="scpme.html#eq:Zk">(3.10)</a> in section <a href="appendix.html#proofZk">A.0.7</a><a href="scpme.html#fnref8" class="footnote-back">↩</a></p></li>
-<li id="fn9"><p>Proof of <a href="scpme.html#eq:stopproof">(3.12)</a> in section <a href="appendix.html#proofstopproof">A.0.8</a>.<a href="scpme.html#fnref9" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>Proof of <a href="scpme.html#eq:Omegak">(3.10)</a> in section <a href="appendix.html#proofOmegak">A.0.6</a><a href="scpme.html#fnref7" class="footnote-back">↩</a></p></li>
+<li id="fn8"><p>Proof of <a href="scpme.html#eq:Zk">(3.11)</a> in section <a href="appendix.html#proofZk">A.0.7</a><a href="scpme.html#fnref8" class="footnote-back">↩</a></p></li>
+<li id="fn9"><p>Proof of <a href="scpme.html#eq:stopproof">(3.13)</a> in section <a href="appendix.html#proofstopproof">A.0.8</a>.<a href="scpme.html#fnref9" class="footnote-back">↩</a></p></li>
 <li id="fn10"><p>Proof in section <a href="appendix.html#proofpenregression">A.0.9</a>.<a href="scpme.html#fnref10" class="footnote-back">↩</a></p></li>
 </ol>
 </div>

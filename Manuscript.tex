@@ -126,7 +126,7 @@
 
 \title{Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression}
 \author{Matt Galloway}
-\date{2019-04-24}
+\date{2019-04-29}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -218,8 +218,8 @@ The estimator for \(\mu\) that maximizes the log-likelihood is \(\hat{\mu}^{mle}
 \begin{split}
   l(\Omega | X) &= \frac{n}{2}\log\left| \Omega \right| - tr\left[ \frac{1}{2}\sum_{i = 1}^{n}\left(X_{i} - \bar{X} \right)\left(X_{i} - \bar{X} \right)'\Omega \right] \\
   &= \frac{n}{2}\log\left| \Omega \right| - \frac{n}{2}tr\left( S\Omega \right)
-\label{eq:partialmaxloglik}\notag
 \end{split}
+\label{eq:partialmaxloglik}\notag
 \end{equation}
 
 where \(S = \sum_{i = 1}^{n}\left(X_{i} - \bar{X}\right)\left(X_{i} - \bar{X}\right)'/n\) is the usual sample estimator for the population covariance matrix, \(\Sigma\). In addition to \(\mu\), one could also derive the maximum likelihood estimator for \(\Omega\). By setting the gradient of the partially maximized log-likelihood equal to zero, one could show that
@@ -310,8 +310,8 @@ where \(\Lambda\) takes the role of \(y\) as the lagrange multiplier. The ADMM a
   \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[\Lambda^{k}\left(\Omega - Z^{k}\right)\right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} \right\} \\
   Z^{k + 1} &= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\} \\
   \Lambda^{k + 1} &= \Lambda^{k} + \rho\left( \Omega^{k + 1} - Z^{k + 1} \right)
-\label{eq:ADMMorig}
 \end{split}
+\label{eq:ADMMorig}
 \end{equation}
 
 Furthermore, it turns out that each step in this algorithm can be solved efficiently in closed-form. The full details of each can be found in the appendix \ref{proofomegaalgo} but the following theorem provides the simplified steps in the algorithm.
@@ -374,8 +374,8 @@ Define \(R^{k} = \Omega - Z^{k}\) and \(U^{k} = \Lambda^{k}/\rho\) then
   tr\left[ \Lambda^{k}\left( \Omega - Z^{k} \right) \right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} &= tr\left[ \Lambda^{k}R^{k} \right] + \frac{\rho}{2}\left\| R^{k} \right\|_{F}^{2} \\
   &= \frac{\rho}{2}\left\| R^{k} + \Lambda^{k}/\rho \right\|_{F}^{2} - \frac{\rho}{2}\left\| \Lambda^{k}/\rho \right\|_{F}^{2} \\
   &= \frac{\rho}{2}\left\| R^{k} + U^{k} \right\|_{F}^{2} - \frac{\rho}{2}\left\| U^{k} \right\|_{F}^{2}
-\label{eq:scaled}\notag
 \end{split}
+\label{eq:scaled}\notag
 \end{equation}
 
 Therefore, a scaled-form ADMM algorithm can now be written as
@@ -385,8 +385,8 @@ Therefore, a scaled-form ADMM algorithm can now be written as
   \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + \frac{\rho}{2}\left\| \Omega - Z^{k} + U^{k} \right\|_{F}^{2} \right\} \\
   Z^{k + 1} &= \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z + U^{k} \right\|_{F}^{2} \right\} \\
   U^{k + 1} &= U^{k} + \Omega^{k + 1} - Z^{k + 1}
-\label{eq:ADMMscaled}
 \end{split}
+\label{eq:ADMMscaled}
 \end{equation}
 
 Note that there are limitations to using this method. Because the dual variable is scaled by \(\rho\) (the step size), this form limits one to using a constant step size for all \(k\) steps if no further adjustments are made to \(U^{k}\).
@@ -403,8 +403,8 @@ Combining these three optimality conditions, Boyd suggests a stopping criterion 
 \begin{split}
   \epsilon^{pri} &= p\epsilon^{abs} + \epsilon^{rel}\max\left\{ \left\| \Omega^{k + 1} \right\|_{F}, \left\| Z^{k + 1} \right\|_{F} \right\} \\
   \epsilon^{dual} &= p\epsilon^{abs} + \epsilon^{rel}\left\| \Lambda^{k + 1} \right\|_{F}
-\label{eq:admmstopping}\notag
 \end{split}
+\label{eq:admmstopping}\notag
 \end{equation}
 
 \hypertarget{simulations}{%
@@ -469,11 +469,14 @@ A similar estimator was proposed by \citet{dalal2017sparse} when \(C = 0\) but h
 
 Solving for \(\hat{\Omega}\) in \eqref{eq:omegaloglik2} uses what we are going to call an \emph{augmented ADMM algorithm}. Molstad and Rothman do not offer a name for this specific algorithm but it leverages the majorize-minimize principle in one of the steps in the algorithm - augmenting the original ADMM algorithm discussed in the previous chapter. Within the context of the proposed penalty, the original ADMM algorithm for precision matrix estimation would consist of iterating over the following three steps:
 
-\begin{align}
+\begin{equation}
+\begin{split}
   \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}L_{\rho}(\Omega, Z^{k}, \Lambda^{k}) \\
   Z^{k + 1} &= \arg\min_{Z \in \mathbb{R}^{n \times r}}L_{\rho}(\Omega^{k + 1}, Z, \Lambda^{k}) \\
   \Lambda^{k + 1} &= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right)
-\end{align}
+\end{split}
+\label{eq:augmentedprecision}
+\end{equation}
 
 where \(L\), the augmented lagrangian, is defined as
 
@@ -490,8 +493,8 @@ Instead of solving the first step directly, the authors propose an alternative, 
 \begin{split}
   \tilde{L}_{\rho}\left(\Omega, Z^{k}, \Lambda^{k}\right) = f\left(\Omega\right) &+ g\left(Z^{k}\right) + tr\left[(\Lambda^{k})'(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \\
   &+ \frac{\rho}{2}vec\left(\Omega - \Omega^{k}\right)' Q\left(\Omega - \Omega^{k}\right)
-\label{eq:approx}
 \end{split}
+\label{eq:approx}
 \end{equation}
 
 where \(Q = \tau I_{p} - \left(A'A \otimes BB'\right)\) and \(\tau\) is chosen such that \(Q\) is positive definite. Note that if \(Q\) is positive definite, then \(L_{\rho}\left(\cdot\right) \leq \tilde{L}\left(\cdot\right)\) for all \(\Omega\) and \(\tilde{L}\) is a majorizing function\footnote{If \(Q\) is positive definite, then \(vec\left(\Omega - \Omega^{k} \right)'\rho Q\left(\Omega - \Omega^{k} \right)/2 > 0\) since \(\rho > 0\) and \(vec\left(\Omega - \Omega^{k}\right)\) is always nonzero whenever \(\Omega \neq \Omega^{k}\).}. The \emph{augmented ADMM} algorithm developed by Molstad and Rothman, which now includes the majorize-minimize principle, consists of the following repeated iterations:
@@ -501,8 +504,8 @@ where \(Q = \tau I_{p} - \left(A'A \otimes BB'\right)\) and \(\tau\) is chosen s
   \Omega^{k + 1} &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{tr\left[\left(S + G^{k}\right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\}\\
   Z^{k + 1} &= \arg\min_{Z \in \mathbb{R}^{n \times r}}\left\{\lambda\left\|Z\right\|_{1} + tr\left[(\Lambda^{k})'(A\Omega B - Z^{k} - C) \right] + \frac{\rho}{2}\left\|A\Omega B - Z^{k} - C \right\|_{F}^{2} \right\} \\
   \Lambda^{k + 1} &= \Lambda^{k} + \rho\left(A\Omega^{k + 1}B - Z^{k + 1} - C \right)
-\label{eq:augADMM}\notag
 \end{split}
+\label{eq:augADMM}\notag
 \end{equation}
 
 where \(G^{k} = \rho A'\left( A\Omega^{k} B - Z^{k} - C + \rho^{-1}\Lambda^{k} \right)B'\). Each step in this algorithm can now conveniently be solved in closed-form and the full details of each can be found in the appendix \ref{proofOmegak}. The following theorem provides the simplified steps in the algorithm.
@@ -592,8 +595,8 @@ For proper convergence, we will require that both residuals are approximately eq
 \begin{split}
   \epsilon^{pri} &= \sqrt{nr}\epsilon^{abs} + \epsilon^{rel}\max\left\{ \left\| A\Omega^{k + 1}B \right\|_{F}, \left\| Z^{k + 1} \right\|_{F}, \left\| C \right\|_{F} \right\} \\
   \epsilon^{dual} &= p\epsilon^{abs} + \epsilon^{rel}\left\| \left( B(\Lambda^{k + 1})'A + A'\Lambda^{k + 1}B' \right)/2 \right\|_{F}
-\label{eq:scpmestopping}\notag
 \end{split}
+\label{eq:scpmestopping}\notag
 \end{equation}
 
 \hypertarget{regression-illustration}{%
@@ -835,8 +838,8 @@ We can use this conditional distribution along with the marginal distribution of
   &+\frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}\sum_{i = 1}^{n}tr\left( X_{i}X_{i}'\Omega_{x} \right) \\
   &= constant + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)'\left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{y | x} \right)\Omega_{y | x} \right] \\
   &+ \frac{n}{2}\log\left| \Omega_{x} \right| - \frac{n}{2}tr\left( S_{x}\Omega_{x} \right)
-\label{eq:partialjointloglik}\notag
 \end{split}
+\label{eq:partialjointloglik}\notag
 \end{equation}
 
 Optimizing this joint log-likelihood with respect to \(\Omega_{x}\) reveals strong similiarities to the estimator that was derived from the SCPME framework:
@@ -845,8 +848,8 @@ Optimizing this joint log-likelihood with respect to \(\Omega_{x}\) reveals stro
 \begin{split}
   \hat{\Omega}_{x} &= \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)'\left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)\Omega_{y | x} \right] + \frac{n}{2}tr\left( S_{x}\Omega_{x} \right) - \frac{n}{2}\log\left| \Omega_{x} \right| \right\} \\
   &= \arg\min_{\Omega_{x} \in \mathbb{S}_{+}^{p}}\left\{ tr\left( S_{x}\Omega_{x} \right) - \log\left| \Omega_{x} \right| + \frac{1}{n}\left\| \left( \mathbb{X}\Omega_{x}\Sigma_{xy} - \mathbb{Y} \right)\Omega_{y | x}^{1/2} \right\|_{F}^{2} \right\}
-\label{eq:omegajointloglik}\notag
 \end{split}
+\label{eq:omegajointloglik}\notag
 \end{equation}
 
 If it is the case that, given \(X\), each of the \(r\) responses are pairwise independent with equal variance so that \(\Omega_{y | x}^{1/2} = \sigma_{y | x}I_{r}\) and we let \(\lambda = 2\sigma_{y | x}^{2}/n\), then we have that
@@ -902,8 +905,8 @@ First start by taking the gradient with respect to \(\Omega\):
 \begin{split}
   \nabla_{\Omega}&\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[\Lambda^{k}\left(\Omega - Z^{k}\right)\right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} \right\} \\
   &= S - \Omega^{-1} + \Lambda^{k} + \rho\left( \Omega - Z^{k} \right)
-\label{eq:appendixomegagradient}\notag
 \end{split}
+\label{eq:appendixomegagradient}\notag
 \end{equation}
 
 Note that because all of the variables are symmetric, we can ignore the symmetric constraint when deriving the gradient. Next set the gradient equal to zero and decompose \(\Omega^{k + 1} = VDV'\) using spectral decomposition so that \(D\) is a diagonal matrix with diagonal elements equal to the eigen values of \(\Omega^{k + 1}\) and \(V\) is the matrix with corresponding eigen vectors as columns so that
@@ -952,8 +955,8 @@ Start by taking the subgradient with respect to \(Z\):
   \partial&\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\} \\
   &= \partial\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] \right\} + \nabla_{\Omega}\left\{ tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\} \\
   &= \lambda(1 - \alpha)Z + \mbox{sign}(Z)\lambda\alpha - \Lambda^{k} - \rho\left( \Omega^{k + 1} - Z \right)
-\label{eq:appendixZZgradient}\notag
 \end{split}
+\label{eq:appendixZZgradient}\notag
 \end{equation}
 
 where sign is the elementwise sign operator. By setting the gradient/sub-differential equal to zero, we have that
@@ -991,8 +994,8 @@ This implies that \(\mbox{sign}(Z_{ij}) = \mbox{sign}(\rho\Omega_{ij}^{k + 1} + 
 \begin{split}
 Z_{ij}^{k + 1} &= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{sign}\left(\rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k}\right)\left( \left| \rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k} \right| - \lambda\alpha \right)_{+} \\
 &= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{soft}\left(\rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k}, \lambda\alpha\right)
-\label{eq:appendixZZproof}\notag
 \end{split}
+\label{eq:appendixZZproof}\notag
 \end{equation}
 
 where soft is the soft-thresholding function.
@@ -1010,8 +1013,8 @@ Here we want to show that \(0 \in \rho\left(Z^{k + 1} - Z^{k}\right)\) which is 
   &= \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k} + \rho\left(\Omega^{k + 1} - Z^{k + 1}\right) + \rho\left(Z^{k + 1} - Z^{k}\right) \\
   &= \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k + 1} + \rho\left(Z^{k + 1} - Z^{k}\right) \\
   \Rightarrow 0 &\in \rho\left( Z^{k + 1} - Z^{k} \right)
-\label{eq:appendixdualresidual}\notag
 \end{split}
+\label{eq:appendixdualresidual}\notag
 \end{equation}
 
 \hypertarget{proofdualopt}{%
@@ -1024,8 +1027,8 @@ Here we use the primal optimality condition \(\Omega^{k + 1} - Z^{k + 1} = 0\) t
   0 &\in \partial \left\{ g\left(Z^{k + 1}\right) + tr\left[ \Lambda^{k}\left( \Omega^{k + 1} - Z^{k + 1} \right) \right] + \rho\left\| \Omega^{k + 1} - Z^{k + 1} \right\|_{F}^{2} \right\} \\
   &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k} - \rho\left(\Omega^{k + 1} - Z^{k + 1}\right) \\
   &= \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1} \\
-\label{eq:appendixdualopt}\notag
 \end{split}
+\label{eq:appendixdualopt}\notag
 \end{equation}
 
 \hypertarget{taylorsexp}{%
@@ -1038,8 +1041,8 @@ To see why this particular function was used, consider the Taylor's expansion of
   \frac{\rho}{2}\left\| A\Omega B - Z^{k} - C \right\|_{F}^{2} &\approx \frac{\rho}{2}\left\| A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2} \\
   &+ \frac{\rho}{2}vec\left( \Omega - \Omega^{k}\right)'\left(A'A \otimes BB'\right)vec\left(\Omega - \Omega^{k}\right) \\
   &+ \rho vec\left(\Omega - \Omega^{k}\right)'vec\left(BB'\Omega^{k}A'A - B(Z^{k})'A - BC'A \right)
-\label{eq:taylors}\notag
 \end{split}
+\label{eq:taylors}\notag
 \end{equation}
 
 Note that the gradient and hessian, respectively, are
@@ -1064,8 +1067,8 @@ This implies that
   &+ \rho vec\left(\Omega - \Omega^{k}\right)' vec\left(BB'\Omega^{k}A'A - B(Z^{k})'A - BC'A \right) \\
   &= \frac{\rho}{2}\left\| A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2} + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \\
   &+ \rho tr\left[\left(\Omega - \Omega^{k}\right)\left(BB'\Omega^{k}A'A - B(Z^{k})'A - BC'A \right)\right]
-\label{eq:penapprox}\notag
 \end{split}
+\label{eq:penapprox}\notag
 \end{equation}
 
 Let us now plug in this equality into our optimization problem that includes the augmented lagrangian:
@@ -1084,8 +1087,8 @@ Let us now plug in this equality into our optimization problem that includes the
   &- \left.\begin{matrix} \log\left|\Omega\right| + \rho\tau\left\|\Omega - \Omega^{k}\right\|_{F}^{2}/2 \end{matrix}\right\} \\
   &= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{
  tr\left[\left(S + G^{k} \right)\Omega\right] - \log\left|\Omega\right| + \rho\tau\left\|\Omega - \Omega^{k}\right\|_{F}^{2}/2 \right\} \\
-\label{eq:omegaapprox}\notag
 \end{split}
+\label{eq:omegaapprox}\notag
 \end{equation}
 
 where \(G^{k} = \rho A'(A\Omega^{k}B - Z^{k} - C + \Lambda^{k}/\rho)B'\).
@@ -1107,8 +1110,8 @@ First start by taking the gradient with respect to \(\Omega\):
   &\nabla_{\Omega}\left\{tr\left[\left(S + G^{k}\right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\} \\
   &= 2S - S\circ I_{p} + G^{k} + (G^{k})' - G^{k}\circ I_{p} - 2\Omega^{-1} + \Omega^{-1}\circ I_{p} \\
   &+ \frac{\rho\tau}{2}\left[2\Omega - 2(\Omega^{k})' + 2\Omega' - 2\Omega^{k} - 2(\Omega - \Omega^{k})'\circ I_{p} \right]
-\label{eq:appendixomegagradient2}\notag
 \end{split}
+\label{eq:appendixomegagradient2}\notag
 \end{equation}
 
 Note that we need to honor the symmetric constraint given by \(\Omega\). By setting the gradient equal to zero and multiplying all off-diagonal elements by \(1/2\), this simplifies to
@@ -1163,8 +1166,8 @@ Start by taking the subgradient with respect to \(Z\):
   \partial&\left\{ \lambda\left\| Z \right\|_{1} + tr\left[(\Lambda^{k})'\left(A\Omega^{k + 1}B - Z - C\right)\right] + \frac{\rho}{2}\left\| A\Omega^{k + 1}B - Z - C \right\|_{F}^{2} \right\} \\
   &= \partial\left\{ \lambda\left\| Z \right\|_{1} \right\} + \nabla_{\Omega}\left\{ tr\left[(\Lambda^{k})'\left(A\Omega^{k + 1}B - Z - C\right)\right] + \frac{\rho}{2}\left\| A\Omega^{k + 1}B - Z - C \right\|_{F}^{2} \right\} \\
   &= \mbox{sign}(Z)\lambda - \Lambda^{k} - \rho\left( A\Omega^{k + 1}B - Z - C \right)
-\label{eq:appendixZZgradient2}\notag
 \end{split}
+\label{eq:appendixZZgradient2}\notag
 \end{equation}
 
 where \(\mbox{sign(Z)}\) is the elementwise sign operator. By setting the gradient/sub-differential equal to zero, we arrive at the following equivalence:
@@ -1202,8 +1205,8 @@ This implies that \(\mbox{sign}\left(Z_{ij}^{k + 1}\right) = \mbox{sign}\left(\r
 \begin{split}
 Z_{ij}^{k + 1} &= \frac{1}{\rho}\mbox{sign}\left(\rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k}\right)\left( \left| \rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k} \right| - \lambda \right)_{+} \\
 &= \frac{1}{\rho}\mbox{soft}\left(\rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k}, \lambda\right)
-\label{eq:appendixZZproof2}\notag
 \end{split}
+\label{eq:appendixZZproof2}\notag
 \end{equation}
 
 where soft is the soft-thresholding function.
@@ -1226,8 +1229,8 @@ Here we want to show that \(0 \in \rho\left( B(Z^{k + 1} - Z^{k})'A + A'(Z^{k + 
   &+ \left[ A'\left(\Lambda^{k} + \rho(A\Omega^{k + 1}B - Z^{k + 1} - c)B \right)B' \right]/2 + \rho\left(B(Z^{k + 1} - Z^{k})'A + A'(Z^{k + 1} - Z^{k})B' \right)/2 \\
   &= \partial f\left(\Omega^{k + 1} \right) + \left(B(\Lambda^{k + 1})'A + A'\Lambda^{k + 1}B' \right)/2 + \rho\left(B(Z^{k + 1} - Z^{k})'A + A'(Z^{k + 1} - Z^{k})B' \right)/2 \\
   \Rightarrow 0 &\in \rho\left( B(Z^{k + 1} - Z^{k})'A + A'(Z^{k + 1} - Z^{k})B' \right)/2
-\label{eq:appendixstopproof}\notag
 \end{split}
+\label{eq:appendixstopproof}\notag
 \end{equation}
 
 \hypertarget{proofpenregression}{%
@@ -1250,8 +1253,8 @@ First start by taking the gradient with respect to \(\Omega\):
   &= 2S - S\circ I_{p} - 2\Omega^{-1} + \Omega^{-1}\circ I_{p} + \lambda\mathbb{X}'\mathbb{X}\Omega\Sigma_{xy}\Sigma_{xy}' + \lambda\Sigma_{xy}\Sigma_{xy}'\Omega\mathbb{X}'\mathbb{X} \\
   &- \lambda\mathbb{X}'\mathbb{X}\Omega\Sigma_{xy}\Sigma_{xy}'\circ I_{p} - \Sigma_{xy}\mathbb{Y}'\mathbb{X} - \mathbb{X}'\mathbb{Y}\Sigma_{xy} + \Sigma_{xy}\mathbb{Y}'\mathbb{X}\circ I_{P} \\
   \Rightarrow 0 &= S - \hat{\Omega}^{-1} + \frac{\lambda}{2}\left(\mathbb{X}'\mathbb{X}\hat{\Omega}\Sigma_{xy}\Sigma_{xy}' + \Sigma_{xy}\Sigma_{xy}'\hat{\Omega}\mathbb{X}'\mathbb{X} \right) - \lambda\Sigma_{xy}\mathbb{Y}'\mathbb{X}
-\label{eq:penregressionproof}\notag
 \end{split}
+\label{eq:penregressionproof}\notag
 \end{equation}
 
 Note that we cannot isolate \(\hat{\Omega}\).

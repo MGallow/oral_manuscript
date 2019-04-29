@@ -25,7 +25,7 @@
 <meta name="author" content="Matt Galloway">
 
 
-<meta name="date" content="2019-04-24">
+<meta name="date" content="2019-04-29">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -190,8 +190,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 \begin{split}
   \nabla_{\Omega}&amp;\left\{ tr\left(S\Omega\right) - \log\left|\Omega\right| + tr\left[\Lambda^{k}\left(\Omega - Z^{k}\right)\right] + \frac{\rho}{2}\left\| \Omega - Z^{k} \right\|_{F}^{2} \right\} \\
   &amp;= S - \Omega^{-1} + \Lambda^{k} + \rho\left( \Omega - Z^{k} \right)
-\tag{A.2}\notag
 \end{split}
+\tag{A.2}\notag
 \end{equation}\]</span></p>
 <p>Note that because all of the variables are symmetric, we can ignore the symmetric constraint when deriving the gradient. Next set the gradient equal to zero and decompose <span class="math inline">\(\Omega^{k + 1} = VDV&#39;\)</span> using spectral decomposition so that <span class="math inline">\(D\)</span> is a diagonal matrix with diagonal elements equal to the eigen values of <span class="math inline">\(\Omega^{k + 1}\)</span> and <span class="math inline">\(V\)</span> is the matrix with corresponding eigen vectors as columns so that</p>
 <p><span class="math display">\[\begin{equation}
@@ -228,8 +228,8 @@ Z^{k + 1} = \arg\min_{Z \in \mathbb{S}^{p}}\left\{ \lambda\left[ \frac{1 - \alph
   \partial&amp;\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] + tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\} \\
   &amp;= \partial\left\{ \lambda\left[ \frac{1 - \alpha}{2}\left\| Z \right\|_{F}^{2} + \alpha\left\| Z \right\|_{1} \right] \right\} + \nabla_{\Omega}\left\{ tr\left[\Lambda^{k}\left(\Omega^{k + 1} - Z\right)\right] + \frac{\rho}{2}\left\| \Omega^{k + 1} - Z \right\|_{F}^{2} \right\} \\
   &amp;= \lambda(1 - \alpha)Z + \mbox{sign}(Z)\lambda\alpha - \Lambda^{k} - \rho\left( \Omega^{k + 1} - Z \right)
-\tag{A.5}\notag
 \end{split}
+\tag{A.5}\notag
 \end{equation}\]</span></p>
 <p>where sign is the elementwise sign operator. By setting the gradient/sub-differential equal to zero, we have that</p>
 <p><span class="math display" id="eq:ZZsoftproof">\[\begin{equation}
@@ -254,8 +254,8 @@ Z_{ij}^{k + 1} = \frac{1}{\lambda(1 - \alpha) + \rho}\left( \rho \Omega_{ij}^{k 
 \begin{split}
 Z_{ij}^{k + 1} &amp;= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{sign}\left(\rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k}\right)\left( \left| \rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k} \right| - \lambda\alpha \right)_{+} \\
 &amp;= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{soft}\left(\rho\Omega_{ij}^{k + 1} + \Lambda_{ij}^{k}, \lambda\alpha\right)
-\tag{A.7}\notag
 \end{split}
+\tag{A.7}\notag
 \end{equation}\]</span></p>
 <p>where soft is the soft-thresholding function.</p>
 </div>
@@ -270,8 +270,8 @@ Z_{ij}^{k + 1} &amp;= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{sign}\left(\rho\
   &amp;= \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k} + \rho\left(\Omega^{k + 1} - Z^{k + 1}\right) + \rho\left(Z^{k + 1} - Z^{k}\right) \\
   &amp;= \partial f\left(\Omega^{k + 1}\right) + \Lambda^{k + 1} + \rho\left(Z^{k + 1} - Z^{k}\right) \\
   \Rightarrow 0 &amp;\in \rho\left( Z^{k + 1} - Z^{k} \right)
-\tag{A.8}\notag
 \end{split}
+\tag{A.8}\notag
 \end{equation}\]</span></p>
 </div>
 <div id="proofdualopt" class="section level3">
@@ -282,20 +282,20 @@ Z_{ij}^{k + 1} &amp;= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{sign}\left(\rho\
   0 &amp;\in \partial \left\{ g\left(Z^{k + 1}\right) + tr\left[ \Lambda^{k}\left( \Omega^{k + 1} - Z^{k + 1} \right) \right] + \rho\left\| \Omega^{k + 1} - Z^{k + 1} \right\|_{F}^{2} \right\} \\
   &amp;= \partial g\left(Z^{k + 1}\right) - \Lambda^{k} - \rho\left(\Omega^{k + 1} - Z^{k + 1}\right) \\
   &amp;= \partial g\left(Z^{k + 1}\right) - \Lambda^{k + 1} \\
-\tag{A.9}\notag
 \end{split}
+\tag{A.9}\notag
 \end{equation}\]</span></p>
 </div>
 <div id="taylorsexp" class="section level3">
-<h3><span class="header-section-number">A.0.5</span> Explanation of majorizing function <a href="scpme.html#eq:approx">(3.5)</a></h3>
+<h3><span class="header-section-number">A.0.5</span> Explanation of majorizing function <a href="scpme.html#eq:approx">(3.6)</a></h3>
 <p>To see why this particular function was used, consider the Taylor’s expansion of <span class="math inline">\(\rho\left\|A\Omega B - Z^{k} - C\right\|_{F}^{2}/2\)</span>:</p>
 <p><span class="math display" id="eq:taylors">\[\begin{equation}
 \begin{split}
   \frac{\rho}{2}\left\| A\Omega B - Z^{k} - C \right\|_{F}^{2} &amp;\approx \frac{\rho}{2}\left\| A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2} \\
   &amp;+ \frac{\rho}{2}vec\left( \Omega - \Omega^{k}\right)&#39;\left(A&#39;A \otimes BB&#39;\right)vec\left(\Omega - \Omega^{k}\right) \\
   &amp;+ \rho vec\left(\Omega - \Omega^{k}\right)&#39;vec\left(BB&#39;\Omega^{k}A&#39;A - B(Z^{k})&#39;A - BC&#39;A \right)
-\tag{A.10}\notag
 \end{split}
+\tag{A.10}\notag
 \end{equation}\]</span></p>
 <p>Note that the gradient and hessian, respectively, are</p>
 <p><span class="math display" id="eq:gradient">\[\begin{equation}
@@ -315,8 +315,8 @@ Z_{ij}^{k + 1} &amp;= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{sign}\left(\rho\
   &amp;+ \rho vec\left(\Omega - \Omega^{k}\right)&#39; vec\left(BB&#39;\Omega^{k}A&#39;A - B(Z^{k})&#39;A - BC&#39;A \right) \\
   &amp;= \frac{\rho}{2}\left\| A\Omega^{k} B - Z^{k} - C \right\|_{F}^{2} + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \\
   &amp;+ \rho tr\left[\left(\Omega - \Omega^{k}\right)\left(BB&#39;\Omega^{k}A&#39;A - B(Z^{k})&#39;A - BC&#39;A \right)\right]
-\tag{A.13}\notag
 \end{split}
+\tag{A.13}\notag
 \end{equation}\]</span></p>
 <p>Let us now plug in this equality into our optimization problem that includes the augmented lagrangian:</p>
 <p><span class="math display" id="eq:omegaapprox">\[\begin{equation}
@@ -333,13 +333,13 @@ Z_{ij}^{k + 1} &amp;= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{sign}\left(\rho\
   &amp;- \left.\begin{matrix} \log\left|\Omega\right| + \rho\tau\left\|\Omega - \Omega^{k}\right\|_{F}^{2}/2 \end{matrix}\right\} \\
   &amp;= \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{
  tr\left[\left(S + G^{k} \right)\Omega\right] - \log\left|\Omega\right| + \rho\tau\left\|\Omega - \Omega^{k}\right\|_{F}^{2}/2 \right\} \\
-\tag{A.14}\notag
 \end{split}
+\tag{A.14}\notag
 \end{equation}\]</span></p>
 <p>where <span class="math inline">\(G^{k} = \rho A&#39;(A\Omega^{k}B - Z^{k} - C + \Lambda^{k}/\rho)B&#39;\)</span>.</p>
 </div>
 <div id="proofOmegak" class="section level3">
-<h3><span class="header-section-number">A.0.6</span> Proof of <a href="scpme.html#eq:Omegak">(3.9)</a></h3>
+<h3><span class="header-section-number">A.0.6</span> Proof of <a href="scpme.html#eq:Omegak">(3.10)</a></h3>
 <p>We show that the following optimization problem can be solved in closed-form similar to <a href="appendix.html#eq:appendixomegaproof">(A.3)</a>.</p>
 <p><span class="math display" id="eq:appendixomegaloglik2">\[\begin{equation}
 \Omega^{k + 1} = \arg\min_{\Omega \in \mathbb{S}_{+}^{p}}\left\{tr\left[\left(S + G^{k}\right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\}
@@ -351,8 +351,8 @@ Z_{ij}^{k + 1} &amp;= \frac{1}{\lambda(1 - \alpha) + \rho}\mbox{sign}\left(\rho\
   &amp;\nabla_{\Omega}\left\{tr\left[\left(S + G^{k}\right)\Omega\right] - \log\left|\Omega\right| + \frac{\rho\tau}{2}\left\|\Omega - \Omega^{k}\right\|_{F}^{2} \right\} \\
   &amp;= 2S - S\circ I_{p} + G^{k} + (G^{k})&#39; - G^{k}\circ I_{p} - 2\Omega^{-1} + \Omega^{-1}\circ I_{p} \\
   &amp;+ \frac{\rho\tau}{2}\left[2\Omega - 2(\Omega^{k})&#39; + 2\Omega&#39; - 2\Omega^{k} - 2(\Omega - \Omega^{k})&#39;\circ I_{p} \right]
-\tag{A.16}\notag
 \end{split}
+\tag{A.16}\notag
 \end{equation}\]</span></p>
 <p>Note that we need to honor the symmetric constraint given by <span class="math inline">\(\Omega\)</span>. By setting the gradient equal to zero and multiplying all off-diagonal elements by <span class="math inline">\(1/2\)</span>, this simplifies to</p>
 <p><span class="math display">\[\begin{equation}
@@ -381,7 +381,7 @@ S + \frac{1}{2}\left(G^{k} + (G^{k})&#39;\right) - \rho\tau\Omega^{k} = VD^{-1}V
 \end{equation}\]</span></p>
 </div>
 <div id="proofZk" class="section level3">
-<h3><span class="header-section-number">A.0.7</span> Proof of <a href="scpme.html#eq:Zk">(3.10)</a></h3>
+<h3><span class="header-section-number">A.0.7</span> Proof of <a href="scpme.html#eq:Zk">(3.11)</a></h3>
 <p>Solve the optimization problem</p>
 <p><span class="math display" id="eq:appendixZZloglik2">\[\begin{equation}
 Z^{k + 1} = \arg\min_{Z \in \mathbb{R}^{n \times r}}\left\{ \lambda\left\| Z \right\|_{1} + tr\left[(\Lambda^{k})&#39;\left(A\Omega^{k + 1}B - Z - C\right)\right] + \frac{\rho}{2}\left\| A\Omega^{k + 1}B - Z - C \right\|_{F}^{2} \right\}
@@ -393,8 +393,8 @@ Z^{k + 1} = \arg\min_{Z \in \mathbb{R}^{n \times r}}\left\{ \lambda\left\| Z \ri
   \partial&amp;\left\{ \lambda\left\| Z \right\|_{1} + tr\left[(\Lambda^{k})&#39;\left(A\Omega^{k + 1}B - Z - C\right)\right] + \frac{\rho}{2}\left\| A\Omega^{k + 1}B - Z - C \right\|_{F}^{2} \right\} \\
   &amp;= \partial\left\{ \lambda\left\| Z \right\|_{1} \right\} + \nabla_{\Omega}\left\{ tr\left[(\Lambda^{k})&#39;\left(A\Omega^{k + 1}B - Z - C\right)\right] + \frac{\rho}{2}\left\| A\Omega^{k + 1}B - Z - C \right\|_{F}^{2} \right\} \\
   &amp;= \mbox{sign}(Z)\lambda - \Lambda^{k} - \rho\left( A\Omega^{k + 1}B - Z - C \right)
-\tag{A.19}\notag
 \end{split}
+\tag{A.19}\notag
 \end{equation}\]</span></p>
 <p>where <span class="math inline">\(\mbox{sign(Z)}\)</span> is the elementwise sign operator. By setting the gradient/sub-differential equal to zero, we arrive at the following equivalence:</p>
 <p><span class="math display" id="eq:ZZsoftproof2">\[\begin{equation}
@@ -419,13 +419,13 @@ Z_{ij}^{k + 1} = \frac{1}{\rho}\left( \rho\left(A\Omega_{ij}^{k + 1}B - C\right)
 \begin{split}
 Z_{ij}^{k + 1} &amp;= \frac{1}{\rho}\mbox{sign}\left(\rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k}\right)\left( \left| \rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k} \right| - \lambda \right)_{+} \\
 &amp;= \frac{1}{\rho}\mbox{soft}\left(\rho\left(A\Omega_{ij}^{k + 1}B - C\right) + \Lambda_{ij}^{k}, \lambda\right)
-\tag{A.21}\notag
 \end{split}
+\tag{A.21}\notag
 \end{equation}\]</span></p>
 <p>where soft is the soft-thresholding function.</p>
 </div>
 <div id="proofstopproof" class="section level3">
-<h3><span class="header-section-number">A.0.8</span> Proof of <a href="scpme.html#eq:stopproof">(3.12)</a></h3>
+<h3><span class="header-section-number">A.0.8</span> Proof of <a href="scpme.html#eq:stopproof">(3.13)</a></h3>
 <p>Here we want to show that <span class="math inline">\(0 \in \rho\left( B(Z^{k + 1} - Z^{k})&#39;A + A&#39;(Z^{k + 1} - Z^{k})B&#39; \right)/2\)</span> which is a direct result of the fact that <span class="math inline">\(0 \in \partial f\left(\Omega^{k + 1} \right) + \left(B(\Lambda^{k + 1})&#39;A + A&#39;\Lambda^{k + 1}B&#39; \right)/2\)</span>.</p>
 <p><span class="math display" id="eq:appendixstopproof">\[\begin{equation}
 \begin{split}
@@ -440,8 +440,8 @@ Z_{ij}^{k + 1} &amp;= \frac{1}{\rho}\mbox{sign}\left(\rho\left(A\Omega_{ij}^{k +
   &amp;+ \left[ A&#39;\left(\Lambda^{k} + \rho(A\Omega^{k + 1}B - Z^{k + 1} - c)B \right)B&#39; \right]/2 + \rho\left(B(Z^{k + 1} - Z^{k})&#39;A + A&#39;(Z^{k + 1} - Z^{k})B&#39; \right)/2 \\
   &amp;= \partial f\left(\Omega^{k + 1} \right) + \left(B(\Lambda^{k + 1})&#39;A + A&#39;\Lambda^{k + 1}B&#39; \right)/2 + \rho\left(B(Z^{k + 1} - Z^{k})&#39;A + A&#39;(Z^{k + 1} - Z^{k})B&#39; \right)/2 \\
   \Rightarrow 0 &amp;\in \rho\left( B(Z^{k + 1} - Z^{k})&#39;A + A&#39;(Z^{k + 1} - Z^{k})B&#39; \right)/2
-\tag{A.22}\notag
 \end{split}
+\tag{A.22}\notag
 \end{equation}\]</span></p>
 </div>
 <div id="proofpenregression" class="section level3">
@@ -460,8 +460,8 @@ Z_{ij}^{k + 1} &amp;= \frac{1}{\rho}\mbox{sign}\left(\rho\left(A\Omega_{ij}^{k +
   &amp;= 2S - S\circ I_{p} - 2\Omega^{-1} + \Omega^{-1}\circ I_{p} + \lambda\mathbb{X}&#39;\mathbb{X}\Omega\Sigma_{xy}\Sigma_{xy}&#39; + \lambda\Sigma_{xy}\Sigma_{xy}&#39;\Omega\mathbb{X}&#39;\mathbb{X} \\
   &amp;- \lambda\mathbb{X}&#39;\mathbb{X}\Omega\Sigma_{xy}\Sigma_{xy}&#39;\circ I_{p} - \Sigma_{xy}\mathbb{Y}&#39;\mathbb{X} - \mathbb{X}&#39;\mathbb{Y}\Sigma_{xy} + \Sigma_{xy}\mathbb{Y}&#39;\mathbb{X}\circ I_{P} \\
   \Rightarrow 0 &amp;= S - \hat{\Omega}^{-1} + \frac{\lambda}{2}\left(\mathbb{X}&#39;\mathbb{X}\hat{\Omega}\Sigma_{xy}\Sigma_{xy}&#39; + \Sigma_{xy}\Sigma_{xy}&#39;\hat{\Omega}\mathbb{X}&#39;\mathbb{X} \right) - \lambda\Sigma_{xy}\mathbb{Y}&#39;\mathbb{X}
-\tag{A.24}\notag
 \end{split}
+\tag{A.24}\notag
 \end{equation}\]</span></p>
 <p>Note that we cannot isolate <span class="math inline">\(\hat{\Omega}\)</span>.</p>
 
