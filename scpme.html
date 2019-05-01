@@ -25,7 +25,7 @@
 <meta name="author" content="Matt Galloway">
 
 
-<meta name="date" content="2019-04-29">
+<meta name="date" content="2019-05-01">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -178,7 +178,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="scpme" class="section level1">
 <h1><span class="header-section-number">Chapter 3</span> SCPME</h1>
-<p>In their 2017 paper, titled <em>Shrinking Characteristics of Precision Matrix Estimators</em>, Aaron Molstad, Ph.D. and Professor Adam Rothman outline a framework to estimate <em>characteristics</em> of precision matrices. This concept, inspired by others like <span class="citation">Cai and Liu (<a href="#ref-cai2011direct">2011</a>)</span>, <span class="citation">Fan, Feng, and Tong (<a href="#ref-fan2012road">2012</a>)</span>, and <span class="citation">Mai, Zou, and Yuan (<a href="#ref-mai2012direct">2012</a>)</span>, exploits the fact that in many predictive models estimation of the precision matrix is only necessary through its product with another feature, such as a mean vector. The example they offer in <span class="citation">Molstad and Rothman (<a href="#ref-molstad2017shrinking">2017</a>)</span> is in the context of Fisher’s linear discriminant analysis model. If a response vector <span class="math inline">\(Y\)</span> is categorical such that <span class="math inline">\(Y\)</span> can take values in <span class="math inline">\(\left\{1, ..., J\right\}\)</span>, then the linear discrimnant analysis model assumes that the design matrix <span class="math inline">\(X\)</span> conditional on the response vector <span class="math inline">\(Y\)</span> is normally distributed:</p>
+<p>In their 2017 paper, titled <em>Shrinking Characteristics of Precision Matrix Estimators</em>, Aaron Molstad, Ph.D. and Professor Adam Rothman outline a framework to shrink a <em>characteristic</em> of a precision matrix. This concept, inspired by others like <span class="citation">Cai and Liu (<a href="#ref-cai2011direct">2011</a>)</span>, <span class="citation">Fan, Feng, and Tong (<a href="#ref-fan2012road">2012</a>)</span>, and <span class="citation">Mai, Zou, and Yuan (<a href="#ref-mai2012direct">2012</a>)</span>, exploits the fact that in many predictive models estimation of the precision matrix is only necessary through its product with another feature, such as a mean vector. The example they offer in <span class="citation">Molstad and Rothman (<a href="#ref-molstad2017shrinking">2017</a>)</span> is in the context of Fisher’s linear discriminant analysis model. If a response vector <span class="math inline">\(Y\)</span> is categorical such that <span class="math inline">\(Y\)</span> can take values in <span class="math inline">\(\left\{1, ..., J\right\}\)</span>, then the linear discrimnant analysis model assumes that the design matrix <span class="math inline">\(X\)</span> conditional on the response vector <span class="math inline">\(Y\)</span> is normally distributed:</p>
 <p><span class="math display" id="eq:lda">\[\begin{equation}
 X | Y = j \sim N_{p}\left(\mu_{j}, \Omega^{-1}\right)
 \tag{3.1}
@@ -266,7 +266,7 @@ Z^{k + 1} = \mbox{soft}\left( A\Omega^{k + 1}B - C + \rho^{-1}\Lambda^{k}, \rho^
 <li>Update <span class="math inline">\(\Lambda^{k + 1}\)</span>.</li>
 </ol>
 <p><span class="math display" id="eq:Yk">\[\begin{equation}
-\Lambda^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)
+\Lambda^{k + 1} = \Lambda^{k} + \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)
 \tag{3.12}\notag
 \end{equation}\]</span></p>
 </div>

@@ -126,7 +126,7 @@
 
 \title{Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression}
 \author{Matt Galloway}
-\date{2019-04-29}
+\date{2019-05-01}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -167,7 +167,7 @@ Inferential statistics consists of two primary components: estimation and predic
 
 However, though most attention is directed towards prediction, these two components are not distinct. In fact, the success and reliability of many predictive models is contingent upon good, efficient parameter estimation. Many of these models require the estimation of a precision matrix - the inverse of the covariance matrix (frequently denoted as \(\Omega\)) - that establishes the interaction and covariance between random variables. For this reason, the last decade has seen an ever-expanding community devoted to precision matrix estimation.
 
-Among this community of researchers is Professor Adam Rothman and Aaron Molstad, Ph.D.~whose research will be a focal point of this manuscript. The two have published work on indirect multivariate linear regression (\citet{molstad2016indirect}) and classification with matrix-valued predictors (\citet{molstad2018penalized}) but the focus of this manuscript is their 2017 paper titled \emph{Shrinking Characteristics of Precision Matrix Estimators} (\citet{molstad2017shrinking}). In it, they outline a framework to estimate \emph{characteristics} of precision matrices - a concept that exploits the fact that in many predictive models estimation of the precision matrix is only necessary through its product with another feature. They write in their manuscript that ``to fit many predictive models, only a characteristic of the population precision matrix needs to be estimated\ldots{} In binary linear discriminant analysis, the population precision matrix is needed for prediction only through the product of the precision matrix and the difference between the two conditional distribution mean vectors.'' The purpose of the research detailed here began with the desire to expand on this concept and to explore avenues that were mentioned but were not further investigated.
+Among this community of researchers is Professor Adam Rothman and Aaron Molstad, Ph.D.~whose research will be a focal point of this manuscript. The two have published work on indirect multivariate linear regression (\citet{molstad2016indirect}) and classification with matrix-valued predictors (\citet{molstad2018penalized}) but the focus of this manuscript is their 2017 paper titled \emph{Shrinking Characteristics of Precision Matrix Estimators} (\citet{molstad2017shrinking}). In it, they outline a framework to shrink a \emph{characteristic} of a precision matrix - a concept that exploits the fact that in many predictive models estimation of the precision matrix is only necessary through its product with another feature. They write in their manuscript that ``to fit many predictive models, only a characteristic of the population precision matrix needs to be estimated\ldots{} In binary linear discriminant analysis, the population precision matrix is needed for prediction only through the product of the precision matrix and the difference between the two conditional distribution mean vectors.'' The purpose of the research detailed here began with the desire to expand on this concept and to explore avenues that were mentioned but were not further investigated.
 
 One of the research directions mentioned in the original paper was the application of their framework to regression. Utilizing the fact that the population regression coefficient matrix \(\beta \equiv \Omega_{x}\Sigma_{xy}\) (where \(\Sigma_{xy}\) is the cross-covariance matrix between the predictors, \(X\), and the responses, \(Y\), and \(\Omega_{x}\) is the precision matrix for \(X\)), their framework allows for the simultaneous estimation of \(\beta\) and \(\Omega_{x}\) with an embedded assumption potentially useful for superior prediction performance. In close communication and collaboration with Professor Rothman, we wanted to explore this research direction further. However, in order to build upon their work and contribute new material, there were a number of concepts that needed to be learned along the way and this document will follow that journey.
 
@@ -439,7 +439,7 @@ The second figure shows the results when the data was generated from a multivari
 \hypertarget{scpme}{%
 \chapter{SCPME}\label{scpme}}
 
-In their 2017 paper, titled \emph{Shrinking Characteristics of Precision Matrix Estimators}, Aaron Molstad, Ph.D.~and Professor Adam Rothman outline a framework to estimate \emph{characteristics} of precision matrices. This concept, inspired by others like \citet{cai2011direct}, \citet{fan2012road}, and \citet{mai2012direct}, exploits the fact that in many predictive models estimation of the precision matrix is only necessary through its product with another feature, such as a mean vector. The example they offer in \citet{molstad2017shrinking} is in the context of Fisher's linear discriminant analysis model. If a response vector \(Y\) is categorical such that \(Y\) can take values in \(\left\{1, ..., J\right\}\), then the linear discrimnant analysis model assumes that the design matrix \(X\) conditional on the response vector \(Y\) is normally distributed:
+In their 2017 paper, titled \emph{Shrinking Characteristics of Precision Matrix Estimators}, Aaron Molstad, Ph.D.~and Professor Adam Rothman outline a framework to shrink a \emph{characteristic} of a precision matrix. This concept, inspired by others like \citet{cai2011direct}, \citet{fan2012road}, and \citet{mai2012direct}, exploits the fact that in many predictive models estimation of the precision matrix is only necessary through its product with another feature, such as a mean vector. The example they offer in \citet{molstad2017shrinking} is in the context of Fisher's linear discriminant analysis model. If a response vector \(Y\) is categorical such that \(Y\) can take values in \(\left\{1, ..., J\right\}\), then the linear discrimnant analysis model assumes that the design matrix \(X\) conditional on the response vector \(Y\) is normally distributed:
 
 \begin{equation}
 X | Y = j \sim N_{p}\left(\mu_{j}, \Omega^{-1}\right)
@@ -574,7 +574,7 @@ Z^{k + 1} = \mbox{soft}\left( A\Omega^{k + 1}B - C + \rho^{-1}\Lambda^{k}, \rho^
 \end{enumerate}
 
 \begin{equation}
-\Lambda^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)
+\Lambda^{k + 1} = \Lambda^{k} + \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)
 \label{eq:Yk}\notag
 \end{equation}
 \EndKnitrBlock{theorem}
