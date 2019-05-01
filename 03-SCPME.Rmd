@@ -1,7 +1,7 @@
 
 # SCPME
 
-In their 2017 paper, titled *Shrinking Characteristics of Precision Matrix Estimators*, Aaron Molstad, Ph.D. and Professor Adam Rothman outline a framework to estimate *characteristics* of precision matrices. This concept, inspired by others like @cai2011direct, @fan2012road, and @mai2012direct, exploits the fact that in many predictive models estimation of the precision matrix is only necessary through its product with another feature, such as a mean vector. The example they offer in @molstad2017shrinking is in the context of Fisher's linear discriminant analysis model. If a response vector $Y$ is categorical such that $Y$ can take values in $\left\{1, ..., J\right\}$, then the linear discrimnant analysis model assumes that the design matrix $X$ conditional on the response vector $Y$ is normally distributed:
+In their 2017 paper, titled *Shrinking Characteristics of Precision Matrix Estimators*, Aaron Molstad, Ph.D. and Professor Adam Rothman outline a framework to shrink a *characteristic* of a precision matrix. This concept, inspired by others like @cai2011direct, @fan2012road, and @mai2012direct, exploits the fact that in many predictive models estimation of the precision matrix is only necessary through its product with another feature, such as a mean vector. The example they offer in @molstad2017shrinking is in the context of Fisher's linear discriminant analysis model. If a response vector $Y$ is categorical such that $Y$ can take values in $\left\{1, ..., J\right\}$, then the linear discrimnant analysis model assumes that the design matrix $X$ conditional on the response vector $Y$ is normally distributed:
 
 \begin{equation}
 X | Y = j \sim N_{p}\left(\mu_{j}, \Omega^{-1}\right)
@@ -109,7 +109,7 @@ Z^{k + 1} = \mbox{soft}\left( A\Omega^{k + 1}B - C + \rho^{-1}\Lambda^{k}, \rho^
 5. Update $\Lambda^{k + 1}$.
 
 \begin{equation}
-\Lambda^{k + 1} = \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)
+\Lambda^{k + 1} = \Lambda^{k} + \rho\left( A\Omega^{k + 1} B - Z^{k + 1} - C \right)
 (\#eq:Yk)\notag
 \end{equation}
 
