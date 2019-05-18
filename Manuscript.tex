@@ -126,7 +126,7 @@
 
 \title{Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression}
 \author{Matt Galloway}
-\date{2019-05-01}
+\date{2019-05-18}
 
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -439,7 +439,7 @@ The second figure shows the results when the data was generated from a multivari
 \hypertarget{scpme}{%
 \chapter{SCPME}\label{scpme}}
 
-In their 2017 paper, titled \emph{Shrinking Characteristics of Precision Matrix Estimators}, Aaron Molstad, Ph.D.~and Professor Adam Rothman outline a framework to shrink a \emph{characteristic} of a precision matrix. This concept, inspired by others like \citet{cai2011direct}, \citet{fan2012road}, and \citet{mai2012direct}, exploits the fact that in many predictive models estimation of the precision matrix is only necessary through its product with another feature, such as a mean vector. The example they offer in \citet{molstad2017shrinking} is in the context of Fisher's linear discriminant analysis model. If a response vector \(Y\) is categorical such that \(Y\) can take values in \(\left\{1, ..., J\right\}\), then the linear discrimnant analysis model assumes that the design matrix \(X\) conditional on the response vector \(Y\) is normally distributed:
+In their 2017 paper, titled \emph{Shrinking Characteristics of Precision Matrix Estimators}, Aaron Molstad, Ph.D.~and Professor Adam Rothman outline a framework to shrink a \emph{characteristic} of a precision matrix. This concept, inspired by others like \citet{cai2011direct}, \citet{fan2012road}, and \citet{mai2012direct}, exploits the fact that in many predictive models estimation of the precision matrix is only necessary through its product with another feature, such as a mean vector. The example they offer in \citet{molstad2017shrinking} is in the context of Fisher's linear discriminant analysis model. If a response vector \(Y\) is categorical such that \(Y\) can take values in \(\left\{1, ..., J\right\}\), then the linear discrimnant analysis model assumes that the predictor matrix \(X\) conditional on the response vector \(Y\) is normally distributed:
 
 \begin{equation}
 X | Y = j \sim N_{p}\left(\mu_{j}, \Omega^{-1}\right)
@@ -657,7 +657,7 @@ For each estimator, if selection of a tuning parameter is required, the tuning p
 
 The data generating procedure for the simulations is the following. The oracle regression coefficient matrix \(\beta^{*}\) was constructed so that \(\beta^{*} = \mathbb{B} \circ \mathbb{V}\) where \(vec\left( \mathbb{B} \right) \sim N_{pr}\left( 0, I_{p} \otimes I_{r}/\sqrt{p} \right)\) and \(\mathbb{V} \in \mathbb{R}^{p \times r}\) is a matrix containing \(p\) times \(r\) random bernoulli draws with 50\% probability being equal to one. The covariance matrices \(\Sigma_{y | x}\) and \(\Sigma_{x}\) were constructed so that \(\left( \Sigma_{y | x} \right)_{ij} = 0.7^{\left| i - j \right|}\) and \(\left( \Sigma_{x} \right)_{ij} = 0.7^{\left| i - j \right|}\), respectively. This ensures that their corresponding precision matrices will be tridiagonal and sparse. Then for 100 independent, identically distributed samples, we had \(X_{i} \sim N_{p}\left( 0, \Sigma_{x} \right)\) and \(E_{i} \sim N_{r}\left( 0, \Sigma_{y | x} \right)\) so that \(\mathbb{Y} = \mathbb{X}\beta + \mathbb{E}\) where \(\mathbb{X} \in \mathbb{R}^{n \times p}\) and \(\mathbb{Y} \in \mathbb{R}^{n \times r}\) are the matrices with stacked rows \(X_{i}\) and \(E_{i}\), respectively, for \(i = 1, ..., n\) and the script notation denotes the fact that the columns have been centered so as to remove the intercept in our prediction models. A sample of an additional 1000 observations was generated similarly for the testing set. Each prediction method was evaluated on both model error and mean squared prediction error.
 
-Figure \ref{fig:scpmesim2} displays the model error for each method by dimension of the design matrix. Here we took the sample size equal to \(n = 100\) and the response matrix dimension \(r = 10\) with each data generating procedure replicated a total of 20 times. Note \texttt{OLS} and \texttt{oracleS} are not shown due to extremely poor performance. We find that in high dimensional settings, \texttt{shrinkBO} and \texttt{shrinkB} perform increasingly well relative to the others as the predictor dimension increases. \texttt{shrinkBO} performed the best. Interestingly, when \(n > p\) \texttt{shrinkBO} is still one of the best-performing estimators - though worse than both \texttt{lasso} and \texttt{ridge} - but the performance of \texttt{shrinkB} decreases drastically (plot not shown).
+Figure \ref{fig:scpmesim2} displays the model error for each method by dimension of the predictor matrix. Here we took the sample size equal to \(n = 100\) and the response matrix dimension \(r = 10\) with each data generating procedure replicated a total of 20 times. Note \texttt{OLS} and \texttt{oracleS} are not shown due to extremely poor performance. We find that in high dimensional settings, \texttt{shrinkBO} and \texttt{shrinkB} perform increasingly well relative to the others as the predictor dimension increases. \texttt{shrinkBO} performed the best. Interestingly, when \(n > p\) \texttt{shrinkBO} is still one of the best-performing estimators - though worse than both \texttt{lasso} and \texttt{ridge} - but the performance of \texttt{shrinkB} decreases drastically (plot not shown).
 
 In the high dimension setting, the oracle estimators \texttt{oracleO} and \texttt{oracleS} performed worse or comparable to the \texttt{OLS} estimator. The poor performance of \texttt{oracleS} is likely due to the fact that the sample estimate of \(\Omega_{x}\) is not identifiable when \(p > n\).
 
@@ -670,7 +670,7 @@ The following table shows the average model error for each estimator when \(n = 
 
 }
 
-\caption{The oracle precision matrices were tri-diagonal with variable dimension (p) and the data was generated with sample size n = 100 and response vector dimension r = 10. The model errors (ME) for each estimator with variable dimension of the design matrix are plotted. shrinkBO and shrinkB were the two best-performing estimators closely follow by the ridge and lasso regression estimators.}\label{fig:scpmesim2}
+\caption{The oracle precision matrices were tri-diagonal with variable dimension (p) and the data was generated with sample size n = 100 and response vector dimension r = 10. The model errors (ME) for each estimator with variable dimension of the predictor matrix are plotted. shrinkBO and shrinkB were the two best-performing estimators closely follow by the ridge and lasso regression estimators.}\label{fig:scpmesim2}
 \end{figure}
 
 \newpage
@@ -836,7 +836,7 @@ We can use this conditional distribution along with the marginal distribution of
 \begin{split}
   l\left( \Omega_{y | x}, \Omega_{x}, \Sigma_{xy} | Y, X \right) &= constant + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}\sum_{i = 1}^{n} tr\left[ \left( Y_{i} - \Sigma_{xy}'\Omega_{x} X_{i} \right)\left( Y_{i} - \Sigma_{xy}'\Omega_{x} X_{i} \right)'\Omega_{y | x} \right] \\
   &+\frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}\sum_{i = 1}^{n}tr\left( X_{i}X_{i}'\Omega_{x} \right) \\
-  &= constant + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)'\left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{y | x} \right)\Omega_{y | x} \right] \\
+  &= constant + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)'\left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)\Omega_{y | x} \right] \\
   &+ \frac{n}{2}\log\left| \Omega_{x} \right| - \frac{n}{2}tr\left( S_{x}\Omega_{x} \right)
 \end{split}
 \label{eq:partialjointloglik}\notag

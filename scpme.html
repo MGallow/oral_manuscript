@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 3 SCPME | Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression</title>
-  <meta name="description" content="Matt Galloway’s Master’s thesis.">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <meta name="description" content="Matt Galloway’s Master’s thesis." />
+  <meta name="generator" content="bookdown 0.10 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 3 SCPME | Shrinking Characteristics of Precision Matrix Estimators: An Illustration via Regression" />
   <meta property="og:type" content="book" />
@@ -22,14 +21,14 @@
   <meta name="twitter:description" content="Matt Galloway’s Master’s thesis." />
   
 
-<meta name="author" content="Matt Galloway">
+<meta name="author" content="Matt Galloway" />
 
 
-<meta name="date" content="2019-05-01">
+<meta name="date" content="2019-05-18" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
 <link rel="prev" href="precision-matrix-estimation.html">
@@ -178,7 +177,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="scpme" class="section level1">
 <h1><span class="header-section-number">Chapter 3</span> SCPME</h1>
-<p>In their 2017 paper, titled <em>Shrinking Characteristics of Precision Matrix Estimators</em>, Aaron Molstad, Ph.D. and Professor Adam Rothman outline a framework to shrink a <em>characteristic</em> of a precision matrix. This concept, inspired by others like <span class="citation">Cai and Liu (<a href="#ref-cai2011direct">2011</a>)</span>, <span class="citation">Fan, Feng, and Tong (<a href="#ref-fan2012road">2012</a>)</span>, and <span class="citation">Mai, Zou, and Yuan (<a href="#ref-mai2012direct">2012</a>)</span>, exploits the fact that in many predictive models estimation of the precision matrix is only necessary through its product with another feature, such as a mean vector. The example they offer in <span class="citation">Molstad and Rothman (<a href="#ref-molstad2017shrinking">2017</a>)</span> is in the context of Fisher’s linear discriminant analysis model. If a response vector <span class="math inline">\(Y\)</span> is categorical such that <span class="math inline">\(Y\)</span> can take values in <span class="math inline">\(\left\{1, ..., J\right\}\)</span>, then the linear discrimnant analysis model assumes that the design matrix <span class="math inline">\(X\)</span> conditional on the response vector <span class="math inline">\(Y\)</span> is normally distributed:</p>
+<p>In their 2017 paper, titled <em>Shrinking Characteristics of Precision Matrix Estimators</em>, Aaron Molstad, Ph.D. and Professor Adam Rothman outline a framework to shrink a <em>characteristic</em> of a precision matrix. This concept, inspired by others like <span class="citation">Cai and Liu (<a href="#ref-cai2011direct">2011</a>)</span>, <span class="citation">Fan, Feng, and Tong (<a href="#ref-fan2012road">2012</a>)</span>, and <span class="citation">Mai, Zou, and Yuan (<a href="#ref-mai2012direct">2012</a>)</span>, exploits the fact that in many predictive models estimation of the precision matrix is only necessary through its product with another feature, such as a mean vector. The example they offer in <span class="citation">Molstad and Rothman (<a href="#ref-molstad2017shrinking">2017</a>)</span> is in the context of Fisher’s linear discriminant analysis model. If a response vector <span class="math inline">\(Y\)</span> is categorical such that <span class="math inline">\(Y\)</span> can take values in <span class="math inline">\(\left\{1, ..., J\right\}\)</span>, then the linear discrimnant analysis model assumes that the predictor matrix <span class="math inline">\(X\)</span> conditional on the response vector <span class="math inline">\(Y\)</span> is normally distributed:</p>
 <p><span class="math display" id="eq:lda">\[\begin{equation}
 X | Y = j \sim N_{p}\left(\mu_{j}, \Omega^{-1}\right)
 \tag{3.1}
@@ -324,7 +323,7 @@ P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \l
 </ul>
 <p>For each estimator, if selection of a tuning parameter is required, the tuning parameter was chosen so that the mean squared prediction error (MSPE) was minimized over 3-fold cross validation.</p>
 <p>The data generating procedure for the simulations is the following. The oracle regression coefficient matrix <span class="math inline">\(\beta^{*}\)</span> was constructed so that <span class="math inline">\(\beta^{*} = \mathbb{B} \circ \mathbb{V}\)</span> where <span class="math inline">\(vec\left( \mathbb{B} \right) \sim N_{pr}\left( 0, I_{p} \otimes I_{r}/\sqrt{p} \right)\)</span> and <span class="math inline">\(\mathbb{V} \in \mathbb{R}^{p \times r}\)</span> is a matrix containing <span class="math inline">\(p\)</span> times <span class="math inline">\(r\)</span> random bernoulli draws with 50% probability being equal to one. The covariance matrices <span class="math inline">\(\Sigma_{y | x}\)</span> and <span class="math inline">\(\Sigma_{x}\)</span> were constructed so that <span class="math inline">\(\left( \Sigma_{y | x} \right)_{ij} = 0.7^{\left| i - j \right|}\)</span> and <span class="math inline">\(\left( \Sigma_{x} \right)_{ij} = 0.7^{\left| i - j \right|}\)</span>, respectively. This ensures that their corresponding precision matrices will be tridiagonal and sparse. Then for 100 independent, identically distributed samples, we had <span class="math inline">\(X_{i} \sim N_{p}\left( 0, \Sigma_{x} \right)\)</span> and <span class="math inline">\(E_{i} \sim N_{r}\left( 0, \Sigma_{y | x} \right)\)</span> so that <span class="math inline">\(\mathbb{Y} = \mathbb{X}\beta + \mathbb{E}\)</span> where <span class="math inline">\(\mathbb{X} \in \mathbb{R}^{n \times p}\)</span> and <span class="math inline">\(\mathbb{Y} \in \mathbb{R}^{n \times r}\)</span> are the matrices with stacked rows <span class="math inline">\(X_{i}\)</span> and <span class="math inline">\(E_{i}\)</span>, respectively, for <span class="math inline">\(i = 1, ..., n\)</span> and the script notation denotes the fact that the columns have been centered so as to remove the intercept in our prediction models. A sample of an additional 1000 observations was generated similarly for the testing set. Each prediction method was evaluated on both model error and mean squared prediction error.</p>
-<p>Figure <a href="scpme.html#fig:scpmesim2">3.1</a> displays the model error for each method by dimension of the design matrix. Here we took the sample size equal to <span class="math inline">\(n = 100\)</span> and the response matrix dimension <span class="math inline">\(r = 10\)</span> with each data generating procedure replicated a total of 20 times. Note <code>OLS</code> and <code>oracleS</code> are not shown due to extremely poor performance. We find that in high dimensional settings, <code>shrinkBO</code> and <code>shrinkB</code> perform increasingly well relative to the others as the predictor dimension increases. <code>shrinkBO</code> performed the best. Interestingly, when <span class="math inline">\(n &gt; p\)</span> <code>shrinkBO</code> is still one of the best-performing estimators - though worse than both <code>lasso</code> and <code>ridge</code> - but the performance of <code>shrinkB</code> decreases drastically (plot not shown).</p>
+<p>Figure <a href="scpme.html#fig:scpmesim2">3.1</a> displays the model error for each method by dimension of the predictor matrix. Here we took the sample size equal to <span class="math inline">\(n = 100\)</span> and the response matrix dimension <span class="math inline">\(r = 10\)</span> with each data generating procedure replicated a total of 20 times. Note <code>OLS</code> and <code>oracleS</code> are not shown due to extremely poor performance. We find that in high dimensional settings, <code>shrinkBO</code> and <code>shrinkB</code> perform increasingly well relative to the others as the predictor dimension increases. <code>shrinkBO</code> performed the best. Interestingly, when <span class="math inline">\(n &gt; p\)</span> <code>shrinkBO</code> is still one of the best-performing estimators - though worse than both <code>lasso</code> and <code>ridge</code> - but the performance of <code>shrinkB</code> decreases drastically (plot not shown).</p>
 <p>In the high dimension setting, the oracle estimators <code>oracleO</code> and <code>oracleS</code> performed worse or comparable to the <code>OLS</code> estimator. The poor performance of <code>oracleS</code> is likely due to the fact that the sample estimate of <span class="math inline">\(\Omega_{x}\)</span> is not identifiable when <span class="math inline">\(p &gt; n\)</span>.</p>
 <p>The following table shows the average model error for each estimator when <span class="math inline">\(n = 100\)</span>, <span class="math inline">\(p = 150\)</span>, and <span class="math inline">\(r = 10\)</span>.</p>
 <!-- <br>\vspace{0.5cm} -->
@@ -339,9 +338,9 @@ P_{\lambda}\left(\Omega \right) = \lambda\left\| A\Omega B - C \right\|_{1} = \l
 <!-- <br>\vspace{0.5cm} -->
 
 <div class="figure" style="text-align: center"><span id="fig:scpmesim2"></span>
-<img src="Manuscript_files/figure-html/scpmesim2-1.png" alt="The oracle precision matrices were tri-diagonal with variable dimension (p) and the data was generated with sample size n = 100 and response vector dimension r = 10. The model errors (ME) for each estimator with variable dimension of the design matrix are plotted. shrinkBO and shrinkB were the two best-performing estimators closely follow by the ridge and lasso regression estimators." width="85%"  />
+<img src="Manuscript_files/figure-html/scpmesim2-1.png" alt="The oracle precision matrices were tri-diagonal with variable dimension (p) and the data was generated with sample size n = 100 and response vector dimension r = 10. The model errors (ME) for each estimator with variable dimension of the predictor matrix are plotted. shrinkBO and shrinkB were the two best-performing estimators closely follow by the ridge and lasso regression estimators." width="85%"  />
 <p class="caption">
-FIGURE 3.1: The oracle precision matrices were tri-diagonal with variable dimension (p) and the data was generated with sample size n = 100 and response vector dimension r = 10. The model errors (ME) for each estimator with variable dimension of the design matrix are plotted. shrinkBO and shrinkB were the two best-performing estimators closely follow by the ridge and lasso regression estimators.
+FIGURE 3.1: The oracle precision matrices were tri-diagonal with variable dimension (p) and the data was generated with sample size n = 100 and response vector dimension r = 10. The model errors (ME) for each estimator with variable dimension of the predictor matrix are plotted. shrinkBO and shrinkB were the two best-performing estimators closely follow by the ridge and lasso regression estimators.
 </p>
 </div>
 
@@ -526,7 +525,7 @@ Y_{i} | X_{i} \sim N_{r}\left( \mu_{y} + \beta&#39;\left(X_{i} - \mu_{x}\right),
 \begin{split}
   l\left( \Omega_{y | x}, \Omega_{x}, \Sigma_{xy} | Y, X \right) &amp;= constant + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}\sum_{i = 1}^{n} tr\left[ \left( Y_{i} - \Sigma_{xy}&#39;\Omega_{x} X_{i} \right)\left( Y_{i} - \Sigma_{xy}&#39;\Omega_{x} X_{i} \right)&#39;\Omega_{y | x} \right] \\
   &amp;+\frac{n}{2}\log\left| \Omega \right| - \frac{1}{2}\sum_{i = 1}^{n}tr\left( X_{i}X_{i}&#39;\Omega_{x} \right) \\
-  &amp;= constant + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)&#39;\left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{y | x} \right)\Omega_{y | x} \right] \\
+  &amp;= constant + \frac{n}{2}\log\left| \Omega_{y | x} \right| - \frac{1}{2}tr\left[ \left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)&#39;\left( \mathbb{Y} - \mathbb{X}\Omega_{x}\Sigma_{xy} \right)\Omega_{y | x} \right] \\
   &amp;+ \frac{n}{2}\log\left| \Omega_{x} \right| - \frac{n}{2}tr\left( S_{x}\Omega_{x} \right)
 \end{split}
 \tag{3.19}\notag
@@ -570,20 +569,20 @@ Set <span class="math inline">\(k = 0\)</span> and initialize <span class="math 
 <div id="ref-cai2011direct">
 <p>Cai, Tony, and Weidong Liu. 2011. “A Direct Estimation Approach to Sparse Linear Discriminant Analysis.” <em>Journal of the American Statistical Association</em> 106 (496). Taylor &amp; Francis: 1566–77.</p>
 </div>
+<div id="ref-dalal2017sparse">
+<p>Dalal, Onkar, and Bala Rajaratnam. 2017. “Sparse Gaussian Graphical Model Estimation via Alternating Minimization.” <em>Biometrika</em> 104 (2). Oxford University Press: 379–95.</p>
+</div>
 <div id="ref-fan2012road">
 <p>Fan, Jianqing, Yang Feng, and Xin Tong. 2012. “A Road to Classification in High Dimensional Space: The Regularized Optimal Affine Discriminant.” <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 74 (4). Wiley Online Library: 745–71.</p>
+</div>
+<div id="ref-lange2016mm">
+<p>Lange, Kenneth. 2016. <em>MM Optimization Algorithms</em>. Vol. 147. SIAM.</p>
 </div>
 <div id="ref-mai2012direct">
 <p>Mai, Qing, Hui Zou, and Ming Yuan. 2012. “A Direct Approach to Sparse Discriminant Analysis in Ultra-High Dimensions.” <em>Biometrika</em> 99 (1). Oxford University Press: 29–42.</p>
 </div>
 <div id="ref-molstad2017shrinking">
 <p>Molstad, Aaron J, and Adam J Rothman. 2017. “Shrinking Characteristics of Precision Matrix Estimators.” <em>Biometrika</em>.</p>
-</div>
-<div id="ref-dalal2017sparse">
-<p>Dalal, Onkar, and Bala Rajaratnam. 2017. “Sparse Gaussian Graphical Model Estimation via Alternating Minimization.” <em>Biometrika</em> 104 (2). Oxford University Press: 379–95.</p>
-</div>
-<div id="ref-lange2016mm">
-<p>Lange, Kenneth. 2016. <em>MM Optimization Algorithms</em>. Vol. 147. SIAM.</p>
 </div>
 <div id="ref-witten2009covariance">
 <p>Witten, Daniela M, and Robert Tibshirani. 2009. “Covariance-Regularized Regression and Classification for High Dimensional Problems.” <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 71 (3). Wiley Online Library: 615–36.</p>
